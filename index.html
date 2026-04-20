@@ -1,1 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Azhagu Hotel – Digital Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+:root {
+  --azh-primary: #b7410e;
+  --azh-deep: #8b2c0d;
+  --azh-gold: #e6b422;
+  --azh-cream: #fff9ef;
+  --azh-green: #2a7f49;
+  --azh-dark: #2c1a0f;
+  --azh-card: #ffffff;
+  --azh-border: #f0e2cf;
+  --azh-text: #2b1e12;
+  --azh-muted: #9b7b5c;
+  --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--azh-cream);
+  color: var(--azh-text);
+}
+
+/* Navigation */
+.app-nav {
+  display: flex;
+  background: var(--azh-dark);
+  padding: 0 20px;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.nt {
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 248, 235, 0.7);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+.nt.active {
+  color: var(--azh-gold);
+  border-bottom-color: var(--azh-gold);
+}
+
+.view {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+}
+.view.active {
+  display: flex;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%);
+  padding: 28px 24px 32px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "🍛";
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  font-size: 120px;
+  opacity: 0.12;
+}
+.hero-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
+}
+.logo-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 24px;
+  background: var(--azh-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 10px 20px -5px rgba(0,0,0,0.2);
+}
+.logo-text h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 800;
+}
+.logo-text p {
+  font-size: 13px;
+  color: rgba(255, 245, 225, 0.85);
+  margin-top: 4px;
+}
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 245, 0.18);
+  backdrop-filter: blur(4px);
+  border-radius: 40px;
+  padding: 6px 16px;
+  font-size: 13px;
+  width: fit-content;
+}
+.ld {
+  width: 8px;
+  height: 8px;
+  background: #a7e0b0;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1);}
+  50% { opacity: 0.5; transform: scale(1.2);}
+}
+
+/* Filter Bar */
+.fbar {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px 12px;
+  overflow-x: auto;
+  background: var(--azh-cream);
+  border-bottom: 1px solid var(--azh-border);
+  position: sticky;
+  top: 52px;
+  z-index: 99;
+}
+.fpill {
+  padding: 8px 22px;
+  border-radius: 60px;
+  border: 1.5px solid var(--azh-border);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  background: white;
+  color: var(--azh-muted);
+}
+.fpill.active {
+  background: var(--azh-primary);
+  color: white;
+  border-color: var(--azh-primary);
+}
+
+/* Menu Grid */
+.mgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 20px;
+  padding: 24px 20px;
+}
+@media (max-width: 520px) {
+  .mgrid { gap: 14px; padding: 18px 16px; grid-template-columns: repeat(2, 1fr);}
+}
+.mc {
+  background: var(--azh-card);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+  border: 1px solid var(--azh-border);
+}
+.mc:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+}
+.mi {
+  position: relative;
+  width: 100%;
+  padding-top: 75%;
+  background: #faeedb;
+  overflow: hidden;
+}
+.mi img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mi .me {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+.mb {
+  padding: 14px 14px 16px;
+  flex: 1;
+}
+.mn {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--azh-dark);
+}
+.mnote {
+  font-size: 11px;
+  color: var(--azh-muted);
+  margin-top: 4px;
+}
+.mrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.mprice {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--azh-primary);
+}
+.qw {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef6ed;
+  padding: 3px 8px 3px 6px;
+  border-radius: 44px;
+}
+.qb {
+  width: 30px;
+  height: 30px;
+  border-radius: 40px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  background: white;
+}
+.qb.plus {
+  background: var(--azh-primary);
+  color: white;
+}
+.qb.minus {
+  border: 1px solid #e2cfb5;
+}
+.qn {
+  font-size: 15px;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Cart Bar */
+.cbar {
+  background: var(--azh-dark);
+  color: white;
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 150;
+}
+.ct {
+  font-size: 26px;
+  font-weight: 800;
+}
+.pbtn {
+  background: var(--azh-gold);
+  color: var(--azh-dark);
+  border: none;
+  border-radius: 44px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pbtn:disabled {
+  background: #9b7b5c;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal */
+.moverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 26, 15, 0.75);
+  z-index: 500;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.moverlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.msheet {
+  background: #fffcf5;
+  border-radius: 32px 32px 0 0;
+  width: 100%;
+  max-width: 520px;
+  transform: translateY(60px);
+  transition: transform 0.35s;
+  max-height: 92vh;
+  overflow-y: auto;
+}
+.moverlay.open .msheet {
+  transform: translateY(0);
+}
+.shandle {
+  width: 48px;
+  height: 5px;
+  background: #e2cfb5;
+  border-radius: 12px;
+  margin: 14px auto 8px;
+}
+.shdr {
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid var(--azh-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.stitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--azh-primary);
+}
+.xbtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #f0e4d4;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+.osum {
+  padding: 16px 22px;
+  background: #fff7ef;
+}
+.slbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: #b87a4a;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.sline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 4px 0;
+}
+.strow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 800;
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 2px dashed #e2cfb5;
+}
+.pmethods {
+  padding: 16px 22px 12px;
+}
+.pgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.popt {
+  border: 2px solid #eedfcb;
+  border-radius: 20px;
+  padding: 12px 6px;
+  cursor: pointer;
+  text-align: center;
+  background: white;
+}
+.popt.selected {
+  border-color: var(--azh-primary);
+  background: #fff1e6;
+}
+.pi {
+  font-size: 28px;
+}
+.pn {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.pcbtn {
+  width: 100%;
+  padding: 14px;
+  background: var(--azh-primary);
+  color: white;
+  border: none;
+  border-radius: 60px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.qrsec, .cashsec, .sucsec {
+  padding: 22px;
+  text-align: center;
+}
+.qrbox {
+  background: white;
+  border-radius: 36px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.qrcw {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+.qra {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--azh-green);
+}
+.urow {
+  background: #f9efe2;
+  border-radius: 60px;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+.cpbtn {
+  background: transparent;
+  border: 1.5px solid var(--azh-primary);
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-weight: 600;
+  color: var(--azh-primary);
+  cursor: pointer;
+}
+.camt {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--azh-green);
+  margin: 16px 0;
+}
+.sucicon {
+  background: #e7f3e3;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  margin: 0 auto 16px;
+}
+.oidbadge {
+  background: var(--azh-gold);
+  padding: 8px 22px;
+  border-radius: 40px;
+  font-weight: 700;
+  display: inline-block;
+  margin: 12px 0;
+}
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2c1a0f;
+  color: #ffecb3;
+  padding: 12px 24px;
+  border-radius: 60px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* App Buttons Row */
+.app-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.app-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 12px 16px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.app-btn.gpay {
+  background: #1a73e8;
+  color: white;
+}
+.app-btn.phonepe {
+  background: #5f259f;
+  color: white;
+}
+.app-btn.paytm {
+  background: #00baf2;
+  color: white;
+}
+.app-btn.whatsapp {
+  background: #25d366;
+  color: white;
+}
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="nt active" data-view="customer">🍛 Azhagu Menu</div>
+  <div class="nt" data-view="imgtool">🖼️ Images</div>
+</nav>
+
+<!-- CUSTOMER VIEW -->
+<div class="view active" id="view-customer">
+  <div class="hero">
+    <div class="hero-row">
+      <div class="logo-box">✨</div>
+      <div class="logo-text"><h1>Azhagu Hotel</h1><p>Pure Veg · Authentic Taste</p></div>
+    </div>
+    <div class="live-pill"><div class="ld"></div> Kitchen Open</div>
+  </div>
+  <div class="fbar" id="filterBar">
+    <div class="fpill active" data-cat="all">✨ All Items</div>
+    <div class="fpill" data-cat="tiffin">🍽️ Tiffin</div>
+    <div class="fpill" data-cat="drinks">🥤 Drinks</div>
+  </div>
+  <div class="mgrid" id="menuGrid"></div>
+  <div class="cbar">
+    <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
+    <button class="pbtn" id="placeBtn" disabled onclick="openPayModal()">Place Order →</button>
+  </div>
+</div>
+
+<!-- IMAGE TOOL VIEW -->
+<div class="view" id="view-imgtool">
+  <div class="ithdr" style="background:#2c1a0f; padding:22px 24px; color:white;">
+    <h2>📸 Dish Images</h2>
+    <p style="font-size:13px;opacity:0.7;">Upload photos — live on menu</p>
+  </div>
+  <div class="ibody" style="padding:20px; display:flex; flex-direction:column; gap:20px;" id="imgBody"></div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="moverlay" id="payModal">
+  <div class="msheet">
+    <div class="shandle"></div>
+    
+    <div id="stepMethod">
+      <div class="shdr"><div class="stitle">✨ Complete Order</div><button class="xbtn" onclick="closeModal()">✕</button></div>
+      <div class="osum"><div class="slbl">Your selection</div><div id="summaryLines"></div><div class="strow"><span>Total</span><span id="summaryTotal">₹0</span></div></div>
+      
+      <!-- DIRECT APP BUTTONS SECTION -->
+      <div class="pmethods">
+        <div class="slbl">📱 Pay via App (Opens Directly)</div>
+        <div class="app-buttons" id="directAppButtons"></div>
+      </div>
+      
+      <div class="pmethods">
+        <div class="slbl">🔽 or Scan QR Code</div>
+        <div class="pgrid">
+          <div class="popt selected" id="opt-upi" onclick="selPay('upi')"><div class="pi">📱</div><div class="pn">UPI/QR</div></div>
+          <div class="popt" id="opt-cash" onclick="selPay('cash')"><div class="pi">💵</div><div class="pn">Cash</div></div>
+        </div>
+      </div>
+      <div style="padding:0 22px 24px"><button class="pcbtn" onclick="proceedPay()">Proceed →</button></div>
+    </div>
+
+    <div id="stepQR" style="display:none">
+      <div class="shdr"><div class="stitle">Scan & Pay</div><button class="xbtn" onclick="closeModal()">✕</button></div>
+      <div class="qrsec">
+        <div class="qrbox"><div class="qrcw" id="qrWrap"></div><div class="qru" id="qrLabel">UPI Payment</div><div class="qra" id="qrAmt">₹0</div></div>
+        <div class="app-buttons" id="qrAppButtons"></div>
+        <div class="urow"><div class="uid" id="upiIdTxt">azhagu@okhdfcbank</div><button class="cpbtn" onclick="copyUPI()">Copy ID</button></div>
+        <button class="pcbtn paid" style="background:#2a7f49; margin-top:12px;" onclick="confirmPay()">✅ I have paid</button>
+        <button class="backlink" style="margin-top:12px; background:none; border:none; color:#9b7b5c;" onclick="showStep('stepMethod')">← Back</button>
+      </div>
+    </div>
+
+    <div id="stepCash" style="display:none">
+      <div class="shdr"><div class="stitle">💵 Pay at Counter</div><button class="xbtn" onclick="closeModal()">✕</button></div>
+      <div class="cashsec"><div class="camt" id="cashAmt">₹0</div><div class="cnote">Please pay at the front desk.<br>We'll prepare your order immediately.</div>
+      <button class="pcbtn" style="margin:18px 0 8px;" onclick="confirmPay()">✅ Confirm Order</button>
+      <button class="backlink" onclick="showStep('stepMethod')">← Change method</button></div>
+    </div>
+
+    <div id="stepSuccess" style="display:none">
+      <div class="sucsec"><div class="sucicon">✅</div><div class="suctitle" style="font-size:24px;font-weight:800;">Order Placed!</div>
+      <div class="sucsub">Your delicious food is being prepared.<br>Azhagu Hotel thanks you.</div>
+      <div class="oidbadge" id="sucOrderId">ORD-001</div>
+      <div>Payment: <span id="sucPayMethod">UPI</span></div>
+      <button class="donebtn" style="background:#b7410e; color:white; margin-top:20px; padding:12px 28px; border:none; border-radius:40px; cursor:pointer;" onclick="closeModal()">🍽️ Order More</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== MENU DATA ====================
+const menuData = [
+  {id:1, name:'Ghee Roast Dosa', price:55, category:'tiffin', note:'crispy + chutney', emoji:'🥞', img:null},
+  {id:2, name:'Mini Idly', price:25, category:'tiffin', note:'10 pcs', emoji:'🍚', img:null},
+  {id:3, name:'Kuzhi Paniyaram', price:40, category:'tiffin', note:'soft & spicy', emoji:'🍘', img:null},
+  {id:4, name:'Podi Pongal', price:50, category:'tiffin', note:'with ghee', emoji:'🍲', img:null},
+  {id:5, name:'Filter Coffee', price:22, category:'drinks', note:'aromatic', emoji:'☕', img:null},
+  {id:6, name:'Badam Milk', price:35, category:'drinks', note:'rich', emoji:'🥛', img:null},
+  {id:7, name:'Elaneer Juice', price:45, category:'drinks', note:'tender coconut', emoji:'🥥', img:null}
+];
+
+// ==================== GLOBAL STATE ====================
+let cart = {};
+let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
+let orderCounter = orders.length + 1;
+let curFilter = 'all';
+let selPayMethod = 'upi';
+let timerInterval = null;
+
+const UPI_ID = 'azhagu@okhdfcbank';
+const UPI_NAME = 'Azhagu Hotel';
+
+// ==================== SAVE ORDERS TO LOCALSTORAGE ====================
+function saveOrders() {
+  localStorage.setItem('azhagu_orders', JSON.stringify(orders));
+}
+
+// ==================== MENU RENDER ====================
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  const filtered = curFilter === 'all' ? menuData : menuData.filter(i => i.category === curFilter);
+  grid.innerHTML = filtered.map(item => {
+    const qty = cart[item.id] || 0;
+    const imgHtml = item.img ? `<img src="${item.img}" alt="${item.name}">` : `<div class="me">${item.emoji}</div>`;
+    return `<div class="mc"><div class="mi">${imgHtml}</div><div class="mb"><div class="mn">${item.name}</div>${item.note ? `<div class="mnote">${item.note}</div>` : ''}<div class="mrow"><div class="mprice">₹${item.price}</div><div class="qw">${qty > 0 ? `<button class="qb minus" onclick="updCart(${item.id},-1)">−</button><span class="qn">${qty}</span>` : ''}<button class="qb plus" onclick="updCart(${item.id},1)">+</button></div></div></div></div>`;
+  }).join('');
+}
+
+function updCart(id, d) {
+  cart[id] = Math.max(0, (cart[id] || 0) + d);
+  if (!cart[id]) delete cart[id];
+  renderMenu();
+  updateCartBar();
+}
+
+function updateCartBar() {
+  let total = 0, count = 0;
+  for (const [id, qty] of Object.entries(cart)) {
+    const item = menuData.find(i => i.id == id);
+    total += item.price * qty;
+    count += qty;
+  }
+  document.getElementById('cartTotal').innerHTML = '₹' + total;
+  document.getElementById('cartLbl').innerText = count + (count === 1 ? ' item' : ' items');
+  document.getElementById('placeBtn').disabled = count === 0;
+}
+
+function getTotal() {
+  let t = 0;
+  for (const [id, qty] of Object.entries(cart)) {
+    const item = menuData.find(i => i.id == id);
+    t += item.price * qty;
+  }
+  return t;
+}
+
+// ==================== DIRECT APP OPENING (INTENTS) ====================
+function openUPIApp(appName, amount) {
+  const packageName = {
+    gpay: 'com.google.android.apps.nbu.paisa.user',
+    phonepe: 'com.phonepe.app',
+    paytm: 'net.one97.paytm',
+    amazonpay: 'in.amazon.mShop.android.shopping'
+  };
+  
+  const upiIntent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=AzhaguHotelOrder`;
+  
+  if (appName === 'gpay') {
+    window.location.href = `intent://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${amount}&cu=INR#Intent;scheme=upi;package=${packageName.gpay};end`;
+    setTimeout(() => { window.location.href = upiIntent; }, 500);
+  } else if (appName === 'phonepe') {
+    window.location.href = `intent://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${amount}&cu=INR#Intent;scheme=upi;package=${packageName.phonepe};end`;
+    setTimeout(() => { window.location.href = upiIntent; }, 500);
+  } else if (appName === 'paytm') {
+    window.location.href = `intent://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${amount}&cu=INR#Intent;scheme=upi;package=${packageName.paytm};end`;
+    setTimeout(() => { window.location.href = upiIntent; }, 500);
+  } else {
+    window.location.href = upiIntent;
+  }
+}
+
+function renderDirectAppButtons(containerId, amount) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  
+  container.innerHTML = `
+    <button class="app-btn gpay" onclick="openUPIApp('gpay', ${amount})">
+      <span>🅖</span> Google Pay
+    </button>
+    <button class="app-btn phonepe" onclick="openUPIApp('phonepe', ${amount})">
+      <span>💜</span> PhonePe
+    </button>
+    <button class="app-btn paytm" onclick="openUPIApp('paytm', ${amount})">
+      <span>🎯</span> Paytm
+    </button>
+  `;
+}
+
+// ==================== PAYMENT MODAL ====================
+function openPayModal() {
+  if (!Object.keys(cart).length) return;
+  
+  const total = getTotal();
+  selPayMethod = 'upi';
+  
+  document.querySelectorAll('.popt').forEach(p => p.classList.remove('selected'));
+  document.getElementById('opt-upi').classList.add('selected');
+  
+  const sumDiv = document.getElementById('summaryLines');
+  sumDiv.innerHTML = Object.entries(cart).map(([id, qty]) => {
+    const it = menuData.find(i => i.id == id);
+    return `<div class="sline"><span>${it.name} × ${qty}</span><span>₹${it.price * qty}</span></div>`;
+  }).join('');
+  document.getElementById('summaryTotal').innerHTML = '₹' + total;
+  
+  // Render direct app buttons in stepMethod
+  renderDirectAppButtons('directAppButtons', total);
+  
+  showStep('stepMethod');
+  document.getElementById('payModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('payModal').classList.remove('open');
+  if (timerInterval) clearInterval(timerInterval);
+}
+
+function selPay(m) {
+  selPayMethod = m;
+  document.querySelectorAll('.popt').forEach(p => p.classList.remove('selected'));
+  document.getElementById(`opt-${m}`).classList.add('selected');
+}
+
+function proceedPay() {
+  const total = getTotal();
+  if (selPayMethod === 'cash') {
+    document.getElementById('cashAmt').innerHTML = '₹' + total;
+    showStep('stepCash');
+  } else {
+    document.getElementById('qrLabel').innerHTML = 'UPI QR Code';
+    document.getElementById('qrAmt').innerHTML = '₹' + total;
+    document.getElementById('upiIdTxt').innerHTML = UPI_ID;
+    generateQR(total);
+    renderDirectAppButtons('qrAppButtons', total);
+    startTimer(600);
+    showStep('stepQR');
+  }
+}
+
+function generateQR(amt) {
+  const wrap = document.getElementById('qrWrap');
+  wrap.innerHTML = '';
+  const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`;
+  try {
+    new QRCode(wrap, { text: url, width: 190, height: 190, colorDark: "#b7410e", colorLight: "#ffffff" });
+  } catch(e) {
+    wrap.innerHTML = `<div style="width:180px;height:180px;background:#f5e6d8;border-radius:20px;display:flex;align-items:center;justify-content:center;">🔽 Scan QR</div>`;
+  }
+}
+
+function startTimer(sec) {
+  if (timerInterval) clearInterval(timerInterval);
+  const el = document.getElementById('timerVal');
+  if (!el) return;
+  const fmt = (s) => `${Math.floor(s/60)}`.padStart(2,'0')+':'+`${s%60}`.padStart(2,'0');
+  el.innerText = fmt(sec);
+  timerInterval = setInterval(() => {
+    sec--;
+    if (sec <= 0) {
+      clearInterval(timerInterval);
+      if(document.getElementById('timerVal')) document.getElementById('timerVal').innerText = "00:00";
+    } else {
+      if(document.getElementById('timerVal')) document.getElementById('timerVal').innerText = fmt(sec);
+    }
+  }, 1000);
+}
+
+function copyUPI() {
+  navigator.clipboard.writeText(UPI_ID);
+  showToast('✅ UPI ID copied!');
+}
+
+function confirmPay() {
+  if (timerInterval) clearInterval(timerInterval);
+  const payLabel = selPayMethod === 'cash' ? 'Cash' : 'UPI';
+  const orderId = finalizeOrder(payLabel);
+  document.getElementById('sucOrderId').innerText = orderId;
+  document.getElementById('sucPayMethod').innerText = payLabel;
+  showStep('stepSuccess');
+}
+
+function finalizeOrder(payMethod) {
+  let total = 0, itemsList = [];
+  for (const [id, qty] of Object.entries(cart)) {
+    const item = menuData.find(i => i.id == id);
+    itemsList.push({ name: item.name, qty, price: item.price * qty });
+    total += item.price * qty;
+  }
+  const newOrder = {
+    id: `ORD-${String(orderCounter++).padStart(3,'0')}`,
+    lines: itemsList,
+    total,
+    status: 'pending',
+    payMethod,
+    time: new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
+    timestamp: Date.now()
+  };
+  orders.unshift(newOrder);
+  saveOrders();
+  cart = {};
+  renderMenu();
+  updateCartBar();
+  showToast(`🎉 Order ${newOrder.id} placed!`);
+  return newOrder.id;
+}
+
+function showStep(id) {
+  ['stepMethod','stepQR','stepCash','stepSuccess'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) el.style.display = s === id ? 'block' : 'none';
+  });
+}
+
+// ==================== IMAGE TOOL ====================
+function renderImgTool() {
+  const body = document.getElementById('imgBody');
+  if (!body) return;
+  body.innerHTML = menuData.map(item => `
+    <div class="ie" style="background:white; border-radius:28px; overflow:hidden; border:1px solid #f0e2cf;">
+      <div class="iehead" style="background:#fff4ea; padding:14px 20px; display:flex; justify-content:space-between;">
+        <span style="font-weight:700;">${item.emoji} ${item.name}</span>
+        <span style="color:#b7410e; font-weight:700;">₹${item.price}</span>
+      </div>
+      <div class="iebody" style="display:flex; gap:16px; padding:18px; flex-wrap:wrap;">
+        <div class="iprev" id="prev-${item.id}" onclick="document.getElementById('fi-${item.id}').click()" style="width:100px; height:100px; border-radius:20px; background:#fcf2e6; border:2px dashed #e2cfb5; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          ${item.img ? `<img src="${item.img}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="font-size:30px;">📷</div>`}
+        </div>
+        <input type="file" accept="image/*" style="display:none" id="fi-${item.id}" onchange="handleImgUp(event,${item.id})">
+        <div>
+          <button class="upbtn" onclick="document.getElementById('fi-${item.id}').click()" style="background:#b7410e; color:white; border:none; padding:8px 16px; border-radius:30px; margin-right:8px; cursor:pointer;">Upload</button>
+          <button class="rmbtn" onclick="removeImg(${item.id})" style="background:#f2e0d0; border:none; padding:8px 16px; border-radius:30px; cursor:pointer;">Remove</button>
+          <div style="font-size:11px; margin-top:6px;">${item.img ? '✓ image set' : 'no image'}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.handleImgUp = (event, id) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const item = menuData.find(i => i.id === id);
+    item.img = e.target.result;
+    renderImgTool();
+    renderMenu();
+    showToast(`📸 ${item.name} updated!`);
+  };
+  reader.readAsDataURL(file);
+};
+
+window.removeImg = (id) => {
+  const item = menuData.find(i => i.id === id);
+  item.img = null;
+  renderImgTool();
+  renderMenu();
+  showToast(`🗑️ ${item.name} image removed`);
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ==================== NAVIGATION ====================
+document.querySelectorAll('.nt').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(`view-${tab.dataset.view}`).classList.add('active');
+    if (tab.dataset.view === 'imgtool') renderImgTool();
+  });
+});
+
+document.querySelectorAll('.fpill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.fpill').forEach(f => f.classList.remove('active'));
+    p.classList.add('active');
+    curFilter = p.dataset.cat;
+    renderMenu();
+  });
+});
+
+// ==================== INIT ====================
+renderMenu();
+renderImgTool();
+updateCartBar();
+</script>
+</body>
+</html>
