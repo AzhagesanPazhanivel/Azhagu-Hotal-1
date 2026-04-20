@@ -1,4 +1,3 @@
-// ========== FIREBASE CONFIGURATION ==========
 const FIREBASE_CONFIG = {
     apiKey: "AIzaSyBLrk_nmC2V0NvRKfhHdFzBi647xiuF1y0",
     authDomain: "azhagu-hotel.firebaseapp.com",
