@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Azhagu Hotel – Digital Menu with OTP Verification</title>
+<title>Azhagu Hotel – Digital Menu | Live Orders</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -429,10 +429,6 @@ body {
   cursor: pointer;
   white-space: nowrap;
 }
-.verify-otp-btn:disabled, .send-otp-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
 .pcbtn {
   width: 100%;
   padding: 12px;
@@ -555,6 +551,16 @@ body {
   border: 1px solid var(--azh-border);
   cursor: pointer;
 }
+.live-badge-header {
+  background: rgba(255,255,255,0.2);
+  border-radius: 40px;
+  padding: 4px 10px;
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+}
 </style>
 </head>
 <body>
@@ -575,7 +581,7 @@ body {
       </div>
       <button class="history-btn" onclick="openOrderHistory()">📜 Bills</button>
     </div>
-    <div class="live-pill"><div class="ld"></div> UPI: azhagumani20-3@okicici</div>
+    <div class="live-pill"><div class="ld"></div> UPI: azhagumani20-3@okicici <span class="live-badge-header">🔴 LIVE</span></div>
   </div>
   <div class="fbar" id="filterBar">
     <div class="fpill active" data-cat="all">All Items</div>
@@ -600,7 +606,7 @@ body {
   <div id="orderHistoryList" class="order-history-list"></div>
 </div>
 
-<!-- CUSTOMER DETAILS & OTP MODAL (Step 0) -->
+<!-- CUSTOMER DETAILS & OTP MODAL -->
 <div class="moverlay" id="customerModal">
   <div class="msheet">
     <div class="shandle"></div>
@@ -625,7 +631,7 @@ body {
   </div>
 </div>
 
-<!-- PAYMENT MODAL (Final Steps) -->
+<!-- PAYMENT MODAL -->
 <div class="moverlay" id="payModal">
   <div class="msheet">
     <div class="shandle"></div>
@@ -653,13 +659,15 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
-// ---------- DATA ----------
+// ========== GLOBAL STORAGE KEY - Same across all tabs ==========
+const STORAGE_KEY = 'azhagu_live_orders';
 const UPI_ID = 'azhagumani20-3@okicici';
 const UPI_NAME = 'Azhagu Hotel';
 const GSTIN = '33AAACA1234E1ZQ';
 let gstRate = 5;
 let gstEnabled = true;
 
+// Menu Data
 const menuData = [
   {id:1, name:'Ghee Roast Dosa', price:55, category:'tiffin', note:'crispy', emoji:'🥞', img:null},
   {id:2, name:'Mini Idly', price:25, category:'tiffin', note:'10 pcs', emoji:'🍚', img:null},
@@ -670,18 +678,32 @@ const menuData = [
   {id:7, name:'Elaneer Juice', price:45, category:'drinks', note:'coconut', emoji:'🥥', img:null}
 ];
 
+// Global state
 let cart = {};
-let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
-let customerOrders = JSON.parse(localStorage.getItem('azhagu_customer_orders') || '[]');
-let orderCounter = Math.max(orders.length, customerOrders.length, 1);
+let customerOrders = [];
+let orderCounter = 1;
 let curFilter = 'all';
 let currentBillOrder = null;
-
-// OTP & Customer session
 let pendingCustomer = { mobile: null, name: null, verified: false, otpSent: false, actualOtp: null };
-let pendingCartCopy = null;
 
-function saveOrders() { localStorage.setItem('azhagu_orders', JSON.stringify(orders)); localStorage.setItem('azhagu_customer_orders', JSON.stringify(customerOrders)); }
+// Load orders from localStorage
+function loadOrdersFromStorage() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    customerOrders = JSON.parse(stored);
+    orderCounter = Math.max(customerOrders.length + 1, 1);
+  } else {
+    customerOrders = [];
+    orderCounter = 1;
+  }
+}
+
+function saveOrdersToStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(customerOrders));
+  // Trigger storage event for cross-tab communication (admin panel)
+  window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY, newValue: JSON.stringify(customerOrders) }));
+}
+
 function calculateGST(subtotal) { if(!gstEnabled) return { gstAmount:0, total:subtotal, cgst:0, sgst:0 }; const amt=(subtotal*gstRate)/100; return { gstAmount:amt, total:subtotal+amt, cgst:amt/2, sgst:amt/2 }; }
 function getCartTotal() { let subtotal=0; for(const [id,qty] of Object.entries(cart)) { const item=menuData.find(i=>i.id==id); subtotal+=item.price*qty; } return { subtotal, ...calculateGST(subtotal) }; }
 
@@ -693,8 +715,8 @@ function renderMenu() {
 function updCart(id,d){ cart[id]=Math.max(0,(cart[id]||0)+d); if(!cart[id]) delete cart[id]; renderMenu(); updateCartBar(); }
 function updateCartBar(){ const {total}=getCartTotal(); let count=Object.values(cart).reduce((a,b)=>a+b,0); document.getElementById('cartTotal').innerHTML='₹'+total.toFixed(2); document.getElementById('cartLbl').innerText=count+(count===1?' item':' items'); document.getElementById('placeBtn').disabled=count===0; }
 
-// Customer verification modal
-function openCustomerVerificationModal() { if(Object.keys(cart).length===0) return; pendingCartCopy=JSON.parse(JSON.stringify(cart)); pendingCustomer={mobile:null,name:null,verified:false,otpSent:false,actualOtp:null}; document.getElementById('customerMobile').value=''; document.getElementById('otpCode').value=''; document.getElementById('customerName').value=''; document.getElementById('customerName').disabled=true; document.getElementById('otpCode').disabled=true; document.getElementById('verifyOtpBtn').disabled=true; document.getElementById('proceedToPaymentBtn').disabled=true; document.getElementById('sendOtpBtn').disabled=false; document.getElementById('otpStatusMsg').innerHTML=''; document.getElementById('customerModal').classList.add('open'); }
+// Customer verification
+function openCustomerVerificationModal() { if(Object.keys(cart).length===0) return; pendingCustomer={mobile:null,name:null,verified:false,otpSent:false,actualOtp:null}; document.getElementById('customerMobile').value=''; document.getElementById('otpCode').value=''; document.getElementById('customerName').value=''; document.getElementById('customerName').disabled=true; document.getElementById('otpCode').disabled=true; document.getElementById('verifyOtpBtn').disabled=true; document.getElementById('proceedToPaymentBtn').disabled=true; document.getElementById('sendOtpBtn').disabled=false; document.getElementById('otpStatusMsg').innerHTML=''; document.getElementById('customerModal').classList.add('open'); }
 function closeCustomerModal() { document.getElementById('customerModal').classList.remove('open'); }
 function sendOTP() {
   const mobile=document.getElementById('customerMobile').value.trim();
@@ -743,7 +765,7 @@ function openPayModalWithCustomer(){
   showPaymentStep('stepMethod');
   document.getElementById('payModal').classList.add('open');
 }
-function generateQR(amt){ const wrap=document.getElementById('qrWrap'); wrap.innerHTML=''; document.getElementById('qrAmt').innerHTML='₹'+amt.toFixed(2); const url=`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`; try{ new QRCode(wrap,{text:url,width:170,height:170,colorDark:"#b7410e",colorLight:"#ffffff"}); }catch(e){ wrap.innerHTML=`<div style="width:170px;height:170px;background:#f5e6d8;border-radius:16px;">Scan QR</div>`; } }
+function generateQR(amt){ const wrap=document.getElementById('qrWrap'); wrap.innerHTML=''; document.getElementById('qrAmt').innerHTML='₹'+amt.toFixed(2); const url=`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`; try{ new QRCode(wrap,{text:url,width:170,height:170,colorDark:"#b7410e",colorLight:"#ffffff"}); }catch(e){ wrap.innerHTML=`<div style="width:170px;height:170px;background:#f5e6d8;">Scan QR</div>`; } }
 function openUpiApp(app,amt){ window.location.href=`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`; showToast(`Opening ${app}...`,false); setTimeout(()=>{ const chk=document.getElementById('paymentConfirmCheckbox'); if(chk&&!chk.checked) showToast('⚠️ Complete payment then confirm here',true); },15000); }
 function copyUPI(){ navigator.clipboard.writeText(UPI_ID); showToast('UPI ID copied'); }
 function toggleConfirmButton(){ const btn=document.getElementById('confirmPayBtn'); const chk=document.getElementById('paymentConfirmCheckbox'); if(btn&&chk) btn.disabled=!chk.checked; }
@@ -762,17 +784,16 @@ function createOrderWithCustomer(){
   const { gstAmount, total, cgst, sgst } = calculateGST(subtotal);
   const orderId=`ORD-${String(orderCounter++).padStart(3,'0')}`;
   const now=new Date();
-  const order={ id:orderId, lines:itemsList, subtotal, gstRate:gstEnabled?gstRate:0, gstAmount, cgst, sgst, total, status:'confirmed', paidStatus:'Paid', payMethod:'UPI', time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), date:now.toLocaleDateString('en-IN'), timestamp:Date.now(), gstin:GSTIN, hotelName:'Azhagu Hotel', upiId:UPI_ID, customerName:pendingCustomer.name, customerMobile:pendingCustomer.mobile };
-  orders.unshift(order);
+  const order={ id:orderId, lines:itemsList, subtotal, gstRate:gstEnabled?gstRate:0, gstAmount, cgst, sgst, total, status:'pending', paidStatus:'Paid', payMethod:'UPI', time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), date:now.toLocaleDateString('en-IN'), timestamp:Date.now(), gstin:GSTIN, hotelName:'Azhagu Hotel', upiId:UPI_ID, customerName:pendingCustomer.name, customerMobile:pendingCustomer.mobile };
   customerOrders.unshift(order);
-  saveOrders();
+  saveOrdersToStorage();
   cart={}; renderMenu(); updateCartBar();
   pendingCustomer={mobile:null,name:null,verified:false,otpSent:false,actualOtp:null};
   return order;
 }
 function downloadBill(){ if(!currentBillOrder) return; const win=window.open('','_blank'); win.document.write(generateBillHTML(currentBillOrder)); win.document.close(); win.print(); }
-function generateBillHTML(order){ return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bill ${order.id}</title><style>body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;} .header{text-align:center;margin-bottom:20px;} .hotel-name{font-size:22px;font-weight:bold;} .items{width:100%;margin:15px 0;border-collapse:collapse;} .items td,.items th{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;} .text-right{text-align:right;}</style></head><body><div class='header'><div class='hotel-name'>🍛 ${order.hotelName}</div><div>GSTIN: ${order.gstin}</div><div>UPI: ${order.upiId}</div><div><strong>TAX INVOICE</strong></div></div><div><strong>Bill No:</strong> ${order.id}</div><div><strong>Date:</strong> ${order.date} | ${order.time}</div><div><strong>Customer:</strong> ${order.customerName} (${order.customerMobile})</div><div><strong>Payment:</strong> UPI | Paid</div><table class='items'><tr><th>Item</th><th>Qty</th><th class='text-right'>Amount</th></tr>${order.lines.map(l=>`<tr><td>${l.name}</td><td>${l.qty}</td><td class='text-right'>₹${l.total.toFixed(2)}</td></tr>`).join('')}</table><div><strong>Subtotal:</strong> ₹${order.subtotal.toFixed(2)}</div>${order.gstRate>0?`<div>CGST (${order.gstRate/2}%): ₹${order.cgst.toFixed(2)}</div><div>SGST (${order.gstRate/2}%): ₹${order.sgst.toFixed(2)}</div>`:''}<div class='total-row'><strong>Total: ₹${order.total.toFixed(2)}</strong></div><div class='footer'>✨ Thank you! Visit Again ✨</div></body></html>`; }
-function openOrderHistory(){ const container=document.getElementById('orderHistoryList'); if(customerOrders.length===0) container.innerHTML='<div class="empty-history">📭 No orders yet</div>'; else container.innerHTML=customerOrders.map(order=>`<div class="history-item" onclick="viewBill('${order.id}')"><div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div><div class="history-items">${order.lines.map(l=>`${l.name}×${l.qty}`).join(', ')}</div><div><span class="history-total">₹${order.total.toFixed(2)}</span> | ${order.customerName||'Guest'}</div></div>`).join(''); document.querySelectorAll('.nt').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('view-orders').classList.add('active'); document.querySelector('.nt[data-view="orders"]').classList.add('active'); }
+function generateBillHTML(order){ return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bill ${order.id}</title><style>body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}</style></head><body><div><h2>Azhagu Hotel</h2><p>Order: ${order.id}</p><p>Customer: ${order.customerName} (${order.customerMobile})</p><hr>${order.lines.map(l=>`<div>${l.name} x${l.qty} = ₹${l.total}</div>`).join('')}<hr><h3>Total: ₹${order.total}</h3><p>Thank you!</p></body></html>`; }
+function openOrderHistory(){ const container=document.getElementById('orderHistoryList'); if(customerOrders.length===0) container.innerHTML='<div class="empty-history">📭 No orders yet</div>'; else container.innerHTML=customerOrders.map(order=>`<div class="history-item" onclick="viewBill('${order.id}')"><div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div><div class="history-items">${order.lines.map(l=>`${l.name}×${l.qty}`).join(', ')}</div><div><span>₹${order.total}</span> | ${order.customerName||'Guest'}</div></div>`).join(''); document.querySelectorAll('.nt').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('view-orders').classList.add('active'); document.querySelector('.nt[data-view="orders"]').classList.add('active'); }
 function viewBill(orderId){ const order=customerOrders.find(o=>o.id===orderId); if(order){ const win=window.open('','_blank'); win.document.write(generateBillHTML(order)); win.document.close(); win.print(); } }
 function showToast(msg,isErr=false){ const t=document.getElementById('toast'); t.innerText=msg; t.style.background=isErr?'#c0392b':'#2c1a0f'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 function closePaymentModal(){ document.getElementById('payModal').classList.remove('open'); document.getElementById('paymentConfirmCheckbox').checked=false; document.getElementById('confirmPayBtn').disabled=true; }
@@ -780,7 +801,35 @@ function closeAllAndReset(){ closePaymentModal(); location.reload(); }
 function showPaymentStep(step){ document.getElementById('stepMethod').style.display=step==='stepMethod'?'block':'none'; document.getElementById('stepPayment').style.display=step==='stepPayment'?'block':'none'; document.getElementById('stepSuccess').style.display=step==='stepSuccess'?'block':'none'; }
 document.querySelectorAll('.nt').forEach(tab=>{ tab.addEventListener('click',()=>{ document.querySelectorAll('.nt').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); tab.classList.add('active'); document.getElementById(`view-${tab.dataset.view}`).classList.add('active'); if(tab.dataset.view==='orders') openOrderHistory(); }); });
 document.querySelectorAll('.fpill').forEach(p=>{ p.addEventListener('click',()=>{ document.querySelectorAll('.fpill').forEach(f=>f.classList.remove('active')); p.classList.add('active'); curFilter=p.dataset.cat; renderMenu(); }); });
-renderMenu(); updateCartBar();
+
+// Initialize
+loadOrdersFromStorage();
+renderMenu();
+updateCartBar();
+
+// Cross-tab real-time listener (for admin panel - updates when admin changes status)
+window.addEventListener('storage', (e) => {
+  if (e.key === STORAGE_KEY && e.newValue) {
+    const updatedOrders = JSON.parse(e.newValue);
+    customerOrders = updatedOrders;
+    orderCounter = Math.max(customerOrders.length + 1, 1);
+    if (document.getElementById('view-orders').classList.contains('active')) openOrderHistory();
+    showToast('📡 Order status updated by admin', false);
+  }
+});
+
+// Auto-refresh orders view every 0.1 seconds (100ms) for live updates
+setInterval(() => {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    const freshOrders = JSON.parse(stored);
+    if (JSON.stringify(freshOrders) !== JSON.stringify(customerOrders)) {
+      customerOrders = freshOrders;
+      orderCounter = Math.max(customerOrders.length + 1, 1);
+      if (document.getElementById('view-orders').classList.contains('active')) openOrderHistory();
+    }
+  }
+}, 100); // 0.1 second refresh
 </script>
 </body>
 </html>
