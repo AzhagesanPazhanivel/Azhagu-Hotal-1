@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Azhagu Hotel – Digital Menu</title>
+<title>Azhagu Hotel – Digital Menu with OTP Verification</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -304,7 +304,7 @@ body {
   cursor: not-allowed;
 }
 
-/* Modal */
+/* Modal Overlay */
 .moverlay {
   position: fixed;
   inset: 0;
@@ -390,34 +390,48 @@ body {
   margin-top: 8px;
   border-top: 2px dashed #e2cfb5;
 }
-.pmethods {
-  padding: 14px 20px 10px;
+.verification-section {
+  padding: 16px 20px;
+  border-top: 1px solid var(--azh-border);
 }
-.pgrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+.input-group {
+  margin-bottom: 16px;
 }
-.popt {
-  border: 2px solid #eedfcb;
-  border-radius: 18px;
-  padding: 10px 5px;
-  cursor: pointer;
-  text-align: center;
-  background: white;
-  transition: all 0.2s;
-}
-.popt.selected {
-  border-color: var(--azh-primary);
-  background: #fff1e6;
-}
-.pi {
-  font-size: 24px;
-}
-.pn {
-  font-size: 11px;
+.input-group label {
   font-weight: 600;
-  margin-top: 4px;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 6px;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--azh-border);
+  border-radius: 40px;
+  font-size: 14px;
+  background: white;
+}
+.otp-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.otp-row input {
+  flex: 1;
+}
+.send-otp-btn, .verify-otp-btn {
+  background: var(--azh-primary);
+  border: none;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 40px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.verify-otp-btn:disabled, .send-otp-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 .pcbtn {
   width: 100%;
@@ -435,7 +449,7 @@ body {
   background: #ccc;
   cursor: not-allowed;
 }
-.qrsec, .cashsec, .sucsec {
+.qrsec {
   padding: 20px;
   text-align: center;
 }
@@ -451,12 +465,6 @@ body {
   height: 180px;
   margin: 0 auto;
 }
-.qra {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--azh-green);
-  margin-top: 8px;
-}
 .urow {
   background: #f9efe2;
   border-radius: 50px;
@@ -467,11 +475,6 @@ body {
   margin: 12px 0;
   gap: 8px;
   flex-wrap: wrap;
-}
-.uid {
-  font-weight: 600;
-  font-size: 12px;
-  word-break: break-all;
 }
 .cpbtn {
   background: transparent;
@@ -518,14 +521,8 @@ body {
   z-index: 999;
   pointer-events: none;
   text-align: center;
-  white-space: nowrap;
 }
 .toast.show { opacity: 1; }
-@media (max-width: 480px) {
-  .toast { white-space: normal; max-width: 85%; font-size: 11px; }
-}
-
-/* Payment Options Grid */
 .payment-options-grid {
   display: flex;
   flex-direction: column;
@@ -548,134 +545,14 @@ body {
 .pay-option-btn.gpay { background: #1a73e8; color: white; }
 .pay-option-btn.phonepe { background: #5f259f; color: white; }
 .pay-option-btn.paytm { background: #00baf2; color: white; }
-.pay-option-btn.whatsapp { background: #25d366; color: white; }
 .pay-option-btn.copy { background: #2c1a0f; color: white; }
-
-.payment-confirm {
-  background: #fff8e8;
-  border-radius: 18px;
-  padding: 14px;
-  margin: 14px 0;
-  border: 1px solid #ffe0a3;
-}
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.checkbox-row input {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-.warning-text {
-  font-size: 11px;
-  color: #e67e22;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px dashed #ffe0a3;
-}
-.utr-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid var(--azh-border);
-  border-radius: 40px;
-  font-size: 12px;
-  margin-top: 10px;
-}
-
-/* Order History */
-.order-history-list {
-  padding: 16px;
-}
+.order-history-list { padding: 16px; }
 .history-item {
   background: white;
   border-radius: 20px;
   padding: 14px;
   margin-bottom: 12px;
   border: 1px solid var(--azh-border);
-  cursor: pointer;
-}
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  flex-wrap: wrap;
-}
-.history-id {
-  font-weight: 800;
-  color: var(--azh-primary);
-  font-size: 13px;
-}
-.history-date {
-  font-size: 11px;
-  color: var(--azh-muted);
-}
-.history-items {
-  font-size: 12px;
-  margin: 6px 0;
-}
-.history-total {
-  font-weight: 800;
-  font-size: 14px;
-  color: var(--azh-green);
-}
-.empty-history {
-  text-align: center;
-  padding: 50px 20px;
-  color: var(--azh-muted);
-}
-
-/* Image Tool */
-.img-tool-item {
-  background: white;
-  border-radius: 24px;
-  overflow: hidden;
-  border: 1px solid var(--azh-border);
-  margin-bottom: 15px;
-}
-.img-tool-header {
-  background: #fff4ea;
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  font-weight: 700;
-}
-.img-tool-body {
-  display: flex;
-  gap: 12px;
-  padding: 14px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-.img-preview {
-  width: 80px;
-  height: 80px;
-  border-radius: 16px;
-  background: #fcf2e6;
-  border: 2px dashed #e2cfb5;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-.upload-btn {
-  background: var(--azh-primary);
-  color: white;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 30px;
-  font-size: 12px;
-  cursor: pointer;
-}
-.remove-btn {
-  background: #f2e0d0;
-  border: none;
-  padding: 6px 14px;
-  border-radius: 30px;
-  font-size: 12px;
   cursor: pointer;
 }
 </style>
@@ -685,7 +562,6 @@ body {
 <nav class="app-nav">
   <div class="nt active" data-view="customer">🍛 Menu</div>
   <div class="nt" data-view="orders">📜 My Orders</div>
-  <div class="nt" data-view="imgtool">🖼️ Images</div>
 </nav>
 
 <!-- CUSTOMER VIEW -->
@@ -709,7 +585,7 @@ body {
   <div class="mgrid" id="menuGrid"></div>
   <div class="cbar">
     <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
-    <button class="pbtn" id="placeBtn" disabled onclick="openPayModal()">Order →</button>
+    <button class="pbtn" id="placeBtn" disabled onclick="openCustomerVerificationModal()">Order →</button>
   </div>
 </div>
 
@@ -724,92 +600,66 @@ body {
   <div id="orderHistoryList" class="order-history-list"></div>
 </div>
 
-<!-- IMAGE TOOL VIEW -->
-<div class="view" id="view-imgtool">
-  <div class="hero" style="background: linear-gradient(135deg, #2c1a0f, #3f2618);">
-    <div class="hero-row">
-      <div class="logo-box">🖼️</div>
-      <div class="logo-text"><h1>Dish Images</h1><p>Upload photos</p></div>
+<!-- CUSTOMER DETAILS & OTP MODAL (Step 0) -->
+<div class="moverlay" id="customerModal">
+  <div class="msheet">
+    <div class="shandle"></div>
+    <div class="shdr"><div class="stitle">👤 Place Order</div><button class="xbtn" onclick="closeCustomerModal()">✕</button></div>
+    <div class="verification-section">
+      <div class="input-group">
+        <label>📞 Mobile Number *</label>
+        <input type="tel" id="customerMobile" placeholder="10-digit mobile number" maxlength="10">
+      </div>
+      <div class="otp-row">
+        <input type="text" id="otpCode" placeholder="Enter OTP" disabled>
+        <button id="sendOtpBtn" class="send-otp-btn" onclick="sendOTP()">Send OTP</button>
+        <button id="verifyOtpBtn" class="verify-otp-btn" onclick="verifyOTPAndProceed()" disabled>Verify</button>
+      </div>
+      <div class="input-group" style="margin-top: 16px;">
+        <label>🧑‍🍳 Your Name *</label>
+        <input type="text" id="customerName" placeholder="Enter full name" disabled>
+      </div>
+      <div id="otpStatusMsg" style="font-size:12px; margin-top:8px; color:#e67e22;"></div>
+      <button id="proceedToPaymentBtn" class="pcbtn" style="background:#b7410e;" onclick="proceedToPaymentAfterVerification()" disabled>✅ Proceed to Payment</button>
     </div>
   </div>
-  <div class="order-history-list" id="imgBody"></div>
 </div>
 
-<!-- PAYMENT MODAL -->
+<!-- PAYMENT MODAL (Final Steps) -->
 <div class="moverlay" id="payModal">
   <div class="msheet">
     <div class="shandle"></div>
-    
-    <!-- Step 1: Method Selection -->
     <div id="stepMethod">
-      <div class="shdr"><div class="stitle">✨ Order Summary</div><button class="xbtn" onclick="closeModal()">✕</button></div>
+      <div class="shdr"><div class="stitle">✨ Order Summary</div><button class="xbtn" onclick="closePaymentModal()">✕</button></div>
       <div class="osum"><div class="slbl">Your Items</div><div id="summaryLines"></div>
       <div class="strow"><span>Subtotal</span><span id="subtotal">₹0</span></div>
       <div id="gstSummary"></div>
       <div class="strow"><span>Total</span><span id="summaryTotal">₹0</span></div></div>
-      
-      <div class="pmethods">
-        <div class="slbl">💳 Pay Using</div>
-        <div class="payment-options-grid" id="paymentOptions"></div>
-      </div>
+      <div class="pmethods"><div class="slbl">💳 Pay Using</div>
+      <div class="payment-options-grid" id="paymentOptions"></div></div>
     </div>
-
-    <!-- Step 2: Payment Confirmation -->
     <div id="stepPayment" style="display:none">
-      <div class="shdr"><div class="stitle">💸 Complete Payment</div><button class="xbtn" onclick="closeModal()">✕</button></div>
-      <div class="qrsec">
-        <div class="qrbox">
-          <div class="qrcw" id="qrWrap"></div>
-          <div class="qra" id="qrAmt">₹0</div>
-          <div style="font-size:11px; color:#666; margin-top:8px;">UPI: azhagumani20-3@okicici</div>
-        </div>
-        
-        <div class="urow">
-          <div class="uid">azhagumani20-3@okicici</div>
-          <button class="cpbtn" onclick="copyUPI()">Copy ID</button>
-        </div>
-        
-        <div class="payment-confirm">
-          <div class="checkbox-row">
-            <input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()">
-            <label>✅ I have completed the payment</label>
-          </div>
-          <input type="text" id="utrNumber" class="utr-input" placeholder="Enter UTR/Reference (optional)">
-          <div class="warning-text">⚠️ Only confirm AFTER completing payment in your UPI app</div>
-        </div>
-        
-        <button class="pcbtn" id="confirmPayBtn" style="background:#2a7f49;" disabled onclick="confirmPaymentAndOrder()">✅ Confirm & Place Order</button>
-        <button class="cpbtn" style="margin-top:10px; width:100%;" onclick="showStep('stepMethod')">← Back</button>
-      </div>
+      <div class="shdr"><div class="stitle">💸 Complete Payment</div><button class="xbtn" onclick="closePaymentModal()">✕</button></div>
+      <div class="qrsec"><div class="qrbox"><div class="qrcw" id="qrWrap"></div><div class="qra" id="qrAmt">₹0</div><div style="font-size:11px;">UPI: azhagumani20-3@okicici</div></div>
+      <div class="urow"><div class="uid">azhagumani20-3@okicici</div><button class="cpbtn" onclick="copyUPI()">Copy ID</button></div>
+      <div class="payment-confirm"><div class="checkbox-row"><input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()"><label>✅ I have completed the payment</label></div><input type="text" id="utrNumber" class="utr-input" placeholder="UTR (optional)"><div class="warning-text">⚠️ Confirm only AFTER payment</div></div>
+      <button class="pcbtn" id="confirmPayBtn" style="background:#2a7f49;" disabled onclick="finalizeOrder()">Confirm & Place Order</button>
+      <button class="cpbtn" style="margin-top:10px;" onclick="showPaymentStep('stepMethod')">← Back</button></div>
     </div>
-
-    <!-- Step 3: Success -->
-    <div id="stepSuccess" style="display:none">
-      <div class="sucsec">
-        <div class="sucicon">✅</div>
-        <div class="suctitle" style="font-size:22px;font-weight:800;">Order Placed!</div>
-        <div class="sucsub">Your food is being prepared.<br>Azhagu Hotel thanks you.</div>
-        <div class="oidbadge" id="sucOrderId">ORD-001</div>
-        <button class="pcbtn" style="background:#2a7f49; margin-top:10px;" onclick="downloadBill()">📄 Download Bill</button>
-        <button class="cpbtn" style="margin-top:10px; width:100%;" onclick="closeModalAndReset()">🍽️ Order More</button>
-      </div>
-    </div>
+    <div id="stepSuccess" style="display:none"><div class="sucsec"><div class="sucicon">✅</div><div class="suctitle" style="font-size:22px;font-weight:800;">Order Placed!</div><div class="sucsub">Your food is being prepared.<br>Azhagu Hotel thanks you.</div><div class="oidbadge" id="sucOrderId">ORD-001</div><button class="pcbtn" style="background:#2a7f49;" onclick="downloadBill()">📄 Download Bill</button><button class="cpbtn" style="margin-top:10px;" onclick="closeAllAndReset()">🍽️ Order More</button></div></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ==================== CONFIGURATION ====================
+// ---------- DATA ----------
 const UPI_ID = 'azhagumani20-3@okicici';
 const UPI_NAME = 'Azhagu Hotel';
 const GSTIN = '33AAACA1234E1ZQ';
+let gstRate = 5;
+let gstEnabled = true;
 
-// GST Settings
-let gstRate = parseFloat(localStorage.getItem('azhagu_gst_rate') || '5');
-let gstEnabled = localStorage.getItem('azhagu_gst_enabled') !== 'false';
-
-// Menu Data
 const menuData = [
   {id:1, name:'Ghee Roast Dosa', price:55, category:'tiffin', note:'crispy', emoji:'🥞', img:null},
   {id:2, name:'Mini Idly', price:25, category:'tiffin', note:'10 pcs', emoji:'🍚', img:null},
@@ -820,7 +670,6 @@ const menuData = [
   {id:7, name:'Elaneer Juice', price:45, category:'drinks', note:'coconut', emoji:'🥥', img:null}
 ];
 
-// Global State
 let cart = {};
 let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
 let customerOrders = JSON.parse(localStorage.getItem('azhagu_customer_orders') || '[]');
@@ -828,357 +677,110 @@ let orderCounter = Math.max(orders.length, customerOrders.length, 1);
 let curFilter = 'all';
 let currentBillOrder = null;
 
-function saveOrders() {
-  localStorage.setItem('azhagu_orders', JSON.stringify(orders));
-  localStorage.setItem('azhagu_customer_orders', JSON.stringify(customerOrders));
-}
+// OTP & Customer session
+let pendingCustomer = { mobile: null, name: null, verified: false, otpSent: false, actualOtp: null };
+let pendingCartCopy = null;
 
-// GST Calculation
-function calculateGST(subtotal) {
-  if (!gstEnabled) return { gstAmount: 0, total: subtotal, cgst: 0, sgst: 0 };
-  const gstAmount = (subtotal * gstRate) / 100;
-  return { gstAmount, total: subtotal + gstAmount, cgst: gstAmount/2, sgst: gstAmount/2 };
-}
+function saveOrders() { localStorage.setItem('azhagu_orders', JSON.stringify(orders)); localStorage.setItem('azhagu_customer_orders', JSON.stringify(customerOrders)); }
+function calculateGST(subtotal) { if(!gstEnabled) return { gstAmount:0, total:subtotal, cgst:0, sgst:0 }; const amt=(subtotal*gstRate)/100; return { gstAmount:amt, total:subtotal+amt, cgst:amt/2, sgst:amt/2 }; }
+function getCartTotal() { let subtotal=0; for(const [id,qty] of Object.entries(cart)) { const item=menuData.find(i=>i.id==id); subtotal+=item.price*qty; } return { subtotal, ...calculateGST(subtotal) }; }
 
-function getCartTotal() {
-  let subtotal = 0;
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuData.find(i => i.id == id);
-    subtotal += item.price * qty;
-  }
-  return { subtotal, ...calculateGST(subtotal) };
-}
-
-// Render Menu
 function renderMenu() {
-  const grid = document.getElementById('menuGrid');
-  const filtered = curFilter === 'all' ? menuData : menuData.filter(i => i.category === curFilter);
-  grid.innerHTML = filtered.map(item => {
-    const qty = cart[item.id] || 0;
-    const imgHtml = item.img ? `<img src="${item.img}" alt="${item.name}">` : `<div class="me">${item.emoji}</div>`;
-    return `<div class="mc">
-      <div class="mi">${imgHtml}</div>
-      <div class="mb">
-        <div class="mn">${item.name}</div>
-        ${item.note ? `<div class="mnote">${item.note}</div>` : ''}
-        <div class="mrow">
-          <div class="mprice">₹${item.price}</div>
-          <div class="qw">
-            ${qty > 0 ? `<button class="qb minus" onclick="updCart(${item.id},-1)">−</button><span class="qn">${qty}</span>` : ''}
-            <button class="qb plus" onclick="updCart(${item.id},1)">+</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  const grid=document.getElementById('menuGrid');
+  const filtered=curFilter==='all'?menuData:menuData.filter(i=>i.category===curFilter);
+  grid.innerHTML=filtered.map(item=>{ const qty=cart[item.id]||0; const imgHtml=item.img?`<img src="${item.img}" alt="${item.name}">`:`<div class="me">${item.emoji}</div>`; return `<div class="mc"><div class="mi">${imgHtml}</div><div class="mb"><div class="mn">${item.name}</div>${item.note?`<div class="mnote">${item.note}</div>`:''}<div class="mrow"><div class="mprice">₹${item.price}</div><div class="qw">${qty>0?`<button class="qb minus" onclick="updCart(${item.id},-1)">−</button><span class="qn">${qty}</span>`:''}<button class="qb plus" onclick="updCart(${item.id},1)">+</button></div></div></div></div>`; }).join('');
 }
+function updCart(id,d){ cart[id]=Math.max(0,(cart[id]||0)+d); if(!cart[id]) delete cart[id]; renderMenu(); updateCartBar(); }
+function updateCartBar(){ const {total}=getCartTotal(); let count=Object.values(cart).reduce((a,b)=>a+b,0); document.getElementById('cartTotal').innerHTML='₹'+total.toFixed(2); document.getElementById('cartLbl').innerText=count+(count===1?' item':' items'); document.getElementById('placeBtn').disabled=count===0; }
 
-function updCart(id, d) {
-  cart[id] = Math.max(0, (cart[id] || 0) + d);
-  if (!cart[id]) delete cart[id];
-  renderMenu();
-  updateCartBar();
+// Customer verification modal
+function openCustomerVerificationModal() { if(Object.keys(cart).length===0) return; pendingCartCopy=JSON.parse(JSON.stringify(cart)); pendingCustomer={mobile:null,name:null,verified:false,otpSent:false,actualOtp:null}; document.getElementById('customerMobile').value=''; document.getElementById('otpCode').value=''; document.getElementById('customerName').value=''; document.getElementById('customerName').disabled=true; document.getElementById('otpCode').disabled=true; document.getElementById('verifyOtpBtn').disabled=true; document.getElementById('proceedToPaymentBtn').disabled=true; document.getElementById('sendOtpBtn').disabled=false; document.getElementById('otpStatusMsg').innerHTML=''; document.getElementById('customerModal').classList.add('open'); }
+function closeCustomerModal() { document.getElementById('customerModal').classList.remove('open'); }
+function sendOTP() {
+  const mobile=document.getElementById('customerMobile').value.trim();
+  if(!/^\d{10}$/.test(mobile)){ showToast('Enter valid 10-digit mobile number', true); return; }
+  const fakeOtp=Math.floor(100000+Math.random()*900000).toString();
+  pendingCustomer.mobile=mobile; pendingCustomer.actualOtp=fakeOtp; pendingCustomer.otpSent=true;
+  document.getElementById('otpCode').disabled=false; document.getElementById('verifyOtpBtn').disabled=false;
+  document.getElementById('sendOtpBtn').disabled=true;
+  document.getElementById('otpStatusMsg').innerHTML=`📲 OTP sent to ${mobile} (Demo: ${fakeOtp})`;
+  showToast(`OTP: ${fakeOtp} (demo mode)`, false);
 }
-
-function updateCartBar() {
-  const { total } = getCartTotal();
-  let count = Object.values(cart).reduce((a,b) => a+b, 0);
-  document.getElementById('cartTotal').innerHTML = '₹' + total.toFixed(2);
-  document.getElementById('cartLbl').innerText = count + (count === 1 ? ' item' : ' items');
-  document.getElementById('placeBtn').disabled = count === 0;
+function verifyOTPAndProceed() {
+  const entered=document.getElementById('otpCode').value.trim();
+  if(!pendingCustomer.otpSent || !pendingCustomer.actualOtp){ showToast('Please send OTP first',true); return; }
+  if(entered!==pendingCustomer.actualOtp){ showToast('Invalid OTP',true); return; }
+  pendingCustomer.verified=true;
+  document.getElementById('customerName').disabled=false;
+  document.getElementById('verifyOtpBtn').disabled=true;
+  document.getElementById('otpCode').disabled=true;
+  document.getElementById('otpStatusMsg').innerHTML='✅ Mobile verified! Enter your name.';
+  showToast('Mobile verified!', false);
 }
-
-// Open UPI App
-function openUpiApp(appName, amount) {
-  const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=Azhagu%20Order`;
-  window.location.href = intent;
-  showToast(`Opening ${appName}... Complete payment then confirm here`, false);
-  
-  // Reminder after 15 seconds
-  setTimeout(() => {
-    const chk = document.getElementById('paymentConfirmCheckbox');
-    if (chk && !chk.checked) {
-      showToast('⚠️ Did you complete payment? Please confirm below.', true);
-    }
-  }, 15000);
+document.getElementById('customerName')?.addEventListener('input', function(e){
+  const name=e.target.value.trim();
+  const btn=document.getElementById('proceedToPaymentBtn');
+  if(pendingCustomer.verified && name.length>=2) { btn.disabled=false; pendingCustomer.name=name; } else { btn.disabled=true; }
+});
+function proceedToPaymentAfterVerification(){
+  if(!pendingCustomer.verified || !pendingCustomer.name || pendingCustomer.name.length<2){ showToast('Enter valid name',true); return; }
+  closeCustomerModal();
+  openPayModalWithCustomer();
 }
-
-function copyUPI() {
-  navigator.clipboard.writeText(UPI_ID);
-  showToast('✅ UPI ID copied! Pay to: ' + UPI_ID);
-}
-
-// Open Payment Modal
-function openPayModal() {
-  if (Object.keys(cart).length === 0) return;
+function openPayModalWithCustomer(){
   const { subtotal, total, cgst, sgst } = getCartTotal();
-  
-  // Summary
-  document.getElementById('summaryLines').innerHTML = Object.entries(cart).map(([id, qty]) => {
-    const it = menuData.find(i => i.id == id);
-    return `<div class="sline"><span>${it.name} × ${qty}</span><span>₹${(it.price * qty).toFixed(2)}</span></div>`;
-  }).join('');
-  document.getElementById('subtotal').innerHTML = '₹' + subtotal.toFixed(2);
-  
-  const gstDiv = document.getElementById('gstSummary');
-  if (gstEnabled && gstRate > 0) {
-    gstDiv.innerHTML = `<div class="sline"><span>CGST (${gstRate/2}%)</span><span>₹${cgst.toFixed(2)}</span></div>
-                        <div class="sline"><span>SGST (${gstRate/2}%)</span><span>₹${sgst.toFixed(2)}</span></div>`;
-  } else {
-    gstDiv.innerHTML = '';
-  }
-  document.getElementById('summaryTotal').innerHTML = '₹' + total.toFixed(2);
-  
-  // Payment Options
+  document.getElementById('summaryLines').innerHTML = Object.entries(cart).map(([id,qty])=>{ const it=menuData.find(i=>i.id==id); return `<div class="sline"><span>${it.name} × ${qty}</span><span>₹${(it.price*qty).toFixed(2)}</span></div>`; }).join('');
+  document.getElementById('subtotal').innerHTML='₹'+subtotal.toFixed(2);
+  const gstDiv=document.getElementById('gstSummary');
+  if(gstEnabled && gstRate>0){ gstDiv.innerHTML=`<div class="sline"><span>CGST (${gstRate/2}%)</span><span>₹${cgst.toFixed(2)}</span></div><div class="sline"><span>SGST (${gstRate/2}%)</span><span>₹${sgst.toFixed(2)}</span></div>`; } else gstDiv.innerHTML='';
+  document.getElementById('summaryTotal').innerHTML='₹'+total.toFixed(2);
   document.getElementById('paymentOptions').innerHTML = `
     <button class="pay-option-btn gpay" onclick="openUpiApp('Google Pay', ${total})">🅖 Google Pay</button>
     <button class="pay-option-btn phonepe" onclick="openUpiApp('PhonePe', ${total})">💜 PhonePe</button>
     <button class="pay-option-btn paytm" onclick="openUpiApp('Paytm', ${total})">🎯 Paytm</button>
-    <button class="pay-option-btn copy" onclick="copyUPI(); showStep('stepPayment'); generateQR(${total});">📋 Copy UPI ID & Show QR</button>
+    <button class="pay-option-btn copy" onclick="copyUPI(); showPaymentStep('stepPayment'); generateQR(${total});">📋 Copy UPI ID & Show QR</button>
   `;
-  
-  showStep('stepMethod');
+  showPaymentStep('stepMethod');
   document.getElementById('payModal').classList.add('open');
 }
-
-function generateQR(amt) {
-  const wrap = document.getElementById('qrWrap');
-  wrap.innerHTML = '';
-  document.getElementById('qrAmt').innerHTML = '₹' + amt.toFixed(2);
-  const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`;
-  try {
-    new QRCode(wrap, { text: url, width: 170, height: 170, colorDark: "#b7410e", colorLight: "#ffffff" });
-  } catch(e) {
-    wrap.innerHTML = `<div style="width:170px;height:170px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;">Scan QR</div>`;
-  }
+function generateQR(amt){ const wrap=document.getElementById('qrWrap'); wrap.innerHTML=''; document.getElementById('qrAmt').innerHTML='₹'+amt.toFixed(2); const url=`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`; try{ new QRCode(wrap,{text:url,width:170,height:170,colorDark:"#b7410e",colorLight:"#ffffff"}); }catch(e){ wrap.innerHTML=`<div style="width:170px;height:170px;background:#f5e6d8;border-radius:16px;">Scan QR</div>`; } }
+function openUpiApp(app,amt){ window.location.href=`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amt}&cu=INR`; showToast(`Opening ${app}...`,false); setTimeout(()=>{ const chk=document.getElementById('paymentConfirmCheckbox'); if(chk&&!chk.checked) showToast('⚠️ Complete payment then confirm here',true); },15000); }
+function copyUPI(){ navigator.clipboard.writeText(UPI_ID); showToast('UPI ID copied'); }
+function toggleConfirmButton(){ const btn=document.getElementById('confirmPayBtn'); const chk=document.getElementById('paymentConfirmCheckbox'); if(btn&&chk) btn.disabled=!chk.checked; }
+function finalizeOrder(){
+  if(!document.getElementById('paymentConfirmCheckbox').checked){ showToast('Confirm payment completion',true); return; }
+  const utr=document.getElementById('utrNumber').value;
+  if(utr) showToast(`Ref: ${utr.substring(0,12)}`,false);
+  const order=createOrderWithCustomer();
+  currentBillOrder=order;
+  document.getElementById('sucOrderId').innerText=order.id;
+  showPaymentStep('stepSuccess');
 }
-
-function toggleConfirmButton() {
-  const btn = document.getElementById('confirmPayBtn');
-  const chk = document.getElementById('paymentConfirmCheckbox');
-  if (btn && chk) btn.disabled = !chk.checked;
-}
-
-function confirmPaymentAndOrder() {
-  const chk = document.getElementById('paymentConfirmCheckbox');
-  if (!chk.checked) {
-    showToast('⚠️ Please confirm you have completed the payment!', true);
-    return;
-  }
-  
-  const utr = document.getElementById('utrNumber').value;
-  if (utr) showToast(`✅ Payment confirmed! Ref: ${utr.substring(0,12)}`, false);
-  
-  // Create order
-  const order = createOrder();
-  currentBillOrder = order;
-  document.getElementById('sucOrderId').innerText = order.id;
-  showStep('stepSuccess');
-}
-
-function createOrder() {
-  let subtotal = 0, itemsList = [];
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuData.find(i => i.id == id);
-    itemsList.push({ name: item.name, qty, price: item.price, total: item.price * qty });
-    subtotal += item.price * qty;
-  }
-  
+function createOrderWithCustomer(){
+  let subtotal=0, itemsList=[];
+  for(const [id,qty] of Object.entries(cart)){ const item=menuData.find(i=>i.id==id); itemsList.push({name:item.name,qty,price:item.price,total:item.price*qty}); subtotal+=item.price*qty; }
   const { gstAmount, total, cgst, sgst } = calculateGST(subtotal);
-  const orderId = `ORD-${String(orderCounter++).padStart(3,'0')}`;
-  const now = new Date();
-  
-  const order = {
-    id: orderId,
-    lines: itemsList,
-    subtotal: subtotal,
-    gstRate: gstEnabled ? gstRate : 0,
-    gstAmount: gstAmount,
-    cgst: cgst,
-    sgst: sgst,
-    total: total,
-    status: 'pending',
-    paidStatus: 'Paid',
-    payMethod: 'UPI',
-    time: now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
-    date: now.toLocaleDateString('en-IN'),
-    timestamp: Date.now(),
-    gstin: GSTIN,
-    hotelName: 'Azhagu Hotel',
-    upiId: UPI_ID
-  };
-  
+  const orderId=`ORD-${String(orderCounter++).padStart(3,'0')}`;
+  const now=new Date();
+  const order={ id:orderId, lines:itemsList, subtotal, gstRate:gstEnabled?gstRate:0, gstAmount, cgst, sgst, total, status:'confirmed', paidStatus:'Paid', payMethod:'UPI', time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), date:now.toLocaleDateString('en-IN'), timestamp:Date.now(), gstin:GSTIN, hotelName:'Azhagu Hotel', upiId:UPI_ID, customerName:pendingCustomer.name, customerMobile:pendingCustomer.mobile };
   orders.unshift(order);
   customerOrders.unshift(order);
   saveOrders();
-  cart = {};
-  renderMenu();
-  updateCartBar();
+  cart={}; renderMenu(); updateCartBar();
+  pendingCustomer={mobile:null,name:null,verified:false,otpSent:false,actualOtp:null};
   return order;
 }
-
-function downloadBill() {
-  if (!currentBillOrder) return;
-  const html = generateBillHTML(currentBillOrder);
-  const win = window.open('', '_blank');
-  win.document.write(html);
-  win.document.close();
-  win.print();
-}
-
-function generateBillHTML(order) {
-  return `<!DOCTYPE html>
-  <html><head><meta charset="UTF-8"><title>Bill ${order.id}</title>
-  <style>
-    body { font-family: monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
-    .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
-    .hotel-name { font-size: 22px; font-weight: bold; }
-    .items { width: 100%; margin: 15px 0; border-collapse: collapse; }
-    .items th, .items td { border-bottom: 1px dotted #ccc; padding: 6px 0; text-align: left; }
-    .total-row { margin-top: 15px; border-top: 1px solid #000; padding-top: 10px; }
-    .footer { text-align: center; margin-top: 30px; font-size: 11px; }
-    .text-right { text-align: right; }
-  </style>
-  </head>
-  <body>
-    <div class="header">
-      <div class="hotel-name">🍛 ${order.hotelName}</div>
-      <div>GSTIN: ${order.gstin}</div>
-      <div>UPI: ${order.upiId}</div>
-      <div><strong>TAX INVOICE</strong></div>
-    </div>
-    <div><strong>Bill No:</strong> ${order.id}</div>
-    <div><strong>Date:</strong> ${order.date} | ${order.time}</div>
-    <div><strong>Payment:</strong> ${order.payMethod} | Paid</div>
-    <table class="items">
-      <tr><th>Item</th><th>Qty</th><th class="text-right">Amount</th></tr>
-      ${order.lines.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total.toFixed(2)}</td></tr>`).join('')}
-    </table>
-    <div><strong>Subtotal:</strong> ₹${order.subtotal.toFixed(2)}</div>
-    ${order.gstRate > 0 ? `<div>CGST (${order.gstRate/2}%): ₹${order.cgst.toFixed(2)}</div>
-    <div>SGST (${order.gstRate/2}%): ₹${order.sgst.toFixed(2)}</div>` : ''}
-    <div class="total-row"><strong>Total: ₹${order.total.toFixed(2)}</strong></div>
-    <div class="footer">✨ Thank you! Visit Again ✨</div>
-  </body>
-  </html>`;
-}
-
-function openOrderHistory() {
-  const container = document.getElementById('orderHistoryList');
-  if (customerOrders.length === 0) {
-    container.innerHTML = '<div class="empty-history">📭 No orders yet</div>';
-  } else {
-    container.innerHTML = customerOrders.map(order => `
-      <div class="history-item" onclick="viewBill('${order.id}')">
-        <div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div>
-        <div class="history-items">${order.lines.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
-        <div><span class="history-total">₹${order.total.toFixed(2)}</span> | ${order.payMethod}</div>
-      </div>
-    `).join('');
-  }
-  document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-orders').classList.add('active');
-  document.querySelector('.nt[data-view="orders"]').classList.add('active');
-}
-
-function viewBill(orderId) {
-  const order = customerOrders.find(o => o.id === orderId);
-  if (order) {
-    const win = window.open('', '_blank');
-    win.document.write(generateBillHTML(order));
-    win.document.close();
-    win.print();
-  }
-}
-
-function renderImgTool() {
-  const body = document.getElementById('imgBody');
-  body.innerHTML = menuData.map(item => `
-    <div class="img-tool-item">
-      <div class="img-tool-header"><span>${item.emoji} ${item.name}</span><span>₹${item.price}</span></div>
-      <div class="img-tool-body">
-        <div class="img-preview" onclick="document.getElementById('fi-${item.id}').click()">
-          ${item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;">` : '📷'}
-        </div>
-        <input type="file" accept="image/*" style="display:none" id="fi-${item.id}" onchange="handleImgUp(event,${item.id})">
-        <div><button class="upload-btn" onclick="document.getElementById('fi-${item.id}').click()">Upload</button>
-        <button class="remove-btn" onclick="removeImg(${item.id})">Remove</button>
-        <div style="font-size:10px; margin-top:5px;">${item.img ? '✓ Set' : 'No image'}</div></div>
-      </div>
-    </div>
-  `).join('');
-}
-
-window.handleImgUp = (e, id) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    menuData.find(i => i.id == id).img = ev.target.result;
-    renderImgTool();
-    renderMenu();
-    showToast(`📸 ${menuData.find(i => i.id == id).name} updated`);
-  };
-  reader.readAsDataURL(file);
-};
-
-window.removeImg = (id) => {
-  menuData.find(i => i.id == id).img = null;
-  renderImgTool();
-  renderMenu();
-  showToast('Image removed');
-};
-
-function showToast(msg, isError = false) {
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.style.background = isError ? '#c0392b' : '#2c1a0f';
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-function closeModal() {
-  document.getElementById('payModal').classList.remove('open');
-  document.getElementById('paymentConfirmCheckbox').checked = false;
-  document.getElementById('confirmPayBtn').disabled = true;
-}
-
-function closeModalAndReset() {
-  closeModal();
-  location.reload();
-}
-
-function showStep(step) {
-  document.getElementById('stepMethod').style.display = step === 'stepMethod' ? 'block' : 'none';
-  document.getElementById('stepPayment').style.display = step === 'stepPayment' ? 'block' : 'none';
-  document.getElementById('stepSuccess').style.display = step === 'stepSuccess' ? 'block' : 'none';
-}
-
-// Navigation
-document.querySelectorAll('.nt').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(`view-${tab.dataset.view}`).classList.add('active');
-    if (tab.dataset.view === 'imgtool') renderImgTool();
-    if (tab.dataset.view === 'orders') openOrderHistory();
-  });
-});
-
-document.querySelectorAll('.fpill').forEach(p => {
-  p.addEventListener('click', () => {
-    document.querySelectorAll('.fpill').forEach(f => f.classList.remove('active'));
-    p.classList.add('active');
-    curFilter = p.dataset.cat;
-    renderMenu();
-  });
-});
-
-renderMenu();
-renderImgTool();
-updateCartBar();
+function downloadBill(){ if(!currentBillOrder) return; const win=window.open('','_blank'); win.document.write(generateBillHTML(currentBillOrder)); win.document.close(); win.print(); }
+function generateBillHTML(order){ return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Bill ${order.id}</title><style>body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;} .header{text-align:center;margin-bottom:20px;} .hotel-name{font-size:22px;font-weight:bold;} .items{width:100%;margin:15px 0;border-collapse:collapse;} .items td,.items th{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;} .text-right{text-align:right;}</style></head><body><div class='header'><div class='hotel-name'>🍛 ${order.hotelName}</div><div>GSTIN: ${order.gstin}</div><div>UPI: ${order.upiId}</div><div><strong>TAX INVOICE</strong></div></div><div><strong>Bill No:</strong> ${order.id}</div><div><strong>Date:</strong> ${order.date} | ${order.time}</div><div><strong>Customer:</strong> ${order.customerName} (${order.customerMobile})</div><div><strong>Payment:</strong> UPI | Paid</div><table class='items'><tr><th>Item</th><th>Qty</th><th class='text-right'>Amount</th></tr>${order.lines.map(l=>`<tr><td>${l.name}</td><td>${l.qty}</td><td class='text-right'>₹${l.total.toFixed(2)}</td></tr>`).join('')}</table><div><strong>Subtotal:</strong> ₹${order.subtotal.toFixed(2)}</div>${order.gstRate>0?`<div>CGST (${order.gstRate/2}%): ₹${order.cgst.toFixed(2)}</div><div>SGST (${order.gstRate/2}%): ₹${order.sgst.toFixed(2)}</div>`:''}<div class='total-row'><strong>Total: ₹${order.total.toFixed(2)}</strong></div><div class='footer'>✨ Thank you! Visit Again ✨</div></body></html>`; }
+function openOrderHistory(){ const container=document.getElementById('orderHistoryList'); if(customerOrders.length===0) container.innerHTML='<div class="empty-history">📭 No orders yet</div>'; else container.innerHTML=customerOrders.map(order=>`<div class="history-item" onclick="viewBill('${order.id}')"><div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div><div class="history-items">${order.lines.map(l=>`${l.name}×${l.qty}`).join(', ')}</div><div><span class="history-total">₹${order.total.toFixed(2)}</span> | ${order.customerName||'Guest'}</div></div>`).join(''); document.querySelectorAll('.nt').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('view-orders').classList.add('active'); document.querySelector('.nt[data-view="orders"]').classList.add('active'); }
+function viewBill(orderId){ const order=customerOrders.find(o=>o.id===orderId); if(order){ const win=window.open('','_blank'); win.document.write(generateBillHTML(order)); win.document.close(); win.print(); } }
+function showToast(msg,isErr=false){ const t=document.getElementById('toast'); t.innerText=msg; t.style.background=isErr?'#c0392b':'#2c1a0f'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+function closePaymentModal(){ document.getElementById('payModal').classList.remove('open'); document.getElementById('paymentConfirmCheckbox').checked=false; document.getElementById('confirmPayBtn').disabled=true; }
+function closeAllAndReset(){ closePaymentModal(); location.reload(); }
+function showPaymentStep(step){ document.getElementById('stepMethod').style.display=step==='stepMethod'?'block':'none'; document.getElementById('stepPayment').style.display=step==='stepPayment'?'block':'none'; document.getElementById('stepSuccess').style.display=step==='stepSuccess'?'block':'none'; }
+document.querySelectorAll('.nt').forEach(tab=>{ tab.addEventListener('click',()=>{ document.querySelectorAll('.nt').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); tab.classList.add('active'); document.getElementById(`view-${tab.dataset.view}`).classList.add('active'); if(tab.dataset.view==='orders') openOrderHistory(); }); });
+document.querySelectorAll('.fpill').forEach(p=>{ p.addEventListener('click',()=>{ document.querySelectorAll('.fpill').forEach(f=>f.classList.remove('active')); p.classList.add('active'); curFilter=p.dataset.cat; renderMenu(); }); });
+renderMenu(); updateCartBar();
 </script>
 </body>
 </html>
