@@ -1,147 +1,1459 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azhagu Hotel – Digital Menu</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --azh-primary: #b7410e;
-  --azh-deep: #8b2c0d;
-  --azh-gold: #e6b422;
-  --azh-cream: #fff9ef;
-  --azh-dark: #2c1a0f;
-  --azh-border: #f0e2cf;
-}
-body { font-family: 'DM Sans', sans-serif; background: var(--azh-cream); }
-.hero {
-  background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%);
-  padding: 20px;
-  color: white;
-}
-.hero-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.logo-box { width: 50px; height: 50px; border-radius: 20px; background: var(--azh-gold); display: flex; align-items: center; justify-content: center; font-size: 28px; }
-.logo-text h1 { font-family: 'Playfair Display', serif; font-size: 22px; }
-.live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; }
-.ld { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.fbar { display: flex; gap: 10px; padding: 12px 16px; overflow-x: auto; background: var(--azh-cream); border-bottom: 1px solid var(--azh-border); }
-.fpill { padding: 6px 18px; border-radius: 40px; border: 1.5px solid var(--azh-border); font-size: 12px; font-weight: 600; cursor: pointer; background: white; }
-.fpill.active { background: var(--azh-primary); color: white; border-color: var(--azh-primary); }
-.mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 16px; }
-@media (max-width: 480px) { .mgrid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; } }
-.mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--azh-border); }
-.mi { position: relative; width: 100%; padding-top: 75%; background: #faeedb; }
-.mi .me { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-.mb { padding: 10px 12px 14px; }
-.mn { font-size: 15px; font-weight: 700; }
-.mrow { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-.mprice { font-size: 16px; font-weight: 800; color: var(--azh-primary); }
-.qw { display: flex; align-items: center; gap: 6px; background: #fef6ed; padding: 2px 6px 2px 4px; border-radius: 40px; }
-.qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; }
-.qb.plus { background: var(--azh-primary); color: white; }
-.qb.minus { border: 1px solid #e2cfb5; }
-.qn { font-size: 14px; font-weight: 700; min-width: 18px; text-align: center; }
-.cbar { background: var(--azh-dark); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; }
-.ct { font-size: 22px; font-weight: 800; }
-.pbtn { background: var(--azh-gold); color: var(--azh-dark); border: none; border-radius: 40px; padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; }
-.pbtn:disabled { background: #9b7b5c; opacity: 0.5; cursor: not-allowed; }
-.moverlay { position: fixed; inset: 0; background: rgba(44, 26, 15, 0.8); z-index: 500; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-.moverlay.open { opacity: 1; pointer-events: all; }
-.msheet { background: #fffcf5; border-radius: 28px 28px 0 0; width: 100%; max-width: 500px; transform: translateY(60px); transition: transform 0.35s; max-height: 90vh; overflow-y: auto; }
-.moverlay.open .msheet { transform: translateY(0); }
-.shandle { width: 45px; height: 4px; background: #e2cfb5; border-radius: 10px; margin: 12px auto 6px; }
-.shdr { padding: 14px 20px; border-bottom: 1px solid var(--azh-border); display: flex; justify-content: space-between; align-items: center; }
-.stitle { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--azh-primary); }
-.xbtn { width: 32px; height: 32px; border-radius: 50%; background: #f0e4d4; border: none; cursor: pointer; font-size: 18px; }
-.input-group { padding: 16px 20px; }
-.input-group label { font-weight: 600; font-size: 13px; }
-.input-group input { width: 100%; padding: 12px; border: 1.5px solid var(--azh-border); border-radius: 40px; margin-top: 8px; }
-.otp-row { display: flex; gap: 10px; padding: 0 20px 16px; }
-.otp-row input { flex: 1; padding: 12px; border: 1.5px solid var(--azh-border); border-radius: 40px; }
-.send-otp-btn, .verify-otp-btn { background: var(--azh-primary); color: white; border: none; padding: 10px 16px; border-radius: 40px; cursor: pointer; font-weight: 600; }
-.pcbtn { width: calc(100% - 40px); margin: 10px 20px; padding: 12px; background: var(--azh-primary); color: white; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; }
-.pcbtn:disabled { background: #ccc; cursor: not-allowed; }
-.qrbox { background: white; border-radius: 20px; padding: 16px; text-align: center; border: 1px solid var(--azh-border); }
-.checkbox-row { margin: 15px 0; display: flex; align-items: center; gap: 10px; }
-.cpbtn { background: transparent; border: 1.5px solid var(--azh-primary); padding: 8px 16px; border-radius: 30px; font-weight: 600; color: var(--azh-primary); cursor: pointer; }
-.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; z-index: 999; display: none; }
-.toast.show { display: block; animation: fadeInOut 2s ease; }
-@keyframes fadeInOut { 0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Azhagu Hotel - Premium Digital Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --azh-primary: #b7410e;
+            --azh-deep: #8b2c0d;
+            --azh-gold: #e6b422;
+            --azh-cream: #fff9ef;
+            --azh-green: #2a7f49;
+            --azh-dark: #2c1a0f;
+            --azh-card: #ffffff;
+            --azh-border: #f0e2cf;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 35px -10px rgba(0,0,0,0.15);
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--azh-cream);
+            color: var(--azh-dark);
+            overflow-x: hidden;
+        }
+        .app-nav {
+            display: flex;
+            background: var(--azh-dark);
+            padding: 0 16px;
+            gap: 4px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            flex-wrap: wrap;
+        }
+        .nt {
+            padding: 14px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 248, 235, 0.7);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .nt.active {
+            color: var(--azh-gold);
+            border-bottom-color: var(--azh-gold);
+        }
+        .view {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .view.active {
+            display: flex;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%);
+            padding: 20px 20px 28px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "🍛";
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+        }
+        .hero-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+        .logo-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 20px;
+            background: var(--azh-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .logo-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .logo-text p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        .welcome-name {
+            margin-left: auto;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .welcome-name:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 40px;
+            padding: 5px 12px;
+            font-size: 11px;
+            width: fit-content;
+        }
+        .ld {
+            width: 7px;
+            height: 7px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,100%{opacity:1} 50%{opacity:0.4}
+        }
+        .search-bar {
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid var(--azh-border);
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--azh-border);
+            border-radius: 50px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--azh-primary);
+        }
+        .fbar {
+            display: flex;
+            gap: 10px;
+            padding: 12px 16px;
+            overflow-x: auto;
+            background: white;
+            border-bottom: 1px solid var(--azh-border);
+            position: sticky;
+            top: 52px;
+            z-index: 99;
+            scrollbar-width: thin;
+        }
+        .fbar::-webkit-scrollbar {
+            height: 3px;
+        }
+        .fpill {
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1.5px solid var(--azh-border);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            background: white;
+            color: var(--azh-muted);
+            transition: all 0.2s;
+        }
+        .fpill.active {
+            background: var(--azh-primary);
+            color: white;
+            border-color: var(--azh-primary);
+        }
+        .mgrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+            padding: 20px 16px;
+            flex: 1;
+        }
+        @media (max-width: 480px) {
+            .mgrid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                padding: 16px;
+            }
+        }
+        .mc {
+            background: var(--azh-card);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--azh-border);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .mc:active {
+            transform: scale(0.98);
+        }
+        .mi {
+            position: relative;
+            width: 100%;
+            padding-top: 75%;
+            background: #faeedb;
+            overflow: hidden;
+        }
+        .mi img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .mi .me {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .mb {
+            padding: 10px 12px 14px;
+        }
+        .mn {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .mnote {
+            font-size: 10px;
+            color: #9b7b5c;
+            margin-top: 3px;
+        }
+        .mrow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .mprice {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--azh-primary);
+        }
+        .qw {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fef6ed;
+            padding: 2px 6px 2px 4px;
+            border-radius: 40px;
+        }
+        .qb {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+            transition: all 0.15s;
+        }
+        .qb.plus {
+            background: var(--azh-primary);
+            color: white;
+        }
+        .qb.minus {
+            border: 1px solid #e2cfb5;
+        }
+        .cbar {
+            background: var(--azh-dark);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 0;
+            z-index: 150;
+        }
+        .ct {
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .pbtn {
+            background: var(--azh-gold);
+            color: var(--azh-dark);
+            border: none;
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pbtn:disabled {
+            background: #9b7b5c;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(44, 26, 15, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 32px;
+            padding: 32px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: modalPop 0.3s ease;
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            color: var(--azh-primary);
+            margin-bottom: 8px;
+        }
+        .modal-card p {
+            color: #9b7b5c;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--azh-border);
+            border-radius: 60px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-family: inherit;
+            text-align: center;
+        }
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--azh-primary);
+        }
+        /* Payment Modal */
+        .payment-sheet {
+            background: #fffcf5;
+            border-radius: 28px 28px 0 0;
+            width: 100%;
+            max-width: 500px;
+            transform: translateY(60px);
+            transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .payment-modal.open .payment-sheet {
+            transform: translateY(0);
+        }
+        .shandle {
+            width: 45px;
+            height: 4px;
+            background: #e2cfb5;
+            border-radius: 10px;
+            margin: 12px auto 6px;
+        }
+        .section-header {
+            padding: 14px 20px 10px;
+            border-bottom: 1px solid var(--azh-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--azh-primary);
+        }
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0e4d4;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .order-summary {
+            padding: 14px 20px;
+            background: #fff7ef;
+        }
+        .summary-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #b87a4a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 4px 0;
+        }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 17px;
+            font-weight: 800;
+            padding-top: 10px;
+            margin-top: 8px;
+            border-top: 2px dashed #e2cfb5;
+        }
+        .customer-info {
+            background: #e8f0ff;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        .payment-methods {
+            padding: 14px 20px;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .method-btn {
+            border: 2px solid #eedfcb;
+            border-radius: 18px;
+            padding: 10px 5px;
+            cursor: pointer;
+            text-align: center;
+            background: white;
+            transition: all 0.2s;
+        }
+        .method-btn.selected {
+            border-color: var(--azh-primary);
+            background: #fff1e6;
+        }
+        .method-icon {
+            font-size: 22px;
+        }
+        .method-name {
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .upi-section {
+            padding: 20px;
+            text-align: center;
+        }
+        .qr-container {
+            background: white;
+            border-radius: 28px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid var(--azh-border);
+        }
+        .qr-wrapper {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+        }
+        .upi-amount {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--azh-green);
+            margin-top: 8px;
+        }
+        .upi-id-row {
+            background: #f9efe2;
+            border-radius: 50px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .upi-id {
+            font-weight: 600;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .copy-btn {
+            background: transparent;
+            border: 1.5px solid var(--azh-primary);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: var(--azh-primary);
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .app-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .app-pay-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .app-pay-btn.gpay { background: #1a73e8; color: white; }
+        .app-pay-btn.phonepe { background: #5f259f; color: white; }
+        .app-pay-btn.paytm { background: #00baf2; color: white; }
+        .payment-confirm-box {
+            background: #fff8e8;
+            border-radius: 18px;
+            padding: 14px;
+            margin: 14px 0;
+            border: 1px solid #ffe0a3;
+        }
+        .confirm-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .confirm-check input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .warning-text {
+            font-size: 11px;
+            color: #e67e22;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #ffe0a3;
+        }
+        .utr-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--azh-border);
+            border-radius: 40px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .confirm-order-btn {
+            width: 100%;
+            padding: 14px;
+            background: #2a7f49;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .confirm-order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .back-link {
+            background: none;
+            border: none;
+            color: #9b7b5c;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 12px;
+            width: 100%;
+        }
+        .success-section {
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .success-icon {
+            background: #e7f3e3;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 16px;
+        }
+        .order-badge {
+            background: var(--azh-gold);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 700;
+            display: inline-block;
+            margin: 12px 0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .button-group button {
+            flex: 1;
+            min-width: 100px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c1a0f;
+            color: #ffecb3;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 999;
+            pointer-events: none;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .toast.show { opacity: 1; }
+        @media (max-width: 480px) {
+            .toast { white-space: normal; max-width: 85%; font-size: 11px; }
+        }
+        .order-history-list {
+            padding: 16px;
+        }
+        .history-item {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid var(--azh-border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .history-item:active {
+            transform: scale(0.98);
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .history-id {
+            font-weight: 800;
+            color: var(--azh-primary);
+            font-size: 13px;
+        }
+        .history-date {
+            font-size: 11px;
+            color: #9b7b5c;
+        }
+        .history-customer {
+            font-size: 12px;
+            color: var(--azh-green);
+            margin: 4px 0;
+        }
+        .history-total {
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--azh-green);
+        }
+        .img-tool-item {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--azh-border);
+            margin-bottom: 15px;
+        }
+        .img-tool-header {
+            background: #fff4ea;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+        .img-tool-body {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .img-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            background: #fcf2e6;
+            border: 2px dashed #e2cfb5;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<div class="hero">
-  <div class="hero-row">
-    <div class="logo-box">✨</div>
-    <div class="logo-text"><h1>Azhagu Hotel</h1><p>Pure Veg · Authentic Taste</p></div>
-  </div>
-  <div class="live-pill"><div class="ld"></div> LIVE ORDERS ACTIVE</div>
-</div>
-<div class="fbar" id="filterBar">
-  <div class="fpill active" data-cat="all">All Items</div>
-  <div class="fpill" data-cat="tiffin">Tiffin</div>
-  <div class="fpill" data-cat="drinks">Drinks</div>
-</div>
-<div class="mgrid" id="menuGrid"></div>
-<div class="cbar">
-  <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
-  <button class="pbtn" id="placeBtn" disabled onclick="openOrderModal()">Order →</button>
+
+<nav class="app-nav">
+    <div class="nt active" data-view="customer">🍛 Menu</div>
+    <div class="nt" data-view="orders">📜 My Orders</div>
+    <div class="nt" data-view="imgtool">🖼️ Images</div>
+</nav>
+
+<!-- CUSTOMER VIEW -->
+<div class="view active" id="view-customer">
+    <div class="hero">
+        <div class="hero-row">
+            <div class="logo-box">✨</div>
+            <div class="logo-text">
+                <h1>Azhagu Hotel</h1>
+                <p>Pure Veg · Authentic Taste</p>
+            </div>
+            <div class="welcome-name" id="welcomeNameBtn" onclick="openNameModal()">👤 Tap to add name</div>
+        </div>
+        <div class="live-pill"><div class="ld"></div> UPI: azhagumani20-3@okicici</div>
+    </div>
+    
+    <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search dishes...">
+    </div>
+    
+    <div class="fbar" id="filterBar">
+        <div class="fpill active" data-cat="all">🍽️ All</div>
+        <div class="fpill" data-cat="tiffin">🥞 Tiffin</div>
+        <div class="fpill" data-cat="drinks">🥤 Drinks</div>
+        <div class="fpill" data-cat="rice">🍚 Rice</div>
+    </div>
+    
+    <div class="mgrid" id="menuGrid"></div>
+    
+    <div class="cbar">
+        <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
+        <button class="pbtn" id="placeBtn" disabled onclick="proceedToPayment()">Order →</button>
+    </div>
 </div>
 
-<div class="moverlay" id="orderModal"><div class="msheet"><div class="shandle"></div><div class="shdr"><div class="stitle">📝 Place Order</div><button class="xbtn" onclick="closeOrderModal()">✕</button></div>
-<div class="input-group"><label>📞 Mobile Number *</label><input type="tel" id="modalMobile" placeholder="10 digits" maxlength="10"></div>
-<div class="otp-row"><input type="text" id="modalOtp" placeholder="Enter OTP" disabled><button id="sendOtpBtnModal" onclick="sendOTPModal()">Send OTP</button><button id="verifyOtpBtnModal" onclick="verifyOTPModal()" disabled>Verify</button></div>
-<div class="input-group"><label>🧑 Your Name *</label><input type="text" id="modalName" placeholder="Full name" disabled></div>
-<div id="modalStatus" style="font-size:12px; padding:0 20px; color:#e67e22;"></div>
-<button id="proceedBtn" class="pcbtn" disabled onclick="proceedToPayment()">Proceed to Payment →</button></div></div>
+<!-- ORDER HISTORY VIEW -->
+<div class="view" id="view-orders">
+    <div class="hero" style="background: linear-gradient(135deg, #2c1a0f, #3f2618);">
+        <div class="hero-row">
+            <div class="logo-box">📜</div>
+            <div class="logo-text"><h1>My Orders</h1><p>View bills & history</p></div>
+        </div>
+    </div>
+    <div id="orderHistoryList" class="order-history-list"></div>
+</div>
 
-<div class="moverlay" id="paymentModal"><div class="msheet"><div class="shandle"></div><div class="shdr"><div class="stitle">💰 Complete Payment</div><button class="xbtn" onclick="closePaymentModal()">✕</button></div>
-<div id="paymentContent" style="padding:20px"></div></div></div>
+<!-- IMAGE TOOL VIEW -->
+<div class="view" id="view-imgtool">
+    <div class="hero" style="background: linear-gradient(135deg, #2c1a0f, #3f2618);">
+        <div class="hero-row">
+            <div class="logo-box">🖼️</div>
+            <div class="logo-text"><h1>Dish Images</h1><p>Upload photos</p></div>
+        </div>
+    </div>
+    <div class="order-history-list" id="imgBody"></div>
+</div>
 
-<div id="toast" class="toast"></div>
+<!-- NAME MODAL -->
+<div id="nameModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>👤 Welcome!</h3>
+        <p>Please enter your name to continue</p>
+        <input type="text" id="customerNameInput" class="modal-input" placeholder="Enter your name" maxlength="30">
+        <button class="pbtn" onclick="saveCustomerName()" style="width:100%;">Continue →</button>
+    </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="paymentModal" class="modal-overlay payment-modal">
+    <div class="payment-sheet">
+        <div class="shandle"></div>
+        
+        <!-- Step 1: Summary & Method -->
+        <div id="stepMethod">
+            <div class="section-header">
+                <div class="section-title">✨ Your Order</div>
+                <button class="close-btn" onclick="closePaymentModal()">✕</button>
+            </div>
+            <div class="order-summary">
+                <div class="summary-label">Order Details</div>
+                <div id="summaryLines"></div>
+                <div class="customer-info" id="customerInfo"></div>
+                <div class="summary-item"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+                <div id="gstBreakdown"></div>
+                <div class="summary-total"><span>Total</span><span id="totalAmount">₹0</span></div>
+            </div>
+            <div class="payment-methods">
+                <div class="summary-label">💳 Select Payment</div>
+                <div class="methods-grid">
+                    <div class="method-btn selected" data-method="gpay" onclick="selectPaymentMethod('gpay')">
+                        <div class="method-icon">🅖</div>
+                        <div class="method-name">Google Pay</div>
+                    </div>
+                    <div class="method-btn" data-method="phonepe" onclick="selectPaymentMethod('phonepe')">
+                        <div class="method-icon">💜</div>
+                        <div class="method-name">PhonePe</div>
+                    </div>
+                    <div class="method-btn" data-method="paytm" onclick="selectPaymentMethod('paytm')">
+                        <div class="method-icon">🎯</div>
+                        <div class="method-name">Paytm</div>
+                    </div>
+                    <div class="method-btn" data-method="cash" onclick="selectPaymentMethod('cash')">
+                        <div class="method-icon">💵</div>
+                        <div class="method-name">Cash</div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 0 20px 24px;">
+                <button class="confirm-order-btn" onclick="goToPayment()" style="background: var(--azh-primary);">Proceed to Pay →</button>
+            </div>
+        </div>
+
+        <!-- Step 2: UPI Payment -->
+        <div id="stepUPI" style="display:none">
+            <div class="section-header">
+                <div class="section-title">💸 Complete Payment</div>
+                <button class="close-btn" onclick="closePaymentModal()">✕</button>
+            </div>
+            <div class="upi-section">
+                <div class="qr-container">
+                    <div class="qr-wrapper" id="qrWrapper"></div>
+                    <div class="upi-amount" id="upiAmount">₹0</div>
+                    <div style="font-size: 11px; color: #666; margin-top: 5px;">Scan with any UPI app</div>
+                </div>
+                
+                <div class="app-buttons">
+                    <button class="app-pay-btn gpay" onclick="openUpiApp('gpay')">🅖 GPay</button>
+                    <button class="app-pay-btn phonepe" onclick="openUpiApp('phonepe')">💜 PhonePe</button>
+                    <button class="app-pay-btn paytm" onclick="openUpiApp('paytm')">🎯 Paytm</button>
+                </div>
+                
+                <div class="upi-id-row">
+                    <div class="upi-id">azhagumani20-3@okicici</div>
+                    <button class="copy-btn" onclick="copyUPI()">Copy ID</button>
+                </div>
+                
+                <div class="payment-confirm-box">
+                    <div class="confirm-check">
+                        <input type="checkbox" id="paymentConfirmCheck" onchange="togglePaymentConfirm()">
+                        <label>✅ I have completed the payment</label>
+                    </div>
+                    <input type="text" id="utrNumber" class="utr-field" placeholder="Enter UTR/Reference (optional)">
+                    <div class="warning-text">⚠️ Please complete payment in your UPI app before confirming</div>
+                </div>
+                
+                <button class="confirm-order-btn" id="confirmPaymentBtn" style="background: #2a7f49;" disabled onclick="confirmOrder('UPI')">✅ Confirm & Place Order</button>
+                <button class="back-link" onclick="showStep('stepMethod')">← Back</button>
+            </div>
+        </div>
+
+        <!-- Step 2: Cash Payment -->
+        <div id="stepCash" style="display:none">
+            <div class="section-header">
+                <div class="section-title">💵 Pay at Counter</div>
+                <button class="close-btn" onclick="closePaymentModal()">✕</button>
+            </div>
+            <div class="upi-section">
+                <div class="qr-container">
+                    <div style="font-size: 48px; text-align: center;">💵</div>
+                    <div class="upi-amount" id="cashAmount">₹0</div>
+                    <div style="font-size: 13px; margin-top: 8px;">Please pay at the front desk</div>
+                </div>
+                
+                <div class="payment-confirm-box">
+                    <div class="confirm-check">
+                        <input type="checkbox" id="cashConfirmCheck" onchange="toggleCashConfirm()">
+                        <label>✅ I will pay cash at the counter</label>
+                    </div>
+                </div>
+                
+                <button class="confirm-order-btn" id="cashConfirmBtn" style="background: #2a7f49;" disabled onclick="confirmOrder('Cash')">✅ Confirm Order</button>
+                <button class="back-link" onclick="showStep('stepMethod')">← Back</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="stepSuccess" style="display:none">
+            <div class="success-section">
+                <div class="success-icon">✅</div>
+                <div class="section-title" style="font-size: 22px;">Order Placed!</div>
+                <p>Your delicious food is being prepared.<br>Azhagu Hotel thanks you.</p>
+                <div class="order-badge" id="successOrderId">ORD-001</div>
+                <div class="button-group">
+                    <button class="confirm-order-btn download-btn" onclick="downloadBill()" style="background: #2a7f49;">📄 Download Bill</button>
+                    <button class="confirm-order-btn print-btn" onclick="printBill()" style="background: #1a73e8;">🖨️ Print Bill</button>
+                    <button class="confirm-order-btn order-more-btn" onclick="closeModalAndReset()" style="background: var(--azh-primary);">🍽️ Order More</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-const STORAGE_KEY = 'azhagu_orders';
-const UPI_ID = 'azhagumani20-3@okicici';
-const GST_RATE = 5;
-const menuData = [
-  {id:1, name:'Ghee Roast Dosa', price:55, category:'tiffin', emoji:'🥞'},
-  {id:2, name:'Mini Idly', price:25, category:'tiffin', emoji:'🍚'},
-  {id:3, name:'Kuzhi Paniyaram', price:40, category:'tiffin', emoji:'🍘'},
-  {id:4, name:'Podi Pongal', price:50, category:'tiffin', emoji:'🍲'},
-  {id:5, name:'Filter Coffee', price:22, category:'drinks', emoji:'☕'},
-  {id:6, name:'Badam Milk', price:35, category:'drinks', emoji:'🥛'},
-  {id:7, name:'Elaneer Juice', price:45, category:'drinks', emoji:'🥥'}
-];
-
-let cart = {}, allOrders = [], orderCounter = 1, currentFilter = 'all';
-let pendingCustomer = {}, currentOTP = null, mobileVerified = false;
-
-function loadOrders() { const stored = localStorage.getItem(STORAGE_KEY); if(stored) { allOrders = JSON.parse(stored); orderCounter = Math.max(allOrders.length + 1, 1); } else { allOrders = []; orderCounter = 1; } }
-function saveOrders() { localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders)); }
-function renderMenu() {
-  const filtered = currentFilter === 'all' ? menuData : menuData.filter(i => i.category === currentFilter);
-  document.getElementById('menuGrid').innerHTML = filtered.map(item => { const qty = cart[item.id] || 0;
-    return `<div class="mc"><div class="mi"><div class="me">${item.emoji}</div></div><div class="mb"><div class="mn">${item.name}</div><div class="mrow"><div class="mprice">₹${item.price}</div><div class="qw">${qty>0?`<button class="qb minus" onclick="updateCart(${item.id},-1)">−</button><span class="qn">${qty}</span>`:''}<button class="qb plus" onclick="updateCart(${item.id},1)">+</button></div></div></div></div>`;
-  }).join('');
-}
-function updateCart(id, delta) { cart[id] = Math.max(0, (cart[id] || 0) + delta); if(cart[id] === 0) delete cart[id]; renderMenu(); updateCartBar(); }
-function updateCartBar() { let subtotal=0, count=0; for(const [id,qty] of Object.entries(cart)) { const item=menuData.find(i=>i.id==id); subtotal+=item.price*qty; count+=qty; } const total=subtotal+(subtotal*GST_RATE/100); document.getElementById('cartTotal').innerHTML=`₹${total.toFixed(2)}`; document.getElementById('cartLbl').innerText=`${count} item${count!==1?'s':''}`; document.getElementById('placeBtn').disabled=count===0; }
-function openOrderModal() { if(Object.keys(cart).length===0) return; pendingCustomer={}; mobileVerified=false; document.getElementById('modalMobile').value=''; document.getElementById('modalOtp').value=''; document.getElementById('modalName').value=''; document.getElementById('modalName').disabled=true; document.getElementById('modalOtp').disabled=true; document.getElementById('verifyOtpBtnModal').disabled=true; document.getElementById('proceedBtn').disabled=true; document.getElementById('sendOtpBtnModal').disabled=false; document.getElementById('modalStatus').innerHTML=''; document.getElementById('orderModal').classList.add('open'); }
-function closeOrderModal() { document.getElementById('orderModal').classList.remove('open'); }
-function sendOTPModal() { const mobile=document.getElementById('modalMobile').value.trim(); if(!/^\d{10}$/.test(mobile)) { showToast('❌ Enter valid 10-digit mobile number', true); return; } currentOTP=Math.floor(100000+Math.random()*900000).toString(); pendingCustomer.mobile=mobile; document.getElementById('modalOtp').disabled=false; document.getElementById('verifyOtpBtnModal').disabled=false; document.getElementById('sendOtpBtnModal').disabled=true; document.getElementById('modalStatus').innerHTML=`📲 OTP sent to ${mobile} (Demo: ${currentOTP})`; showToast(`Demo OTP: ${currentOTP}`, false); }
-function verifyOTPModal() { const entered=document.getElementById('modalOtp').value.trim(); if(entered!==currentOTP) { showToast('❌ Invalid OTP', true); return; } mobileVerified=true; document.getElementById('modalName').disabled=false; document.getElementById('verifyOtpBtnModal').disabled=true; document.getElementById('modalOtp').disabled=true; document.getElementById('modalStatus').innerHTML='✅ Mobile verified! Enter your name.'; document.getElementById('modalName').oninput=function(){ const name=document.getElementById('modalName').value.trim(); document.getElementById('proceedBtn').disabled=name.length<2; if(name.length>=2) pendingCustomer.name=name; }; }
-function proceedToPayment() { const name=document.getElementById('modalName').value.trim(); if(!mobileVerified || name.length<2) { showToast('❌ Please verify mobile and enter your name', true); return; } pendingCustomer.name=name; closeOrderModal(); let subtotal=0, items=[]; for(const [id,qty] of Object.entries(cart)) { const item=menuData.find(i=>i.id==id); subtotal+=item.price*qty; items.push({name:item.name,qty,price:item.price,total:item.price*qty}); } const gstAmount=subtotal*GST_RATE/100, total=subtotal+gstAmount; document.getElementById('paymentContent').innerHTML=`<div><h3 style="margin-bottom:15px">Order Summary</h3>${items.map(i=>`<div>🍽️ ${i.name} × ${i.qty} = ₹${i.total}</div>`).join('')}<div style="margin:10px 0; padding:10px 0; border-top:1px dashed #ccc;">GST (5%): ₹${gstAmount.toFixed(2)}</div><div style="font-size:22px; font-weight:800; margin:10px 0">Total: ₹${total.toFixed(2)}</div><div class="qrbox" style="margin:20px 0"><div id="qrCodeDiv" style="width:180px; height:180px; margin:0 auto"></div><div style="margin-top:10px;">UPI: ${UPI_ID}</div><button class="cpbtn" style="margin-top:10px" onclick="copyUPI()">📋 Copy UPI ID</button></div><div class="checkbox-row"><input type="checkbox" id="paymentConfirm"> <label><strong>✅ I have completed the payment</strong></label></div><input type="text" id="utrInput" placeholder="UTR Number (optional)" style="width:100%; padding:12px; margin:10px 0; border-radius:30px; border:1px solid #ccc"><button class="pcbtn" style="margin:10px 0 0 0; width:100%;" onclick="finalizeOrder(${total}, '${JSON.stringify(items).replace(/"/g, '&quot;')}', ${subtotal}, ${gstAmount})">✅ Confirm & Place Order</button></div>`; const qrUrl=`upi://pay?pa=${UPI_ID}&pn=Azhagu%20Hotel&am=${total}&cu=INR`; setTimeout(()=>{ const qrDiv=document.getElementById('qrCodeDiv'); if(qrDiv && typeof QRCode!=='undefined') { qrDiv.innerHTML=''; new QRCode(qrDiv, { text: qrUrl, width: 170, height: 170, colorDark: "#b7410e", colorLight: "#ffffff" }); } }, 100); document.getElementById('paymentModal').classList.add('open'); }
-function copyUPI() { navigator.clipboard.writeText(UPI_ID); showToast('✅ UPI ID copied!'); }
-function finalizeOrder(total, itemsJson, subtotal, gstAmount) { const confirmCheck=document.getElementById('paymentConfirm'); if(!confirmCheck || !confirmCheck.checked) { showToast('❌ Please confirm payment completion', true); return; } const items=JSON.parse(itemsJson); const orderId=`ORD-${String(orderCounter++).padStart(3,'0')}`; const now=new Date(); const newOrder={ id:orderId, customerName:pendingCustomer.name, customerMobile:pendingCustomer.mobile, items:items, subtotal:subtotal, gstAmount:gstAmount, total:total, status:'pending', time:now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}), date:now.toLocaleDateString(), timestamp:Date.now() }; allOrders.unshift(newOrder); saveOrders(); cart={}; renderMenu(); updateCartBar(); closePaymentModal(); showToast(`✅ Order ${orderId} placed successfully!`, false); setTimeout(()=>{ showToast(`🔔 Order sent to Admin!`, false); }, 500); }
-function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
-function showToast(msg, isError=false) { const toast=document.getElementById('toast'); toast.textContent=msg; toast.style.background=isError?'#c0392b':'#2c1a0f'; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2500); }
-document.querySelectorAll('.fpill').forEach(p=>{ p.addEventListener('click',()=>{ document.querySelectorAll('.fpill').forEach(f=>f.classList.remove('active')); p.classList.add('active'); currentFilter=p.dataset.cat; renderMenu(); }); });
-loadOrders(); renderMenu(); updateCartBar();
+    // ========== FIREBASE CONFIGURATION ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyBLrk_nmC2V0NvRKfhHdFzBi647xiuF1y0",
+        authDomain: "azhagu-hotel.firebaseapp.com",
+        projectId: "azhagu-hotel",
+        storageBucket: "azhagu-hotel.firebasestorage.app",
+        messagingSenderId: "357401937469",
+        appId: "1:357401937469:web:a7a55fc0e59a5059660c54"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // ========== CONSTANTS ==========
+    const UPI_ID = 'azhagumani20-3@okicici';
+    const UPI_NAME = 'Azhagu Hotel';
+    const GSTIN = '33AAACA1234E1ZQ';
+    
+    // GST Settings
+    let gstRate = parseFloat(localStorage.getItem('azhagu_gst_rate') || '5');
+    let gstEnabled = localStorage.getItem('azhagu_gst_enabled') !== 'false';
+    
+    // Menu Data
+    const menuData = [
+        {id: 1, name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', note: 'crispy + chutney', emoji: '🥞', img: null},
+        {id: 2, name: 'Mini Idly', price: 30, category: 'tiffin', note: '10 pcs', emoji: '🍚', img: null},
+        {id: 3, name: 'Masala Dosa', price: 70, category: 'tiffin', note: 'with potato filling', emoji: '🥞', img: null},
+        {id: 4, name: 'Vada', price: 15, category: 'tiffin', note: 'crispy', emoji: '🍩', img: null},
+        {id: 5, name: 'Pongal', price: 55, category: 'tiffin', note: 'with ghee', emoji: '🍲', img: null},
+        {id: 6, name: 'Filter Coffee', price: 22, category: 'drinks', note: 'aromatic', emoji: '☕', img: null},
+        {id: 7, name: 'Badam Milk', price: 35, category: 'drinks', note: 'rich & creamy', emoji: '🥛', img: null},
+        {id: 8, name: 'Elaneer Juice', price: 45, category: 'drinks', note: 'tender coconut', emoji: '🥥', img: null},
+        {id: 9, name: 'Lemon Rice', price: 50, category: 'rice', note: 'tangy', emoji: '🍚', img: null},
+        {id: 10, name: 'Curd Rice', price: 45, category: 'rice', note: 'comfort food', emoji: '🍚', img: null},
+        {id: 11, name: 'Sambar Rice', price: 55, category: 'rice', note: 'with veggies', emoji: '🍲', img: null}
+    ];
+    
+    // Global variables
+    let cart = {};
+    let customerName = localStorage.getItem('customerName') || '';
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let selectedPaymentMethod = 'gpay';
+    let currentBillOrder = null;
+    let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
+    let customerOrders = JSON.parse(localStorage.getItem('azhagu_customer_orders') || '[]');
+    let orderCounter = Math.max(orders.length, customerOrders.length, 1);
+    
+    function saveOrders() {
+        localStorage.setItem('azhagu_orders', JSON.stringify(orders));
+        localStorage.setItem('azhagu_customer_orders', JSON.stringify(customerOrders));
+    }
+    
+    // GST Calculation
+    function calculateGST(subtotal) {
+        if (!gstEnabled) return { gstAmount: 0, total: subtotal, cgst: 0, sgst: 0 };
+        const gstAmount = (subtotal * gstRate) / 100;
+        return { gstAmount, total: subtotal + gstAmount, cgst: gstAmount/2, sgst: gstAmount/2 };
+    }
+    
+    function getCartTotal() {
+        let subtotal = 0;
+        for (const [id, qty] of Object.entries(cart)) {
+            const item = menuData.find(i => i.id == parseInt(id));
+            if (item) subtotal += item.price * qty;
+        }
+        return { subtotal, ...calculateGST(subtotal) };
+    }
+    
+    // Render Menu
+    function renderMenu() {
+        const grid = document.getElementById('menuGrid');
+        let filtered = menuData;
+        if (currentFilter !== 'all') {
+            filtered = filtered.filter(i => i.category === currentFilter);
+        }
+        if (searchQuery) {
+            filtered = filtered.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div style="text-align:center; padding:40px; color:#9b7b5c;">No items found 🔍</div>';
+            return;
+        }
+        
+        grid.innerHTML = filtered.map(item => {
+            const qty = cart[item.id] || 0;
+            const imgHtml = item.img ? `<img src="${item.img}" alt="${item.name}">` : `<div class="me">${item.emoji}</div>`;
+            return `
+                <div class="mc">
+                    <div class="mi">${imgHtml}</div>
+                    <div class="mb">
+                        <div class="mn">${item.name}</div>
+                        ${item.note ? `<div class="mnote">${item.note}</div>` : ''}
+                        <div class="mrow">
+                            <div class="mprice">₹${item.price}</div>
+                            <div class="qw">
+                                ${qty > 0 ? `<button class="qb minus" onclick="event.stopPropagation(); updateCart(${item.id}, -1)">−</button><span class="qn">${qty}</span>` : ''}
+                                <button class="qb plus" onclick="event.stopPropagation(); updateCart(${item.id}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function updateCart(id, delta) {
+        const newQty = Math.max(0, (cart[id] || 0) + delta);
+        if (newQty === 0) delete cart[id];
+        else cart[id] = newQty;
+        renderMenu();
+        updateCartBar();
+    }
+    
+    function updateCartBar() {
+        const { total } = getCartTotal();
+        let count = Object.values(cart).reduce((a,b) => a+b, 0);
+        document.getElementById('cartTotal').innerHTML = '₹' + total.toFixed(2);
+        document.getElementById('cartLbl').innerText = count + (count === 1 ? ' item' : ' items');
+        document.getElementById('placeBtn').disabled = count === 0;
+    }
+    
+    // Customer Name
+    function openNameModal() {
+        if (!customerName) {
+            document.getElementById('nameModal').classList.add('open');
+            document.getElementById('customerNameInput').value = '';
+        }
+    }
+    
+    function saveCustomerName() {
+        const name = document.getElementById('customerNameInput').value.trim();
+        if (name === '') {
+            showToast('⚠️ Please enter your name', true);
+            return;
+        }
+        customerName = name;
+        localStorage.setItem('customerName', customerName);
+        document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName.substring(0, 15)}`;
+        document.getElementById('nameModal').classList.remove('open');
+        showToast(`Welcome ${customerName}! 🎉`);
+    }
+    
+    // Open UPI App
+    function openUpiApp(appName) {
+        const { total } = getCartTotal();
+        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${total}&cu=INR&tn=Azhagu%20Order`;
+        window.location.href = intent;
+        showToast(`Opening ${appName}... Complete payment then confirm here`, false);
+        
+        setTimeout(() => {
+            const chk = document.getElementById('paymentConfirmCheck');
+            if (chk && !chk.checked) {
+                showToast('⚠️ Did you complete payment? Please confirm below.', true);
+            }
+        }, 15000);
+    }
+    
+    function copyUPI() {
+        navigator.clipboard.writeText(UPI_ID);
+        showToast('✅ UPI ID copied! Pay to: ' + UPI_ID);
+    }
+    
+    // Proceed to Payment
+    function proceedToPayment() {
+        if (Object.keys(cart).length === 0) return;
+        
+        if (!customerName) {
+            openNameModal();
+            return;
+        }
+        
+        const { subtotal, total, cgst, sgst } = getCartTotal();
+        
+        document.getElementById('summaryLines').innerHTML = Object.entries(cart).map(([id, qty]) => {
+            const it = menuData.find(i => i.id == parseInt(id));
+            return `<div class="summary-item"><span>${it.name} × ${qty}</span><span>₹${(it.price * qty).toFixed(2)}</span></div>`;
+        }).join('');
+        
+        document.getElementById('customerInfo').innerHTML = `👤 Customer: <span style="font-weight:700;">${customerName}</span>`;
+        document.getElementById('subtotal').innerHTML = '₹' + subtotal.toFixed(2);
+        
+        const gstDiv = document.getElementById('gstBreakdown');
+        if (gstEnabled && gstRate > 0) {
+            gstDiv.innerHTML = `<div class="summary-item"><span>CGST (${gstRate/2}%)</span><span>₹${cgst.toFixed(2)}</span></div>
+                                <div class="summary-item"><span>SGST (${gstRate/2}%)</span><span>₹${sgst.toFixed(2)}</span></div>`;
+        } else {
+            gstDiv.innerHTML = '';
+        }
+        document.getElementById('totalAmount').innerHTML = '₹' + total.toFixed(2);
+        
+        document.getElementById('paymentModal').classList.add('open');
+        showStep('stepMethod');
+    }
+    
+    function selectPaymentMethod(method) {
+        selectedPaymentMethod = method;
+        document.querySelectorAll('.method-btn').forEach(btn => btn.classList.remove('selected'));
+        document.querySelector(`.method-btn[data-method="${method}"]`).classList.add('selected');
+    }
+    
+    function goToPayment() {
+        const { total } = getCartTotal();
+        if (selectedPaymentMethod === 'cash') {
+            document.getElementById('cashAmount').innerHTML = '₹' + total.toFixed(2);
+            showStep('stepCash');
+        } else {
+            document.getElementById('upiAmount').innerHTML = '₹' + total.toFixed(2);
+            generateQR(total);
+            showStep('stepUPI');
+        }
+    }
+    
+    function generateQR(amount) {
+        const wrapper = document.getElementById('qrWrapper');
+        wrapper.innerHTML = '';
+        const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=Azhagu%20Order`;
+        try {
+            new QRCode(wrapper, { text: url, width: 170, height: 170, colorDark: "#b7410e", colorLight: "#ffffff" });
+        } catch(e) {
+            wrapper.innerHTML = `<div style="width:170px;height:170px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;">Scan QR<br>${UPI_ID}</div>`;
+        }
+    }
+    
+    function togglePaymentConfirm() {
+        const btn = document.getElementById('confirmPaymentBtn');
+        const chk = document.getElementById('paymentConfirmCheck');
+        if (btn && chk) btn.disabled = !chk.checked;
+    }
+    
+    function toggleCashConfirm() {
+        const btn = document.getElementById('cashConfirmBtn');
+        const chk = document.getElementById('cashConfirmCheck');
+        if (btn && chk) btn.disabled = !chk.checked;
+    }
+    
+    async function confirmOrder(payMethod) {
+        if (payMethod !== 'Cash') {
+            const chk = document.getElementById('paymentConfirmCheck');
+            if (!chk.checked) {
+                showToast('⚠️ Please confirm payment before proceeding', true);
+                return;
+            }
+        }
+        
+        let subtotal = 0, itemsList = [];
+        for (const [id, qty] of Object.entries(cart)) {
+            const item = menuData.find(i => i.id == parseInt(id));
+            itemsList.push({ name: item.name, qty, price: item.price, total: item.price * qty });
+            subtotal += item.price * qty;
+        }
+        
+        const { gstAmount, total, cgst, sgst } = calculateGST(subtotal);
+        const orderId = `ORD-${String(orderCounter++).padStart(3,'0')}`;
+        const now = new Date();
+        
+        const order = {
+            id: orderId,
+            customerName: customerName,
+            items: itemsList,
+            subtotal: subtotal,
+            gstRate: gstEnabled ? gstRate : 0,
+            gstAmount: gstAmount,
+            cgst: cgst,
+            sgst: sgst,
+            total: total,
+            status: 'pending',
+            paidStatus: 'Paid',
+            payMethod: payMethod,
+            time: now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
+            date: now.toLocaleDateString('en-IN'),
+            timestamp: now.toISOString(),
+            gstin: GSTIN,
+            hotelName: 'Azhagu Hotel',
+            upiId: UPI_ID,
+            device: /Mobile/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop'
+        };
+        
+        try {
+            await db.collection('orders').add(order);
+            
+            orders.unshift(order);
+            customerOrders.unshift(order);
+            saveOrders();
+            
+            currentBillOrder = order;
+            document.getElementById('successOrderId').innerText = order.id;
+            
+            cart = {};
+            renderMenu();
+            updateCartBar();
+            showStep('stepSuccess');
+            showToast(`✅ Order ${order.id} placed successfully!`);
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('❌ Failed to place order. Check internet!', true);
+        }
+    }
+    
+    // Bill Functions
+    function generateBillHTML(order) {
+        return `<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Bill - ${order.id}</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Courier New', monospace;
+                    padding: 20px;
+                    max-width: 400px;
+                    margin: 0 auto;
+                    background: white;
+                }
+                .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+                .hotel-name { font-size: 22px; font-weight: bold; color: #b7410e; }
+                .bill-title { font-size: 16px; font-weight: bold; margin: 10px 0; text-decoration: underline; }
+                .info-row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 12px; }
+                .items-table { width: 100%; margin: 15px 0; border-collapse: collapse; }
+                .items-table th, .items-table td { border-bottom: 1px dotted #ccc; padding: 6px 0; text-align: left; font-size: 12px; }
+                .items-table th { border-bottom: 1px solid #000; }
+                .text-right { text-align: right; }
+                .total-line { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
+                .grand-total { font-size: 18px; font-weight: bold; color: #b7410e; }
+                .footer { text-align: center; margin-top: 25px; font-size: 10px; border-top: 1px dashed #000; padding-top: 10px; }
+                @media print { body { margin: 0; padding: 10px; } }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="hotel-name">🍛 ${order.hotelName}</div>
+                <div>123, South Street, Madurai - 625001</div>
+                <div>GSTIN: ${order.gstin}</div>
+                <div class="bill-title">TAX INVOICE</div>
+            </div>
+            <div class="info-row"><span><strong>Bill No:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
+            <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Time:</strong> ${order.time}</span></div>
+            <div class="info-row"><span><strong>Payment:</strong> ${order.payMethod}</span><span><strong>Status:</strong> Paid</span></div>
+            <table class="items-table">
+                <tr><th>Item</th><th>Qty</th><th class="text-right">Amount</th></tr>
+                ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total.toFixed(2)}</td></tr>`).join('')}
+            </table>
+            <div class="total-line"><span>Subtotal:</span><span>₹${order.subtotal.toFixed(2)}</span></div>
+            ${order.gstRate > 0 ? `
+            <div class="total-line"><span>CGST (${order.gstRate/2}%):</span><span>₹${order.cgst.toFixed(2)}</span></div>
+            <div class="total-line"><span>SGST (${order.gstRate/2}%):</span><span>₹${order.sgst.toFixed(2)}</span></div>
+            ` : ''}
+            <div class="total-line grand-total"><span>TOTAL:</span><span>₹${order.total.toFixed(2)}</span></div>
+            <div class="footer"><div>✨ Thank you! Visit Again ✨</div><div>UPI: ${order.upiId}</div></div>
+        </body>
+        </html>`;
+    }
+    
+    function downloadBill() {
+        if (!currentBillOrder) return;
+        const html = generateBillHTML(currentBillOrder);
+        const blob = new Blob([html], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Bill_${currentBillOrder.id}.html`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast('📄 Bill downloaded!');
+    }
+    
+    function printBill() {
+        if (!currentBillOrder) return;
+        const html = generateBillHTML(currentBillOrder);
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.print();
+        showToast('🖨️ Print window opened');
+    }
+    
+    // Order History
+    function loadOrderHistory() {
+        const userOrders = customerOrders.filter(o => o.customerName === customerName);
+        const container = document.getElementById('orderHistoryList');
+        if (userOrders.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:50px; color:#9b7b5c;">📭 No orders yet</div>';
+            return;
+        }
+        container.innerHTML = userOrders.map(order => `
+            <div class="history-item" onclick="viewBill('${order.id}')">
+                <div class="history-header">
+                    <span class="history-id">${order.id}</span>
+                    <span class="history-date">${order.date} ${order.time}</span>
+                </div>
+                <div class="history-customer">👤 ${order.customerName}</div>
+                <div class="history-items">${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
+                <div><span class="history-total">₹${order.total.toFixed(2)}</span> | ${order.payMethod}</div>
+            </div>
+        `).join('');
+    }
+    
+    function viewBill(orderId) {
+        const order = customerOrders.find(o => o.id === orderId);
+        if (order) {
+            currentBillOrder = order;
+            const html = generateBillHTML(order);
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.print();
+        }
+    }
+    
+    // Image Tool
+    function renderImgTool() {
+        const body = document.getElementById('imgBody');
+        body.innerHTML = menuData.map(item => `
+            <div class="img-tool-item">
+                <div class="img-tool-header"><span>${item.emoji} ${item.name}</span><span>₹${item.price}</span></div>
+                <div class="img-tool-body">
+                    <div class="img-preview" onclick="document.getElementById('fi-${item.id}').click()">
+                        ${item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;">` : '📷'}
+                    </div>
+                    <input type="file" accept="image/*" style="display:none" id="fi-${item.id}" onchange="handleImgUp(event,${item.id})">
+                    <div>
+                        <button style="background:#b7410e; color:white; border:none; padding:6px 14px; border-radius:30px; margin-right:8px; cursor:pointer;" onclick="document.getElementById('fi-${item.id}').click()">Upload</button>
+                        <button style="background:#f2e0d0; border:none; padding:6px 14px; border-radius:30px; cursor:pointer;" onclick="removeImg(${item.id})">Remove</button>
+                        <div style="font-size:10px; margin-top:5px;">${item.img ? '✓ Set' : 'No image'}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    window.handleImgUp = (e, id) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            menuData.find(i => i.id == id).img = ev.target.result;
+            renderImgTool();
+            renderMenu();
+            showToast(`📸 ${menuData.find(i => i.id == id).name} updated`);
+        };
+        reader.readAsDataURL(file);
+    };
+    
+    window.removeImg = (id) => {
+        menuData.find(i => i.id == id).img = null;
+        renderImgTool();
+        renderMenu();
+        showToast('Image removed');
+    };
+    
+    function showToast(msg, isError = false) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.style.background = isError ? '#c0392b' : '#2c1a0f';
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    
+    function closePaymentModal() {
+        document.getElementById('paymentModal').classList.remove('open');
+        document.getElementById('paymentConfirmCheck').checked = false;
+        document.getElementById('cashConfirmCheck').checked = false;
+        if (document.getElementById('confirmPaymentBtn')) document.getElementById('confirmPaymentBtn').disabled = true;
+        if (document.getElementById('cashConfirmBtn')) document.getElementById('cashConfirmBtn').disabled = true;
+    }
+    
+    function closeModalAndReset() {
+        closePaymentModal();
+        location.reload();
+    }
+    
+    function showStep(step) {
+        document.getElementById('stepMethod').style.display = step === 'stepMethod' ? 'block' : 'none';
+        document.getElementById('stepUPI').style.display = step === 'stepUPI' ? 'block' : 'none';
+        document.getElementById('stepCash').style.display = step === 'stepCash' ? 'block' : 'none';
+        document.getElementById('stepSuccess').style.display = step === 'stepSuccess' ? 'block' : 'none';
+    }
+    
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderMenu();
+    });
+    
+    // Navigation
+    document.querySelectorAll('.nt').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById(`view-${tab.dataset.view}`).classList.add('active');
+            if (tab.dataset.view === 'imgtool') renderImgTool();
+            if (tab.dataset.view === 'orders') loadOrderHistory();
+        });
+    });
+    
+    document.querySelectorAll('.fpill').forEach(p => {
+        p.addEventListener('click', () => {
+            document.querySelectorAll('.fpill').forEach(f => f.classList.remove('active'));
+            p.classList.add('active');
+            currentFilter = p.dataset.cat;
+            renderMenu();
+        });
+    });
+    
+    // Initialize
+    if (customerName) {
+        document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName.substring(0, 15)}`;
+    } else {
+        setTimeout(() => openNameModal(), 500);
+    }
+    
+    renderMenu();
+    renderImgTool();
+    updateCartBar();
 </script>
 </body>
 </html>
