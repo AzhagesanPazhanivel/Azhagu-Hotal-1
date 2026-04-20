@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azhagu Hotel – Admin Portal with GST</title>
+<title>Azhagu Hotel – Admin Portal | Order Management</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * {
@@ -17,17 +17,23 @@
   --azh-deep: #8b2c0d;
   --azh-gold: #e6b422;
   --azh-cream: #fff9ef;
+  --azh-green: #2a7f49;
   --azh-dark: #2c1a0f;
   --azh-card: #ffffff;
   --azh-border: #f0e2cf;
+  --azh-text: #2b1e12;
+  --azh-muted: #9b7b5c;
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
 }
 
 body {
   font-family: 'DM Sans', sans-serif;
   background: #f5efe6;
-  color: #2b1e12;
+  color: var(--azh-text);
 }
 
+/* Login Modal */
 .login-overlay {
   position: fixed;
   inset: 0;
@@ -43,21 +49,34 @@ body {
   border-radius: 32px;
   padding: 40px 32px;
   width: 90%;
-  max-width: 400px;
+  max-width: 380px;
   text-align: center;
+  box-shadow: var(--shadow-md);
 }
 .login-card h2 {
   font-family: 'Playfair Display', serif;
   font-size: 28px;
   color: var(--azh-primary);
+  margin-bottom: 8px;
+}
+.login-card p {
+  color: var(--azh-muted);
+  margin-bottom: 24px;
+  font-size: 13px;
 }
 .login-input {
   width: 100%;
   padding: 14px 18px;
   border: 2px solid var(--azh-border);
   border-radius: 60px;
-  font-size: 16px;
-  margin: 20px 0;
+  font-size: 15px;
+  margin-bottom: 20px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.login-input:focus {
+  outline: none;
+  border-color: var(--azh-primary);
 }
 .login-btn {
   width: 100%;
@@ -66,15 +85,30 @@ body {
   color: white;
   border: none;
   border-radius: 60px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
 }
+.login-btn:hover {
+  background: var(--azh-deep);
+  transform: scale(1.02);
+}
+.error-msg {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Admin Main Content */
 .admin-content {
   display: none;
 }
+
+/* Header */
 .admin-header {
-  background: linear-gradient(135deg, #2c1a0f 0%, #3f2618 100%);
-  padding: 24px 28px;
+  background: linear-gradient(135deg, var(--azh-dark) 0%, #3f2618 100%);
+  padding: 20px 28px;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -82,7 +116,46 @@ body {
   flex-wrap: wrap;
   gap: 15px;
 }
-.admin-header h1 span { color: var(--azh-gold); }
+.admin-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+}
+.admin-header h1 span {
+  color: var(--azh-gold);
+}
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.header-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 40px;
+  color: white;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.header-btn:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.02);
+}
+.header-btn.gst {
+  background: var(--azh-gold);
+  color: var(--azh-dark);
+}
+.header-btn.refresh {
+  background: var(--azh-primary);
+}
+.header-btn.logout {
+  background: #c0392b;
+}
 .live-badge {
   display: inline-flex;
   align-items: center;
@@ -90,6 +163,7 @@ body {
   background: rgba(255,255,255,0.15);
   padding: 8px 18px;
   border-radius: 40px;
+  font-size: 12px;
 }
 .pulse-dot {
   width: 10px;
@@ -99,34 +173,14 @@ body {
   animation: pulse 1.5s infinite;
 }
 @keyframes pulse {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,100% { opacity: 1; transform: scale(1);}
+  50% { opacity: 0.4; transform: scale(1.2);}
 }
-.header-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.icon-btn, .refresh-btn, .gst-btn {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  padding: 8px 18px;
-  border-radius: 40px;
-  color: white;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-}
-.gst-btn {
-  background: var(--azh-gold);
-  color: var(--azh-dark);
-}
-.refresh-btn {
-  background: var(--azh-primary);
-}
+
+/* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 20px;
   padding: 24px 28px;
 }
@@ -134,12 +188,19 @@ body {
   background: white;
   border-radius: 24px;
   padding: 20px;
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--azh-border);
+  transition: all 0.2s;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 .stat-card h3 {
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
-  color: #b87a4a;
+  letter-spacing: 1px;
+  color: var(--azh-muted);
   margin-bottom: 8px;
 }
 .stat-number {
@@ -147,52 +208,155 @@ body {
   font-weight: 800;
   color: var(--azh-primary);
 }
+.stat-number.small {
+  font-size: 26px;
+}
+
+/* Orders Section */
 .orders-section {
   padding: 0 28px 28px;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .orders-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 5px;
 }
+.orders-container::-webkit-scrollbar {
+  width: 5px;
+}
+.orders-container::-webkit-scrollbar-track {
+  background: #e2cfb5;
+  border-radius: 10px;
+}
+.orders-container::-webkit-scrollbar-thumb {
+  background: var(--azh-primary);
+  border-radius: 10px;
+}
+
+/* Order Card */
 .order-card {
   background: white;
   border-radius: 24px;
-  padding: 20px;
+  padding: 18px;
   border-left: 6px solid var(--azh-gold);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  animation: slideIn 0.3s ease;
 }
-.order-card.pending { border-left-color: var(--azh-primary); }
-.order-card.ready { border-left-color: #f39c12; }
-.order-card.done { border-left-color: #95a5a6; opacity: 0.7; }
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.order-card.pending {
+  border-left-color: var(--azh-primary);
+  background: linear-gradient(135deg, white, #fff8f5);
+}
+.order-card.ready {
+  border-left-color: #f39c12;
+  background: linear-gradient(135deg, white, #fffef5);
+}
+.order-card.done {
+  border-left-color: #95a5a6;
+  opacity: 0.8;
+}
 .order-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 14px;
 }
-.order-id { font-weight: 800; font-size: 18px; }
+.order-id {
+  font-weight: 800;
+  font-size: 18px;
+  font-family: monospace;
+  color: var(--azh-dark);
+}
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .badge {
   padding: 4px 12px;
   border-radius: 40px;
   font-size: 11px;
   font-weight: 700;
 }
-.badge-pay { background: #e8f0ff; color: #2255cc; }
+.badge-pay {
+  background: #e8f0ff;
+  color: #2255cc;
+}
+.badge-status {
+  background: #ffede3;
+  color: var(--azh-primary);
+}
+.badge-status.ready {
+  background: #fff8e0;
+  color: #c99c00;
+}
+.badge-status.done {
+  background: #e0e0e0;
+  color: #666;
+}
 .order-items {
   background: #faf6f0;
   border-radius: 16px;
   padding: 14px;
   margin: 12px 0;
   font-size: 13px;
+  line-height: 1.6;
+}
+.order-items span {
+  display: block;
+  padding: 4px 0;
+  border-bottom: 1px dashed #e2cfb5;
+}
+.order-items span:last-child {
+  border-bottom: none;
+}
+.gst-breakdown {
+  font-size: 11px;
+  color: var(--azh-muted);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2cfb5;
 }
 .order-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  gap: 12px;
   margin-top: 12px;
 }
-.order-total { font-size: 22px; font-weight: 800; color: var(--azh-primary); }
+.order-total {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--azh-primary);
+}
+.order-time {
+  font-size: 11px;
+  color: var(--azh-muted);
+}
 .action-btn {
   background: var(--azh-primary);
   color: white;
@@ -201,8 +365,25 @@ body {
   border-radius: 40px;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.gst-modal {
+.action-btn:hover {
+  background: var(--azh-deep);
+  transform: scale(1.02);
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--azh-muted);
+}
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* Modals */
+.modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.7);
@@ -212,22 +393,44 @@ body {
   justify-content: center;
   display: none;
 }
-.gst-card {
+.modal-card {
   background: white;
   border-radius: 32px;
   padding: 32px;
   width: 90%;
   max-width: 380px;
+  animation: modalPop 0.3s ease;
 }
-.gst-card input, .gst-card select {
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal-card h3 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: var(--azh-primary);
+  font-family: 'Playfair Display', serif;
+}
+.modal-card input, .modal-card select {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid var(--azh-border);
   border-radius: 60px;
-  margin: 15px 0;
-  font-size: 16px;
+  margin-bottom: 15px;
+  font-family: inherit;
+  font-size: 14px;
 }
-.gst-card button {
+.modal-card input:focus, .modal-card select:focus {
+  outline: none;
+  border-color: var(--azh-primary);
+}
+.modal-card button {
   width: 100%;
   padding: 12px;
   background: var(--azh-primary);
@@ -236,169 +439,383 @@ body {
   border-radius: 60px;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 8px;
+  font-size: 14px;
 }
+.modal-card .cancel-btn {
+  background: #ccc;
+  color: #333;
+  margin-top: 8px;
+}
+.modal-card .cancel-btn:hover {
+  background: #bbb;
+}
+
+/* Toast */
 .toast {
   position: fixed;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
-  background: #2c1a0f;
+  background: var(--azh-dark);
   color: #ffecb3;
-  padding: 10px 20px;
-  border-radius: 40px;
+  padding: 12px 24px;
+  border-radius: 60px;
+  font-size: 13px;
+  font-weight: 500;
   z-index: 1100;
   display: none;
+  animation: toastFade 0.3s ease;
+  white-space: nowrap;
+}
+@keyframes toastFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Notification Badge */
+.notification-badge {
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+@media (max-width: 600px) {
+  .stats-grid { padding: 16px; gap: 12px; }
+  .orders-section { padding: 0 16px 20px; }
+  .admin-header { padding: 16px 20px; flex-direction: column; text-align: center; }
+  .header-buttons { justify-content: center; }
+  .toast { white-space: normal; max-width: 85%; text-align: center; }
 }
 </style>
 </head>
 <body>
 
+<!-- LOGIN MODAL -->
 <div id="loginModal" class="login-overlay">
   <div class="login-card">
     <h2>🔐 Admin Login</h2>
-    <input type="password" id="loginPassword" class="login-input" placeholder="Enter password">
+    <p>Enter password to access dashboard</p>
+    <input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()">
     <button class="login-btn" onclick="checkLogin()">Login →</button>
-    <div id="loginError" style="color:red; margin-top:12px;"></div>
+    <div id="loginError" class="error-msg"></div>
   </div>
 </div>
 
-<div id="adminContent" class="admin-content">
-  <div class="admin-header">
-    <div><h1>🍛 Azhagu <span>Admin</span></h1><p style="font-size:13px;opacity:0.7;">GST Enabled Management</p></div>
-    <div class="header-buttons">
-      <div class="live-badge"><div class="pulse-dot"></div><span>Live</span></div>
-      <button class="gst-btn" onclick="openGSTModal()">💰 GST Settings</button>
-      <button class="refresh-btn" onclick="loadOrders()">⟳ Refresh</button>
-      <button class="icon-btn" onclick="logout()">🚪 Logout</button>
-    </div>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card"><h3>📊 Total Orders</h3><div class="stat-number" id="totalOrders">0</div></div>
-    <div class="stat-card"><h3>⏳ Pending</h3><div class="stat-number" id="pendingOrders">0</div></div>
-    <div class="stat-card"><h3>✅ Completed</h3><div class="stat-number" id="completedOrders">0</div></div>
-    <div class="stat-card"><h3>💰 Revenue</h3><div class="stat-number" id="totalRevenue">₹0</div></div>
-  </div>
-
-  <div class="orders-section">
-    <div id="ordersContainer" class="orders-container"></div>
+<!-- CHANGE PASSWORD MODAL -->
+<div id="changePwdModal" class="modal-overlay">
+  <div class="modal-card">
+    <h3>🔑 Change Password</h3>
+    <input type="password" id="oldPassword" placeholder="Current Password">
+    <input type="password" id="newPassword" placeholder="New Password (min 4 characters)">
+    <input type="password" id="confirmPassword" placeholder="Confirm New Password">
+    <button onclick="changePassword()">Update Password</button>
+    <button class="cancel-btn" onclick="closeChangePwdModal()">Cancel</button>
   </div>
 </div>
 
-<div id="gstModal" class="gst-modal">
-  <div class="gst-card">
-    <h3 style="color:var(--azh-primary);">💰 GST Configuration</h3>
-    <label>Enable GST</label>
+<!-- GST SETTINGS MODAL -->
+<div id="gstModal" class="modal-overlay">
+  <div class="modal-card">
+    <h3>💰 GST Settings</h3>
+    <label style="font-size:13px; margin-bottom:5px; display:block;">Enable GST</label>
     <select id="gstEnabled">
       <option value="true">✅ Enabled</option>
       <option value="false">❌ Disabled</option>
     </select>
-    <label>GST Rate (%)</label>
+    <label style="font-size:13px; margin-bottom:5px; display:block;">GST Rate (%)</label>
     <input type="number" id="gstRate" step="0.5" min="0" max="28" placeholder="e.g., 5, 12, 18">
-    <div style="font-size:12px; color:#666;">Note: CGST & SGST will be split equally</div>
+    <div style="font-size:11px; color:#666; margin-bottom:15px;">Note: CGST & SGST will be split equally</div>
     <button onclick="saveGSTSettings()">💾 Save Settings</button>
-    <button onclick="closeGSTModal()" style="background:#ccc;">Cancel</button>
+    <button class="cancel-btn" onclick="closeGSTModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- MAIN ADMIN CONTENT -->
+<div id="adminContent" class="admin-content">
+  <div class="admin-header">
+    <div>
+      <h1>🍛 Azhagu <span>Admin</span></h1>
+      <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Order Management Dashboard</p>
+    </div>
+    <div class="header-buttons">
+      <div class="live-badge">
+        <div class="pulse-dot"></div>
+        <span>Live Orders <span id="newOrderCount" style="background:#e74c3c; border-radius:50%; padding:2px 6px; font-size:10px; margin-left:5px; display:none;">0</span></span>
+      </div>
+      <button class="header-btn gst" onclick="openGSTModal()">💰 GST</button>
+      <button class="header-btn" onclick="openChangePwdModal()">🔐 Change Password</button>
+      <button class="header-btn refresh" onclick="loadOrders()">⟳ Refresh</button>
+      <button class="header-btn logout" onclick="logout()">🚪 Logout</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>📊 Total Orders</h3>
+      <div class="stat-number" id="totalOrders">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>⏳ Pending</h3>
+      <div class="stat-number" id="pendingOrders">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>✅ Completed</h3>
+      <div class="stat-number" id="completedOrders">0</div>
+    </div>
+    <div class="stat-card">
+      <h3>💰 Total Revenue</h3>
+      <div class="stat-number small" id="totalRevenue">₹0</div>
+    </div>
+  </div>
+
+  <div class="orders-section">
+    <div class="section-title">
+      <span>📋</span> Live Orders
+      <span id="orderIndicator" style="display:none; background:#e74c3c; width:10px; height:10px; border-radius:50%;"></span>
+    </div>
+    <div id="ordersContainer" class="orders-container">
+      <div class="empty-state">
+        <div class="empty-state-icon">🍽️</div>
+        <div>No orders yet. Waiting for customers...</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
+// ==================== CONSTANTS ====================
 const STORAGE_KEY = 'azhagu_orders';
 const PASSWORD_KEY = 'azhagu_admin_password';
 const GST_RATE_KEY = 'azhagu_gst_rate';
 const GST_ENABLED_KEY = 'azhagu_gst_enabled';
 const DEFAULT_PASSWORD = 'admin123';
 
-if (!localStorage.getItem(PASSWORD_KEY)) localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
-if (!localStorage.getItem(GST_RATE_KEY)) localStorage.setItem(GST_RATE_KEY, '5');
-if (!localStorage.getItem(GST_ENABLED_KEY)) localStorage.setItem(GST_ENABLED_KEY, 'true');
+// ==================== INITIALIZE DEFAULTS ====================
+if (!localStorage.getItem(PASSWORD_KEY)) {
+  localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
+}
+if (!localStorage.getItem(GST_RATE_KEY)) {
+  localStorage.setItem(GST_RATE_KEY, '5');
+}
+if (!localStorage.getItem(GST_ENABLED_KEY)) {
+  localStorage.setItem(GST_ENABLED_KEY, 'true');
+}
 
+// ==================== GLOBAL VARIABLES ====================
 let refreshInterval = null;
 let lastOrderCount = 0;
+let soundEnabled = true;
 
-function showToast(msg) {
+// ==================== HELPER FUNCTIONS ====================
+function showToast(message, isError = false) {
   const toast = document.getElementById('toast');
-  toast.textContent = msg;
+  toast.textContent = message;
+  toast.style.background = isError ? '#c0392b' : 'var(--azh-dark)';
   toast.style.display = 'block';
-  setTimeout(() => toast.style.display = 'none', 2500);
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
 }
 
-function playSound() {
+function playNewOrderSound() {
+  if (!soundEnabled) return;
   try {
-    const audio = new AudioContext();
-    const osc = audio.createOscillator();
-    const gain = audio.createGain();
-    osc.connect(gain);
-    gain.connect(audio.destination);
-    osc.frequency.value = 880;
-    gain.gain.value = 0.2;
-    osc.start();
-    gain.gain.exponentialRampToValueAtTime(0.00001, audio.currentTime + 0.5);
-    osc.stop(audio.currentTime + 0.5);
-  } catch(e) {}
+    // Create a simple beep using Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.frequency.value = 880;
+    gainNode.gain.value = 0.3;
+    oscillator.start();
+    gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.8);
+    oscillator.stop(audioContext.currentTime + 0.8);
+  } catch(e) {
+    // Fallback - just visual
+    console.log('Sound not supported');
+  }
 }
 
+// ==================== LOAD ORDERS (REAL-TIME) ====================
 function loadOrders() {
   const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  if (orders.length > lastOrderCount && lastOrderCount > 0) playSound();
+  
+  // Check for new orders
+  if (orders.length > lastOrderCount && lastOrderCount > 0) {
+    playNewOrderSound();
+    showToast(`🔔 New order received! Total: ${orders.length - lastOrderCount} new`, false);
+    
+    // Show notification badge
+    const newCount = orders.length - lastOrderCount;
+    const badge = document.getElementById('newOrderCount');
+    if (badge) {
+      badge.textContent = newCount;
+      badge.style.display = 'inline-block';
+      setTimeout(() => {
+        badge.style.display = 'none';
+      }, 5000);
+    }
+  }
   lastOrderCount = orders.length;
   
+  // Calculate stats
   const pending = orders.filter(o => o.status === 'pending').length;
+  const ready = orders.filter(o => o.status === 'ready').length;
   const completed = orders.filter(o => o.status === 'done').length;
-  const revenue = orders.filter(o => o.status === 'done').reduce((s, o) => s + o.total, 0);
+  const revenue = orders.filter(o => o.status === 'done').reduce((sum, o) => sum + (o.total || 0), 0);
   
+  // Update stats display
   document.getElementById('totalOrders').innerText = orders.length;
   document.getElementById('pendingOrders').innerText = pending;
   document.getElementById('completedOrders').innerText = completed;
-  document.getElementById('totalRevenue').innerHTML = '₹' + revenue;
+  document.getElementById('totalRevenue').innerHTML = '₹' + revenue.toFixed(2);
   
+  // Render orders
   const container = document.getElementById('ordersContainer');
   if (orders.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;">🍽️ No orders yet</div>';
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🍽️</div><div>No orders yet. Waiting for customers...</div></div>`;
     return;
   }
   
-  container.innerHTML = orders.map((order, idx) => `
-    <div class="order-card ${order.status}">
-      <div class="order-header">
-        <div class="order-id">${order.id}</div>
-        <div class="badges">
-          <span class="badge badge-pay">${order.payMethod}</span>
-          <span class="badge" style="background:${order.status === 'pending' ? '#ffede3' : order.status === 'ready' ? '#fff8e0' : '#e0e0e0'}">
-            ${order.status === 'pending' ? '⏳ Pending' : order.status === 'ready' ? '🔥 Ready' : '✅ Done'}
-          </span>
+  container.innerHTML = orders.map((order, idx) => {
+    const statusClass = order.status === 'pending' ? 'pending' : (order.status === 'ready' ? 'ready' : 'done');
+    const statusText = order.status === 'pending' ? '⏳ Pending' : (order.status === 'ready' ? '🔥 Ready' : '✅ Done');
+    const statusBg = order.status === 'pending' ? '#ffede3' : (order.status === 'ready' ? '#fff8e0' : '#e0e0e0');
+    const statusColor = order.status === 'pending' ? 'var(--azh-primary)' : (order.status === 'ready' ? '#c99c00' : '#666');
+    
+    return `
+      <div class="order-card ${statusClass}" data-order-idx="${idx}">
+        <div class="order-header">
+          <div class="order-id">${order.id}</div>
+          <div class="badges">
+            <span class="badge badge-pay">${order.payMethod || 'UPI'}</span>
+            <span class="badge badge-status ${statusClass}" style="background:${statusBg}; color:${statusColor}">${statusText}</span>
+          </div>
+        </div>
+        <div class="order-items">
+          ${order.lines.map(l => `<span>${l.name} × ${l.qty} — ₹${(l.total || l.price * l.qty).toFixed(2)}</span>`).join('')}
+          ${order.gstRate && order.gstRate > 0 ? `
+            <div class="gst-breakdown">
+              <small>GST ${order.gstRate}% | CGST: ₹${(order.cgst || 0).toFixed(2)} | SGST: ₹${(order.sgst || 0).toFixed(2)}</small>
+            </div>
+          ` : ''}
+        </div>
+        <div class="order-footer">
+          <div class="order-total">₹${(order.total || 0).toFixed(2)}</div>
+          <div class="order-time">🕐 ${order.time || 'Just now'} | ${order.date || ''}</div>
+          ${order.status !== 'done' ? `
+            <button class="action-btn" onclick="updateOrderStatus(${idx}, '${order.status === 'pending' ? 'ready' : 'done'}')">
+              ${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete Order'}
+            </button>
+          ` : ''}
         </div>
       </div>
-      <div class="order-items">
-        ${order.lines.map(l => `${l.name} × ${l.qty} — ₹${l.total}`).join('<br>')}
-        ${order.gstRate > 0 ? `<br><small>GST ${order.gstRate}% (CGST:₹${order.cgst?.toFixed(2)} | SGST:₹${order.sgst?.toFixed(2)})</small>` : ''}
-      </div>
-      <div class="order-footer">
-        <div class="order-total">₹${order.total}</div>
-        <div><small>${order.date} | ${order.time}</small></div>
-        ${order.status !== 'done' ? `<button class="action-btn" onclick="updateOrderStatus(${idx}, '${order.status === 'pending' ? 'ready' : 'done'}')">
-          ${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}
-        </button>` : ''}
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
+// ==================== UPDATE ORDER STATUS ====================
 function updateOrderStatus(orderIndex, newStatus) {
   const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
   if (orders[orderIndex]) {
+    const oldStatus = orders[orderIndex].status;
     orders[orderIndex].status = newStatus;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
     loadOrders();
-    showToast(`Order ${orders[orderIndex].id} marked as ${newStatus}`);
+    
+    const statusText = newStatus === 'ready' ? 'Ready' : 'Completed';
+    showToast(`✅ Order ${orders[orderIndex].id} marked as ${statusText}`);
+    
+    // Play sound for ready orders
+    if (newStatus === 'ready') {
+      playNewOrderSound();
+    }
   }
 }
 
+// ==================== LOGIN FUNCTIONS ====================
+function checkLogin() {
+  const password = document.getElementById('loginPassword').value;
+  const savedPassword = localStorage.getItem(PASSWORD_KEY);
+  
+  if (password === savedPassword) {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    startAutoRefresh();
+    loadOrders();
+    showToast('✅ Login successful! Welcome to Admin Dashboard');
+  } else {
+    document.getElementById('loginError').innerText = '❌ Incorrect password! Please try again.';
+  }
+}
+
+function logout() {
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('loginModal').style.display = 'flex';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').innerText = '';
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+    refreshInterval = null;
+  }
+  showToast('🔒 Logged out successfully');
+}
+
+// ==================== CHANGE PASSWORD FUNCTIONS ====================
+function openChangePwdModal() {
+  document.getElementById('changePwdModal').style.display = 'flex';
+  document.getElementById('oldPassword').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('confirmPassword').value = '';
+}
+
+function closeChangePwdModal() {
+  document.getElementById('changePwdModal').style.display = 'none';
+}
+
+function changePassword() {
+  const oldPwd = document.getElementById('oldPassword').value;
+  const newPwd = document.getElementById('newPassword').value;
+  const confirmPwd = document.getElementById('confirmPassword').value;
+  const savedPwd = localStorage.getItem(PASSWORD_KEY);
+  
+  if (oldPwd !== savedPwd) {
+    showToast('❌ Current password is incorrect!', true);
+    return;
+  }
+  
+  if (newPwd.length < 4) {
+    showToast('❌ New password must be at least 4 characters!', true);
+    return;
+  }
+  
+  if (newPwd !== confirmPwd) {
+    showToast('❌ New passwords do not match!', true);
+    return;
+  }
+  
+  localStorage.setItem(PASSWORD_KEY, newPwd);
+  closeChangePwdModal();
+  showToast('✅ Password changed successfully!');
+}
+
+// ==================== GST FUNCTIONS ====================
 function openGSTModal() {
-  document.getElementById('gstEnabled').value = localStorage.getItem(GST_ENABLED_KEY);
-  document.getElementById('gstRate').value = localStorage.getItem(GST_RATE_KEY);
+  const gstEnabled = localStorage.getItem(GST_ENABLED_KEY);
+  const gstRate = localStorage.getItem(GST_RATE_KEY);
+  document.getElementById('gstEnabled').value = gstEnabled;
+  document.getElementById('gstRate').value = gstRate;
   document.getElementById('gstModal').style.display = 'flex';
 }
 
@@ -409,45 +826,46 @@ function closeGSTModal() {
 function saveGSTSettings() {
   const enabled = document.getElementById('gstEnabled').value === 'true';
   const rate = parseFloat(document.getElementById('gstRate').value);
+  
   if (isNaN(rate) || rate < 0 || rate > 28) {
-    showToast('❌ Please enter valid GST rate (0-28%)');
+    showToast('❌ Please enter valid GST rate (0-28%)', true);
     return;
   }
+  
   localStorage.setItem(GST_ENABLED_KEY, enabled);
   localStorage.setItem(GST_RATE_KEY, rate);
+  
   closeGSTModal();
   showToast(`✅ GST ${enabled ? 'Enabled' : 'Disabled'} | Rate: ${rate}%`);
+  
+  // Trigger refresh to update order displays
+  loadOrders();
 }
 
-function checkLogin() {
-  const pwd = document.getElementById('loginPassword').value;
-  if (pwd === localStorage.getItem(PASSWORD_KEY)) {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('adminContent').style.display = 'block';
-    startAutoRefresh();
-    loadOrders();
-    showToast('✅ Login successful');
-  } else {
-    document.getElementById('loginError').innerText = '❌ Incorrect password';
-  }
-}
-
-function logout() {
-  document.getElementById('adminContent').style.display = 'none';
-  document.getElementById('loginModal').style.display = 'flex';
-  document.getElementById('loginPassword').value = '';
-  if (refreshInterval) clearInterval(refreshInterval);
-  showToast('🔒 Logged out');
-}
-
+// ==================== AUTO REFRESH (REAL-TIME) ====================
 function startAutoRefresh() {
-  if (refreshInterval) clearInterval(refreshInterval);
-  refreshInterval = setInterval(loadOrders, 3000);
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+  }
+  // Refresh every 2 seconds for real-time updates
+  refreshInterval = setInterval(() => {
+    loadOrders();
+  }, 2000);
 }
 
+// ==================== STORAGE EVENT LISTENER (Cross-tab sync) ====================
 window.addEventListener('storage', (e) => {
-  if (e.key === STORAGE_KEY && document.getElementById('adminContent').style.display === 'block') loadOrders();
+  if (e.key === STORAGE_KEY) {
+    // New order from customer tab
+    loadOrders();
+    playNewOrderSound();
+    showToast('🔔 New order received!', false);
+  }
 });
+
+// ==================== INITIAL CHECK ====================
+// Check if already logged in (optional - can be removed for security)
+// By default, show login screen
 </script>
 </body>
 </html>
