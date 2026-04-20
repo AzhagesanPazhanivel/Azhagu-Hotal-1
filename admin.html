@@ -1,144 +1,856 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azhagu Hotel – Admin Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --azh-primary: #b7410e;
-  --azh-deep: #8b2c0d;
-  --azh-gold: #e6b422;
-  --azh-cream: #fff9ef;
-  --azh-dark: #2c1a0f;
-  --azh-border: #f0e2cf;
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-}
-body { font-family: 'DM Sans', sans-serif; background: #f5efe6; }
-.admin-header { background: linear-gradient(135deg, #2c1a0f 0%, #3f2618 100%); padding: 20px 28px; color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-.admin-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; }
-.live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; }
-.ld { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 20px 28px; }
-.stat-card { background: white; border-radius: 20px; padding: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--azh-border); }
-.stat-card h4 { font-size: 11px; text-transform: uppercase; color: #9b7b5c; margin-bottom: 5px; }
-.stat-number { font-size: 28px; font-weight: 800; color: var(--azh-primary); }
-.orders-container { padding: 0 28px 28px; max-height: 60vh; overflow-y: auto; }
-.order-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 5px solid var(--azh-primary); box-shadow: var(--shadow-sm); animation: slideIn 0.3s ease; }
-@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-.order-card.ready { border-left-color: #f39c12; }
-.order-card.done { border-left-color: #95a5a6; opacity: 0.7; }
-.order-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px; }
-.order-id { font-weight: 800; font-size: 16px; color: var(--azh-primary); }
-.customer-info { display: flex; gap: 10px; flex-wrap: wrap; }
-.customer-badge { background: #f0e4d4; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-.order-items { background: #faf6f0; border-radius: 12px; padding: 10px; margin: 10px 0; font-size: 12px; }
-.order-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 10px; }
-.order-total { font-size: 20px; font-weight: 800; color: var(--azh-primary); }
-.status-btn { background: var(--azh-primary); color: white; border: none; padding: 6px 16px; border-radius: 30px; cursor: pointer; font-size: 12px; font-weight: 600; }
-.status-btn:hover { background: var(--azh-deep); }
-.empty-state { text-align: center; padding: 50px; color: #9b7b5c; }
-.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; z-index: 999; display: none; }
-.toast.show { display: block; animation: fadeInOut 2s ease; }
-@keyframes fadeInOut { 0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
-.refresh-btn { background: var(--azh-primary); color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azhagu Hotel - Premium Admin Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #f5efe6 0%, #f0e8df 100%);
+            min-height: 100vh;
+        }
+        :root {
+            --azh-primary: #b7410e;
+            --azh-deep: #8b2c0d;
+            --azh-gold: #e6b422;
+            --azh-cream: #fff9ef;
+            --azh-green: #2a7f49;
+            --azh-dark: #2c1a0f;
+            --azh-card: #ffffff;
+            --azh-border: #f0e2cf;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 35px -10px rgba(0,0,0,0.15);
+        }
+        
+        /* Login Modal */
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(44, 26, 15, 0.98), rgba(44, 26, 15, 0.95));
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        .login-card {
+            background: white;
+            border-radius: 48px;
+            padding: 48px 40px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--azh-primary);
+            margin-bottom: 8px;
+        }
+        .login-card .hotel-name {
+            font-size: 14px;
+            color: #9b7b5c;
+            margin-bottom: 30px;
+        }
+        .login-input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .login-input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9b7b5c;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--azh-border);
+            border-radius: 60px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .login-input:focus {
+            outline: none;
+            border-color: var(--azh-primary);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--azh-primary), var(--azh-deep));
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+        
+        /* Admin Content */
+        .admin-content {
+            display: none;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, var(--azh-dark) 0%, #3f2618 100%);
+            padding: 20px 32px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: var(--shadow-md);
+        }
+        .admin-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+        }
+        .admin-header h1 span {
+            color: var(--azh-gold);
+        }
+        .header-right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .datetime {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-family: monospace;
+        }
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 12px;
+        }
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+        }
+        .header-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .header-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+        .header-btn.gst {
+            background: var(--azh-gold);
+            color: var(--azh-dark);
+        }
+        .header-btn.refresh {
+            background: var(--azh-primary);
+        }
+        .header-btn.logout {
+            background: #c0392b;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 20px;
+            padding: 28px 32px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 28px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--azh-border);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        .stat-card h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9b7b5c;
+            margin-bottom: 10px;
+        }
+        .stat-number {
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--azh-primary);
+        }
+        .stat-number.small {
+            font-size: 32px;
+        }
+        
+        /* Orders Section */
+        .orders-section {
+            padding: 0 32px 32px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .orders-container {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        .orders-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .orders-container::-webkit-scrollbar-track {
+            background: #e2cfb5;
+            border-radius: 10px;
+        }
+        .orders-container::-webkit-scrollbar-thumb {
+            background: var(--azh-primary);
+            border-radius: 10px;
+        }
+        
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: 28px;
+            padding: 22px;
+            border-left: 8px solid var(--azh-gold);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            animation: slideIn 0.4s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .order-card.pending { border-left-color: var(--azh-primary); }
+        .order-card.ready { border-left-color: #f39c12; }
+        .order-card.done { border-left-color: #95a5a6; opacity: 0.85; }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .order-id {
+            font-weight: 800;
+            font-size: 18px;
+            font-family: monospace;
+            background: #f5f0ea;
+            padding: 4px 14px;
+            border-radius: 40px;
+        }
+        .badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .badge-pay {
+            background: #e8f0ff;
+            color: #2255cc;
+        }
+        .customer-name {
+            background: #e8f5e9;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--azh-green);
+        }
+        .order-items {
+            background: #faf6f0;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 16px 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .order-items span {
+            display: block;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2cfb5;
+        }
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 16px;
+        }
+        .order-total {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--azh-primary);
+        }
+        .order-time {
+            font-size: 12px;
+            color: #9b7b5c;
+            font-family: monospace;
+        }
+        .action-btn {
+            background: linear-gradient(135deg, var(--azh-primary), var(--azh-deep));
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            transform: scale(1.02);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9b7b5c;
+            background: white;
+            border-radius: 28px;
+        }
+        
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+        .modal-card {
+            background: white;
+            border-radius: 40px;
+            padding: 36px;
+            width: 90%;
+            max-width: 400px;
+            animation: modalPop 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-card h3 {
+            font-size: 26px;
+            margin-bottom: 8px;
+            color: var(--azh-primary);
+            font-family: 'Playfair Display', serif;
+        }
+        .modal-card p {
+            color: #9b7b5c;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        .modal-card input, .modal-card select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--azh-border);
+            border-radius: 60px;
+            margin-bottom: 18px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .modal-card input:focus, .modal-card select:focus {
+            outline: none;
+            border-color: var(--azh-primary);
+        }
+        .modal-card button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--azh-primary), var(--azh-deep));
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+        .modal-card .cancel-btn {
+            background: #ccc;
+            color: #333;
+            margin-top: 10px;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--azh-dark);
+            color: #ffecb3;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1200;
+            display: none;
+            box-shadow: var(--shadow-md);
+        }
+        
+        @media (max-width: 700px) {
+            .stats-grid { padding: 20px; gap: 12px; }
+            .orders-section { padding: 0 20px 20px; }
+            .admin-header { padding: 16px 20px; flex-direction: column; text-align: center; }
+            .header-right { justify-content: center; }
+        }
+    </style>
 </head>
 <body>
-<div class="admin-header">
-  <h2>👑 Azhagu Admin Dashboard</h2>
-  <div style="display: flex; gap: 15px; align-items: center;">
-    <div class="live-pill"><div class="ld"></div> REAL-TIME: 1s</div>
-    <button class="refresh-btn" onclick="loadOrders()">⟳ Refresh</button>
-  </div>
+
+<!-- LOGIN MODAL -->
+<div id="loginModal" class="login-overlay">
+    <div class="login-card">
+        <h2>🔐 Admin Portal</h2>
+        <div class="hotel-name">🍛 Azhagu Hotel · Premium Dashboard</div>
+        <div class="login-input-group">
+            <label>👤 Username</label>
+            <input type="text" id="loginUsername" class="login-input" placeholder="Enter username" autocomplete="off">
+        </div>
+        <div class="login-input-group">
+            <label>🔒 Password</label>
+            <input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()">
+        </div>
+        <button class="login-btn" onclick="checkLogin()">Login to Dashboard →</button>
+        <div id="loginError" class="error-msg"></div>
+    </div>
 </div>
-<div class="stats-grid">
-  <div class="stat-card"><h4>📊 Total Orders</h4><div class="stat-number" id="totalOrders">0</div></div>
-  <div class="stat-card"><h4>⏳ Pending</h4><div class="stat-number" id="pendingOrders">0</div></div>
-  <div class="stat-card"><h4>✅ Completed</h4><div class="stat-number" id="completedOrders">0</div></div>
-  <div class="stat-card"><h4>💰 Revenue</h4><div class="stat-number" id="revenue">₹0</div></div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div id="changePwdModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>🔑 Change Password</h3>
+        <p>Update your admin credentials</p>
+        <input type="text" id="currentUsername" placeholder="Current Username" autocomplete="off">
+        <input type="password" id="currentPassword" placeholder="Current Password">
+        <input type="password" id="newPassword" placeholder="New Password (min 4 characters)">
+        <input type="password" id="confirmPassword" placeholder="Confirm New Password">
+        <button onclick="changePassword()">Update Password</button>
+        <button class="cancel-btn" onclick="closeChangePwdModal()">Cancel</button>
+    </div>
 </div>
-<div class="orders-container" id="ordersList"><div class="empty-state">📭 Waiting for orders... Customers will appear here when they place orders.</div></div>
+
+<!-- GST SETTINGS MODAL -->
+<div id="gstModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>💰 GST Settings</h3>
+        <p>Configure tax rates for all orders</p>
+        <label style="font-size:13px; margin-bottom:5px; display:block;">Enable GST</label>
+        <select id="gstEnabled">
+            <option value="true">✅ Enabled</option>
+            <option value="false">❌ Disabled</option>
+        </select>
+        <label style="font-size:13px; margin-bottom:5px; display:block;">GST Rate (%)</label>
+        <input type="number" id="gstRate" step="0.5" min="0" max="28" placeholder="e.g., 5, 12, 18">
+        <div style="font-size:11px; color:#666; margin-bottom:15px;">Note: CGST & SGST will be split equally</div>
+        <button onclick="saveGSTSettings()">💾 Save Settings</button>
+        <button class="cancel-btn" onclick="closeGSTModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- MAIN ADMIN CONTENT -->
+<div id="adminContent" class="admin-content">
+    <div class="admin-header">
+        <div>
+            <h1>🍛 Azhagu <span>Admin</span></h1>
+            <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Premium Order Management Dashboard</p>
+        </div>
+        <div class="header-right">
+            <div class="datetime" id="datetimeDisplay"></div>
+            <div class="live-badge">
+                <div class="pulse-dot"></div>
+                <span>Live Orders</span>
+            </div>
+            <button class="header-btn gst" onclick="openGSTModal()">💰 GST</button>
+            <button class="header-btn" onclick="openChangePwdModal()">🔐 Change Password</button>
+            <button class="header-btn refresh" onclick="loadOrders()">⟳ Refresh</button>
+            <button class="header-btn logout" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>📊 Total Orders</h3>
+            <div class="stat-number" id="totalOrders">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>⏳ Pending</h3>
+            <div class="stat-number" id="pendingOrders">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>🔥 Ready</h3>
+            <div class="stat-number" id="readyOrders">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>✅ Completed</h3>
+            <div class="stat-number" id="completedOrders">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>💰 Total Revenue</h3>
+            <div class="stat-number small" id="totalRevenue">₹0</div>
+        </div>
+    </div>
+
+    <div class="orders-section">
+        <div class="section-title">
+            <span>📋</span>
+            <span>Live Orders</span>
+        </div>
+        <div id="ordersContainer" class="orders-container">
+            <div class="empty-state">📭 Loading orders...</div>
+        </div>
+    </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
-const STORAGE_KEY = 'azhagu_orders';
-let allOrders = [];
-let lastOrderCount = 0;
-
-function loadOrders() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) { allOrders = JSON.parse(stored); } else { allOrders = []; }
-  
-  const pending = allOrders.filter(o => o.status === 'pending').length;
-  const completed = allOrders.filter(o => o.status === 'done').length;
-  const revenue = allOrders.filter(o => o.status === 'done').reduce((sum, o) => sum + o.total, 0);
-  
-  document.getElementById('totalOrders').innerText = allOrders.length;
-  document.getElementById('pendingOrders').innerText = pending;
-  document.getElementById('completedOrders').innerText = completed;
-  document.getElementById('revenue').innerHTML = `₹${revenue.toFixed(2)}`;
-  
-  const container = document.getElementById('ordersList');
-  if (allOrders.length === 0) {
-    container.innerHTML = '<div class="empty-state">📭 Waiting for orders... Customers will appear here when they place orders.</div>';
-    return;
-  }
-  
-  container.innerHTML = allOrders.map((order, idx) => {
-    const statusClass = order.status === 'ready' ? 'ready' : (order.status === 'done' ? 'done' : '');
-    const statusText = order.status === 'pending' ? '⏳ Pending' : (order.status === 'ready' ? '🔥 Ready' : '✅ Done');
-    return `<div class="order-card ${statusClass}">
-      <div class="order-header">
-        <span class="order-id">📄 ${order.id}</span>
-        <div class="customer-info">
-          <span class="customer-badge">👤 ${order.customerName || 'Guest'}</span>
-          <span class="customer-badge">📞 ${order.customerMobile ? order.customerMobile.slice(0,3) + '****' + order.customerMobile.slice(-3) : 'N/A'}</span>
-        </div>
-      </div>
-      <div class="order-items">
-        ${order.items.map(i => `<div>🍽️ ${i.name} × ${i.qty} = ₹${i.total}</div>`).join('')}
-        <small style="color:#666;">GST (5%): ₹${order.gstAmount.toFixed(2)}</small>
-      </div>
-      <div class="order-footer">
-        <span class="order-total">₹${order.total.toFixed(2)}</span>
-        <span style="font-size:11px; color:#999;">🕐 ${order.time}</span>
-        ${order.status !== 'done' ? `<button class="status-btn" onclick="updateOrderStatus(${idx}, '${order.status === 'pending' ? 'ready' : 'done'}')">${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}</button>` : '<span style="color:#95a5a6;">✅ Completed</span>'}
-      </div>
-    </div>`;
-  }).join('');
-  
-  // Check for new orders
-  if (allOrders.length > lastOrderCount && lastOrderCount > 0) {
-    const newCount = allOrders.length - lastOrderCount;
-    showToast(`🔔 ${newCount} new order${newCount > 1 ? 's' : ''} received!`, false);
-  }
-  lastOrderCount = allOrders.length;
-}
-
-function updateOrderStatus(index, newStatus) {
-  if (allOrders[index]) {
-    allOrders[index].status = newStatus;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
-    loadOrders();
-    showToast(`✅ Order ${allOrders[index].id} marked as ${newStatus === 'ready' ? 'Ready' : 'Completed'}`);
-  }
-}
-
-function showToast(msg, isError=false) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.style.background = isError ? '#c0392b' : '#2c1a0f';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
-}
-
-// Auto-refresh every 1 second
-setInterval(() => { loadOrders(); }, 1000);
-loadOrders();
+    // ========== FIREBASE CONFIGURATION ==========
+    const firebaseConfig = {
+        apiKey: "AIzaSyBLrk_nmC2V0NvRKfhHdFzBi647xiuF1y0",
+        authDomain: "azhagu-hotel.firebaseapp.com",
+        projectId: "azhagu-hotel",
+        storageBucket: "azhagu-hotel.firebasestorage.app",
+        messagingSenderId: "357401937469",
+        appId: "1:357401937469:web:a7a55fc0e59a5059660c54"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // ========== CONSTANTS ==========
+    const ADMIN_CRED_KEY = 'azhagu_admin_credentials';
+    const GST_RATE_KEY = 'azhagu_gst_rate';
+    const GST_ENABLED_KEY = 'azhagu_gst_enabled';
+    
+    // Default admin credentials
+    const DEFAULT_USERNAME = 'admin';
+    const DEFAULT_PASSWORD = 'admin123';
+    
+    // Initialize admin credentials if not exists
+    if (!localStorage.getItem(ADMIN_CRED_KEY)) {
+        localStorage.setItem(ADMIN_CRED_KEY, JSON.stringify({
+            username: DEFAULT_USERNAME,
+            password: DEFAULT_PASSWORD
+        }));
+    }
+    
+    // Initialize GST settings if not exists
+    if (!localStorage.getItem(GST_RATE_KEY)) {
+        localStorage.setItem(GST_RATE_KEY, '5');
+    }
+    if (!localStorage.getItem(GST_ENABLED_KEY)) {
+        localStorage.setItem(GST_ENABLED_KEY, 'true');
+    }
+    
+    // ========== GLOBAL VARIABLES ==========
+    let unsubscribeOrders = null;
+    let currentAdmin = null;
+    
+    // ========== HELPER FUNCTIONS ==========
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.background = isError ? '#c0392b' : 'var(--azh-dark)';
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+    
+    function playNewOrderSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = 880;
+            gainNode.gain.value = 0.25;
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.6);
+            oscillator.stop(audioContext.currentTime + 0.6);
+        } catch(e) {
+            console.log('Sound not supported');
+        }
+    }
+    
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('datetimeDisplay').innerHTML = now.toLocaleString('en-IN', {
+            day: '2-digit', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit'
+        });
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+    
+    // ========== LOAD ORDERS (REAL-TIME) ==========
+    function loadOrders() {
+        // This is handled by the real-time listener
+    }
+    
+    function startListening() {
+        if (unsubscribeOrders) unsubscribeOrders();
+        
+        unsubscribeOrders = db.collection('orders')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot((snapshot) => {
+                const orders = [];
+                snapshot.forEach(doc => {
+                    orders.push({ id: doc.id, ...doc.data() });
+                });
+                renderOrders(orders);
+                updateStats(orders);
+                
+                // Play sound for new orders (simple detection)
+                if (window.lastOrderCount && orders.length > window.lastOrderCount) {
+                    playNewOrderSound();
+                    showToast(`🔔 ${orders.length - window.lastOrderCount} new order(s) received!`);
+                }
+                window.lastOrderCount = orders.length;
+            }, (error) => {
+                console.error('Error listening:', error);
+                document.getElementById('ordersContainer').innerHTML = '<div class="empty-state">❌ Connection error! Check Firebase configuration.</div>';
+            });
+    }
+    
+    function renderOrders(orders) {
+        const container = document.getElementById('ordersContainer');
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="empty-state">📭 No orders yet. Waiting for customers...</div>';
+            return;
+        }
+        
+        container.innerHTML = orders.map((order, idx) => {
+            const statusClass = order.status || 'pending';
+            const statusText = statusClass === 'pending' ? '⏳ Pending' : (statusClass === 'ready' ? '🔥 Ready' : '✅ Done');
+            
+            return `
+                <div class="order-card ${statusClass}">
+                    <div class="order-header">
+                        <div class="order-id">${order.id || order.orderId || 'N/A'}</div>
+                        <div class="badges">
+                            <span class="badge badge-pay">💰 ${order.payMethod || 'UPI'}</span>
+                            <span class="customer-name">👤 ${order.customerName || 'Guest'}</span>
+                        </div>
+                    </div>
+                    <div class="order-items">
+                        ${order.items ? order.items.map(item => `<span>🍽️ ${item.name} × ${item.qty} — ₹${item.total || (item.price * item.qty)}</span>`).join('') : 'No items'}
+                        ${order.gstRate && order.gstRate > 0 ? `
+                            <div style="font-size:11px; color:#888; margin-top:8px;">
+                                📊 GST ${order.gstRate}% (CGST: ₹${(order.cgst || 0).toFixed(2)} | SGST: ₹${(order.sgst || 0).toFixed(2)})
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-total">₹${(order.total || 0).toFixed(2)}</div>
+                        <div class="order-time">📅 ${order.date || ''} | 🕐 ${order.time || 'Just now'}</div>
+                        ${statusClass !== 'done' ? `
+                            <button class="action-btn" onclick="updateOrderStatus('${order.id}', '${statusClass === 'pending' ? 'ready' : 'done'}')">
+                                ${statusClass === 'pending' ? '✓ Mark Ready' : '✅ Complete Order'}
+                            </button>
+                        ` : '<span style="color:#888;">✅ Completed</span>'}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    async function updateOrderStatus(orderId, newStatus) {
+        try {
+            await db.collection('orders').doc(orderId).update({ status: newStatus });
+            showToast(`✅ Order marked as ${newStatus === 'ready' ? 'Ready' : 'Completed'}`);
+            if (newStatus === 'ready') playNewOrderSound();
+        } catch (error) {
+            console.error('Error updating:', error);
+            showToast('❌ Failed to update order', true);
+        }
+    }
+    
+    function updateStats(orders) {
+        const total = orders.length;
+        const pending = orders.filter(o => o.status === 'pending').length;
+        const ready = orders.filter(o => o.status === 'ready').length;
+        const completed = orders.filter(o => o.status === 'done').length;
+        const revenue = orders.filter(o => o.status === 'done').reduce((sum, o) => sum + (o.total || 0), 0);
+        
+        document.getElementById('totalOrders').innerText = total;
+        document.getElementById('pendingOrders').innerText = pending;
+        document.getElementById('readyOrders').innerText = ready;
+        document.getElementById('completedOrders').innerText = completed;
+        document.getElementById('totalRevenue').innerHTML = '₹' + revenue.toFixed(2);
+    }
+    
+    // ========== LOGIN FUNCTIONS ==========
+    function checkLogin() {
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const credentials = JSON.parse(localStorage.getItem(ADMIN_CRED_KEY));
+        
+        if (username === credentials.username && password === credentials.password) {
+            currentAdmin = username;
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            startListening();
+            showToast(`✅ Welcome back, ${username}!`);
+        } else {
+            document.getElementById('loginError').innerHTML = '❌ Invalid username or password!';
+        }
+    }
+    
+    function logout() {
+        if (unsubscribeOrders) unsubscribeOrders();
+        document.getElementById('adminContent').style.display = 'none';
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('loginError').innerHTML = '';
+        currentAdmin = null;
+        showToast('🔒 Logged out successfully');
+    }
+    
+    // ========== CHANGE PASSWORD FUNCTIONS ==========
+    function openChangePwdModal() {
+        document.getElementById('changePwdModal').style.display = 'flex';
+        document.getElementById('currentUsername').value = '';
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    }
+    
+    function closeChangePwdModal() {
+        document.getElementById('changePwdModal').style.display = 'none';
+    }
+    
+    function changePassword() {
+        const currentUsername = document.getElementById('currentUsername').value.trim();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const credentials = JSON.parse(localStorage.getItem(ADMIN_CRED_KEY));
+        
+        if (currentUsername !== credentials.username) {
+            showToast('❌ Current username is incorrect!', true);
+            return;
+        }
+        if (currentPassword !== credentials.password) {
+            showToast('❌ Current password is incorrect!', true);
+            return;
+        }
+        if (newPassword.length < 4) {
+            showToast('❌ New password must be at least 4 characters!', true);
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            showToast('❌ New passwords do not match!', true);
+            return;
+        }
+        
+        credentials.password = newPassword;
+        localStorage.setItem(ADMIN_CRED_KEY, JSON.stringify(credentials));
+        closeChangePwdModal();
+        showToast('✅ Password changed successfully! Please login again.');
+        setTimeout(() => logout(), 1500);
+    }
+    
+    // ========== GST FUNCTIONS ==========
+    function openGSTModal() {
+        const gstEnabled = localStorage.getItem(GST_ENABLED_KEY);
+        const gstRate = localStorage.getItem(GST_RATE_KEY);
+        document.getElementById('gstEnabled').value = gstEnabled;
+        document.getElementById('gstRate').value = gstRate;
+        document.getElementById('gstModal').style.display = 'flex';
+    }
+    
+    function closeGSTModal() {
+        document.getElementById('gstModal').style.display = 'none';
+    }
+    
+    function saveGSTSettings() {
+        const enabled = document.getElementById('gstEnabled').value === 'true';
+        const rate = parseFloat(document.getElementById('gstRate').value);
+        
+        if (isNaN(rate) || rate < 0 || rate > 28) {
+            showToast('❌ Please enter valid GST rate (0-28%)', true);
+            return;
+        }
+        
+        localStorage.setItem(GST_ENABLED_KEY, enabled);
+        localStorage.setItem(GST_RATE_KEY, rate);
+        closeGSTModal();
+        showToast(`✅ GST ${enabled ? 'Enabled' : 'Disabled'} | Rate: ${rate}%`);
+    }
 </script>
 </body>
 </html>
