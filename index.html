@@ -415,6 +415,11 @@ body {
   font-weight: 700;
   cursor: pointer;
 }
+.pcbtn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 .qrsec, .cashsec, .sucsec {
   padding: 22px;
   text-align: center;
@@ -518,6 +523,52 @@ body {
 .app-btn.gpay { background: #1a73e8; color: white; }
 .app-btn.phonepe { background: #5f259f; color: white; }
 .app-btn.paytm { background: #00baf2; color: white; }
+
+/* Payment confirmation section */
+.payment-confirm {
+  background: #fff8e8;
+  border-radius: 20px;
+  padding: 16px;
+  margin: 16px 22px;
+  border: 1px solid #ffe0a3;
+}
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.checkbox-row input {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.checkbox-row label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--azh-dark);
+  cursor: pointer;
+}
+.warning-text {
+  font-size: 12px;
+  color: #e67e22;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #ffe0a3;
+}
+.utr-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--azh-border);
+  border-radius: 40px;
+  font-size: 13px;
+  margin-top: 10px;
+  font-family: inherit;
+}
+.utr-input:focus {
+  outline: none;
+  border-color: var(--azh-primary);
+}
 </style>
 </head>
 <body>
@@ -584,16 +635,44 @@ body {
         <div class="qrbox"><div class="qrcw" id="qrWrap"></div><div class="qru" id="qrLabel">UPI Payment</div><div class="qra" id="qrAmt">₹0</div></div>
         <div class="app-buttons" id="qrAppButtons"></div>
         <div class="urow"><div class="uid" id="upiIdTxt">azhagu@okhdfcbank</div><button class="cpbtn" onclick="copyUPI()">Copy ID</button></div>
-        <button class="pcbtn paid" style="background:#2a7f49; margin-top:12px;" onclick="autoConfirmAfterPay()">✅ I have paid (Confirm Order)</button>
-        <button class="backlink" style="margin-top:12px; background:none; border:none; color:#9b7b5c;" onclick="showStep('stepMethod')">← Back</button>
+        
+        <!-- PAYMENT CONFIRMATION SECTION - FIXED -->
+        <div class="payment-confirm">
+          <div class="checkbox-row">
+            <input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()">
+            <label for="paymentConfirmCheckbox">✅ I have successfully completed the payment via UPI</label>
+          </div>
+          <input type="text" id="utrNumber" class="utr-input" placeholder="Optional: Enter UTR/Reference number" maxlength="30">
+          <div class="warning-text">
+            ⚠️ Please confirm you have made the payment before proceeding. False confirmations may delay your order.
+          </div>
+        </div>
+        
+        <button class="pcbtn paid" id="confirmPayBtn" style="background:#2a7f49; margin-top:12px;" disabled onclick="validateAndConfirm()">✅ Confirm Payment & Place Order</button>
+        <button class="backlink" style="margin-top:12px; background:none; border:none; color:#9b7b5c; cursor:pointer;" onclick="showStep('stepMethod')">← Back</button>
       </div>
     </div>
 
     <div id="stepCash" style="display:none">
       <div class="shdr"><div class="stitle">💵 Pay at Counter</div><button class="xbtn" onclick="closeModal()">✕</button></div>
-      <div class="cashsec"><div class="camt" id="cashAmt">₹0</div><div class="cnote">Please pay at the front desk.<br>We'll prepare your order immediately.</div>
-      <button class="pcbtn" style="margin:18px 0 8px;" onclick="autoConfirmAfterPay()">✅ Confirm Order</button>
-      <button class="backlink" onclick="showStep('stepMethod')">← Change method</button></div>
+      <div class="cashsec">
+        <div class="camt" id="cashAmt">₹0</div>
+        <div class="cnote">Please pay at the front desk.<br>We'll prepare your order immediately.</div>
+        
+        <!-- Cash payment confirmation -->
+        <div class="payment-confirm" style="margin-top: 20px;">
+          <div class="checkbox-row">
+            <input type="checkbox" id="cashConfirmCheckbox" onchange="toggleCashConfirmButton()">
+            <label for="cashConfirmCheckbox">✅ I will pay cash at the counter</label>
+          </div>
+          <div class="warning-text">
+            ⚠️ Please be ready to pay the exact amount at the counter.
+          </div>
+        </div>
+        
+        <button class="pcbtn" id="cashConfirmBtn" style="margin:18px 0 8px;" disabled onclick="autoConfirmAfterPay()">✅ Confirm Order</button>
+        <button class="backlink" onclick="showStep('stepMethod')">← Change method</button>
+      </div>
     </div>
 
     <div id="stepSuccess" style="display:none">
@@ -625,7 +704,6 @@ let orderCounter = orders.length + 1;
 let curFilter = 'all';
 let selPayMethod = 'upi';
 let timerInterval = null;
-let pendingOrderData = null;
 
 const UPI_ID = 'azhagu@okhdfcbank';
 const UPI_NAME = 'Azhagu Hotel';
@@ -673,7 +751,7 @@ function getTotal() {
 function openUPIApp(appName, amount) {
   const upiIntent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=AzhaguHotelOrder`;
   window.location.href = upiIntent;
-  setTimeout(() => { showToast('📱 Check your payment app'); }, 1000);
+  setTimeout(() => { showToast('📱 Check your payment app', false); }, 1000);
 }
 
 function renderDirectAppButtons(containerId, amount) {
@@ -706,7 +784,15 @@ function openPayModal() {
 function closeModal() {
   document.getElementById('payModal').classList.remove('open');
   if (timerInterval) clearInterval(timerInterval);
-  pendingOrderData = null;
+  // Reset checkboxes
+  const upiCheckbox = document.getElementById('paymentConfirmCheckbox');
+  const cashCheckbox = document.getElementById('cashConfirmCheckbox');
+  if (upiCheckbox) upiCheckbox.checked = false;
+  if (cashCheckbox) cashCheckbox.checked = false;
+  const utrInput = document.getElementById('utrNumber');
+  if (utrInput) utrInput.value = '';
+  toggleConfirmButton();
+  toggleCashConfirmButton();
 }
 
 function closeModalAndReset() {
@@ -733,6 +819,10 @@ function proceedPay() {
     renderDirectAppButtons('qrAppButtons', total);
     startTimer(600);
     showStep('stepQR');
+    // Reset checkbox state
+    const chk = document.getElementById('paymentConfirmCheckbox');
+    if (chk) chk.checked = false;
+    toggleConfirmButton();
   }
 }
 
@@ -769,7 +859,43 @@ function copyUPI() {
   showToast('✅ UPI ID copied!');
 }
 
-// AUTO CONFIRM ORDER AFTER PAYMENT
+// Toggle confirm button based on checkbox
+function toggleConfirmButton() {
+  const checkbox = document.getElementById('paymentConfirmCheckbox');
+  const confirmBtn = document.getElementById('confirmPayBtn');
+  if (checkbox && confirmBtn) {
+    confirmBtn.disabled = !checkbox.checked;
+  }
+}
+
+function toggleCashConfirmButton() {
+  const checkbox = document.getElementById('cashConfirmCheckbox');
+  const confirmBtn = document.getElementById('cashConfirmBtn');
+  if (checkbox && confirmBtn) {
+    confirmBtn.disabled = !checkbox.checked;
+  }
+}
+
+// VALIDATE before confirming order
+function validateAndConfirm() {
+  const checkbox = document.getElementById('paymentConfirmCheckbox');
+  const utrValue = document.getElementById('utrNumber').value;
+  
+  if (!checkbox.checked) {
+    showToast('⚠️ Please confirm that you have completed the payment!', true);
+    return;
+  }
+  
+  // Optional: Show success with UTR
+  if (utrValue) {
+    showToast(`✅ Payment confirmed! Reference: ${utrValue.substring(0, 10)}...`, false);
+  } else {
+    showToast('✅ Payment confirmed! Order placed successfully.', false);
+  }
+  
+  autoConfirmAfterPay();
+}
+
 function autoConfirmAfterPay() {
   if (timerInterval) clearInterval(timerInterval);
   const payLabel = selPayMethod === 'cash' ? 'Cash' : 'UPI';
@@ -777,7 +903,6 @@ function autoConfirmAfterPay() {
   document.getElementById('sucOrderId').innerText = orderId;
   document.getElementById('sucPayMethod').innerText = payLabel;
   showStep('stepSuccess');
-  showToast(`🎉 Order ${orderId} confirmed automatically!`);
 }
 
 function finalizeOrder(payMethod) {
@@ -857,11 +982,19 @@ window.removeImg = (id) => {
   showToast(`🗑️ ${item.name} image removed`);
 };
 
-function showToast(msg) {
+function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
   t.innerText = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  if (isError) {
+    t.style.background = '#c0392b';
+  } else {
+    t.style.background = '#2c1a0f';
+  }
+  setTimeout(() => {
+    t.classList.remove('show');
+    t.style.background = '#2c1a0f';
+  }, 2500);
 }
 
 document.querySelectorAll('.nt').forEach(tab => {
