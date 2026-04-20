@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Azhagu Hotel – Admin Portal</title>
+<title>Azhagu Hotel – Admin Portal with GST</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 * {
@@ -28,7 +28,6 @@ body {
   color: #2b1e12;
 }
 
-/* Login Modal */
 .login-overlay {
   position: fixed;
   inset: 0;
@@ -46,18 +45,11 @@ body {
   width: 90%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
 }
 .login-card h2 {
   font-family: 'Playfair Display', serif;
   font-size: 28px;
   color: var(--azh-primary);
-  margin-bottom: 8px;
-}
-.login-card p {
-  color: var(--azh-muted);
-  margin-bottom: 28px;
-  font-size: 14px;
 }
 .login-input {
   width: 100%;
@@ -65,12 +57,7 @@ body {
   border: 2px solid var(--azh-border);
   border-radius: 60px;
   font-size: 16px;
-  margin-bottom: 20px;
-  font-family: inherit;
-}
-.login-input:focus {
-  outline: none;
-  border-color: var(--azh-primary);
+  margin: 20px 0;
 }
 .login-btn {
   width: 100%;
@@ -79,20 +66,9 @@ body {
   color: white;
   border: none;
   border-radius: 60px;
-  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
 }
-.login-btn:hover {
-  background: var(--azh-deep);
-}
-.error-msg {
-  color: #e74c3c;
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-/* Admin Main Content (hidden until login) */
 .admin-content {
   display: none;
 }
@@ -106,13 +82,7 @@ body {
   flex-wrap: wrap;
   gap: 15px;
 }
-.admin-header h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-}
-.admin-header h1 span {
-  color: var(--azh-gold);
-}
+.admin-header h1 span { color: var(--azh-gold); }
 .live-badge {
   display: inline-flex;
   align-items: center;
@@ -120,7 +90,6 @@ body {
   background: rgba(255,255,255,0.15);
   padding: 8px 18px;
   border-radius: 40px;
-  font-size: 13px;
 }
 .pulse-dot {
   width: 10px;
@@ -133,37 +102,28 @@ body {
   0%,100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
-
 .header-buttons {
   display: flex;
   gap: 12px;
-  align-items: center;
+  flex-wrap: wrap;
 }
-.icon-btn {
+.icon-btn, .refresh-btn, .gst-btn {
   background: rgba(255,255,255,0.15);
   border: none;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 40px;
   color: white;
   cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
 }
-.icon-btn:hover {
-  background: rgba(255,255,255,0.25);
+.gst-btn {
+  background: var(--azh-gold);
+  color: var(--azh-dark);
 }
 .refresh-btn {
-  background: var(--azh-gold);
-  color: #2c1a0f;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 40px;
-  font-weight: 700;
-  cursor: pointer;
+  background: var(--azh-primary);
 }
-
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -174,35 +134,21 @@ body {
   background: white;
   border-radius: 24px;
   padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   border: 1px solid var(--azh-border);
 }
 .stat-card h3 {
   font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 1px;
   color: #b87a4a;
   margin-bottom: 8px;
 }
 .stat-number {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--azh-primary);
 }
-.stat-number.small {
-  font-size: 28px;
-}
-
 .orders-section {
   padding: 0 28px 28px;
-}
-.section-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 .orders-container {
   display: flex;
@@ -214,71 +160,39 @@ body {
   border-radius: 24px;
   padding: 20px;
   border-left: 6px solid var(--azh-gold);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: all 0.2s;
 }
-.order-card.pending {
-  border-left-color: var(--azh-primary);
-}
-.order-card.ready {
-  border-left-color: #f39c12;
-}
-.order-card.done {
-  border-left-color: #95a5a6;
-  opacity: 0.7;
-}
+.order-card.pending { border-left-color: var(--azh-primary); }
+.order-card.ready { border-left-color: #f39c12; }
+.order-card.done { border-left-color: #95a5a6; opacity: 0.7; }
 .order-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
   margin-bottom: 14px;
 }
-.order-id {
-  font-weight: 800;
-  font-size: 18px;
-  font-family: monospace;
-}
-.badges {
-  display: flex;
-  gap: 8px;
-}
+.order-id { font-weight: 800; font-size: 18px; }
 .badge {
   padding: 4px 12px;
   border-radius: 40px;
   font-size: 11px;
   font-weight: 700;
 }
-.badge-pay {
-  background: #e8f0ff;
-  color: #2255cc;
-}
+.badge-pay { background: #e8f0ff; color: #2255cc; }
 .order-items {
   background: #faf6f0;
   border-radius: 16px;
   padding: 14px;
   margin: 12px 0;
   font-size: 13px;
-  line-height: 1.6;
 }
 .order-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
   margin-top: 12px;
 }
-.order-total {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--azh-primary);
-}
-.order-time {
-  font-size: 12px;
-  color: #9b7b5c;
-}
+.order-total { font-size: 22px; font-weight: 800; color: var(--azh-primary); }
 .action-btn {
   background: var(--azh-primary);
   color: white;
@@ -288,22 +202,7 @@ body {
   font-weight: 600;
   cursor: pointer;
 }
-.action-btn:hover {
-  background: var(--azh-deep);
-}
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: #9b7b5c;
-}
-.empty-state-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-  opacity: 0.5;
-}
-
-/* Change Password Modal */
-.modal-overlay {
+.gst-modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.7);
@@ -313,27 +212,22 @@ body {
   justify-content: center;
   display: none;
 }
-.modal-card {
+.gst-card {
   background: white;
   border-radius: 32px;
   padding: 32px;
   width: 90%;
   max-width: 380px;
 }
-.modal-card h3 {
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: var(--azh-primary);
-}
-.modal-card input {
+.gst-card input, .gst-card select {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid var(--azh-border);
   border-radius: 60px;
-  margin-bottom: 15px;
-  font-family: inherit;
+  margin: 15px 0;
+  font-size: 16px;
 }
-.modal-card button {
+.gst-card button {
   width: 100%;
   padding: 12px;
   background: var(--azh-primary);
@@ -342,11 +236,7 @@ body {
   border-radius: 60px;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 8px;
-}
-.modal-card .cancel-btn {
-  background: #ccc;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 .toast {
   position: fixed;
@@ -357,7 +247,6 @@ body {
   color: #ffecb3;
   padding: 10px 20px;
   border-radius: 40px;
-  font-size: 13px;
   z-index: 1100;
   display: none;
 }
@@ -365,42 +254,21 @@ body {
 </head>
 <body>
 
-<!-- LOGIN MODAL -->
 <div id="loginModal" class="login-overlay">
   <div class="login-card">
     <h2>🔐 Admin Login</h2>
-    <p>Enter password to access dashboard</p>
-    <input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()">
+    <input type="password" id="loginPassword" class="login-input" placeholder="Enter password">
     <button class="login-btn" onclick="checkLogin()">Login →</button>
-    <div id="loginError" class="error-msg"></div>
+    <div id="loginError" style="color:red; margin-top:12px;"></div>
   </div>
 </div>
 
-<!-- CHANGE PASSWORD MODAL -->
-<div id="changePwdModal" class="modal-overlay">
-  <div class="modal-card">
-    <h3>🔑 Change Password</h3>
-    <input type="password" id="oldPassword" placeholder="Current Password">
-    <input type="password" id="newPassword" placeholder="New Password">
-    <input type="password" id="confirmPassword" placeholder="Confirm New Password">
-    <button onclick="changePassword()">Update Password</button>
-    <button class="cancel-btn" onclick="closeChangePwdModal()">Cancel</button>
-  </div>
-</div>
-
-<!-- MAIN ADMIN CONTENT -->
 <div id="adminContent" class="admin-content">
   <div class="admin-header">
-    <div>
-      <h1>🍛 Azhagu <span>Admin</span></h1>
-      <p style="font-size: 13px; opacity: 0.7; margin-top: 5px;">Order Management Portal</p>
-    </div>
+    <div><h1>🍛 Azhagu <span>Admin</span></h1><p style="font-size:13px;opacity:0.7;">GST Enabled Management</p></div>
     <div class="header-buttons">
-      <div class="live-badge">
-        <div class="pulse-dot"></div>
-        <span>Live Orders</span>
-      </div>
-      <button class="icon-btn" onclick="openChangePwdModal()">🔐 Change Password</button>
+      <div class="live-badge"><div class="pulse-dot"></div><span>Live</span></div>
+      <button class="gst-btn" onclick="openGSTModal()">💰 GST Settings</button>
       <button class="refresh-btn" onclick="loadOrders()">⟳ Refresh</button>
       <button class="icon-btn" onclick="logout()">🚪 Logout</button>
     </div>
@@ -410,14 +278,27 @@ body {
     <div class="stat-card"><h3>📊 Total Orders</h3><div class="stat-number" id="totalOrders">0</div></div>
     <div class="stat-card"><h3>⏳ Pending</h3><div class="stat-number" id="pendingOrders">0</div></div>
     <div class="stat-card"><h3>✅ Completed</h3><div class="stat-number" id="completedOrders">0</div></div>
-    <div class="stat-card"><h3>💰 Revenue</h3><div class="stat-number small" id="totalRevenue">₹0</div></div>
+    <div class="stat-card"><h3>💰 Revenue</h3><div class="stat-number" id="totalRevenue">₹0</div></div>
   </div>
 
   <div class="orders-section">
-    <div class="section-title"><span>📋</span> Incoming Orders</div>
-    <div id="ordersContainer" class="orders-container">
-      <div class="empty-state"><div class="empty-state-icon">🍽️</div><div>No orders yet.</div></div>
-    </div>
+    <div id="ordersContainer" class="orders-container"></div>
+  </div>
+</div>
+
+<div id="gstModal" class="gst-modal">
+  <div class="gst-card">
+    <h3 style="color:var(--azh-primary);">💰 GST Configuration</h3>
+    <label>Enable GST</label>
+    <select id="gstEnabled">
+      <option value="true">✅ Enabled</option>
+      <option value="false">❌ Disabled</option>
+    </select>
+    <label>GST Rate (%)</label>
+    <input type="number" id="gstRate" step="0.5" min="0" max="28" placeholder="e.g., 5, 12, 18">
+    <div style="font-size:12px; color:#666;">Note: CGST & SGST will be split equally</div>
+    <button onclick="saveGSTSettings()">💾 Save Settings</button>
+    <button onclick="closeGSTModal()" style="background:#ccc;">Cancel</button>
   </div>
 </div>
 
@@ -426,52 +307,47 @@ body {
 <script>
 const STORAGE_KEY = 'azhagu_orders';
 const PASSWORD_KEY = 'azhagu_admin_password';
+const GST_RATE_KEY = 'azhagu_gst_rate';
+const GST_ENABLED_KEY = 'azhagu_gst_enabled';
 const DEFAULT_PASSWORD = 'admin123';
 
+if (!localStorage.getItem(PASSWORD_KEY)) localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
+if (!localStorage.getItem(GST_RATE_KEY)) localStorage.setItem(GST_RATE_KEY, '5');
+if (!localStorage.getItem(GST_ENABLED_KEY)) localStorage.setItem(GST_ENABLED_KEY, 'true');
+
 let refreshInterval = null;
-let soundEnabled = true;
 let lastOrderCount = 0;
 
-// Initialize default password if not exists
-if (!localStorage.getItem(PASSWORD_KEY)) {
-  localStorage.setItem(PASSWORD_KEY, DEFAULT_PASSWORD);
-}
-
-function showToast(msg, isError = false) {
+function showToast(msg) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.style.display = 'block';
-  toast.style.background = isError ? '#c0392b' : '#2c1a0f';
-  setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  setTimeout(() => toast.style.display = 'none', 2500);
 }
 
-function playNewOrderSound() {
-  if (!soundEnabled) return;
+function playSound() {
   try {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    oscillator.frequency.value = 880;
-    gainNode.gain.value = 0.3;
-    oscillator.start();
-    gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 0.8);
-    oscillator.stop(audioContext.currentTime + 0.8);
+    const audio = new AudioContext();
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.frequency.value = 880;
+    gain.gain.value = 0.2;
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.00001, audio.currentTime + 0.5);
+    osc.stop(audio.currentTime + 0.5);
   } catch(e) {}
 }
 
 function loadOrders() {
   const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  
-  if (orders.length > lastOrderCount && lastOrderCount > 0) {
-    playNewOrderSound();
-  }
+  if (orders.length > lastOrderCount && lastOrderCount > 0) playSound();
   lastOrderCount = orders.length;
   
   const pending = orders.filter(o => o.status === 'pending').length;
   const completed = orders.filter(o => o.status === 'done').length;
-  const revenue = orders.filter(o => o.status === 'done').reduce((sum, o) => sum + o.total, 0);
+  const revenue = orders.filter(o => o.status === 'done').reduce((s, o) => s + o.total, 0);
   
   document.getElementById('totalOrders').innerText = orders.length;
   document.getElementById('pendingOrders').innerText = pending;
@@ -480,7 +356,7 @@ function loadOrders() {
   
   const container = document.getElementById('ordersContainer');
   if (orders.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🍽️</div><div>No orders yet. Waiting for customers...</div></div>`;
+    container.innerHTML = '<div style="text-align:center;padding:40px;">🍽️ No orders yet</div>';
     return;
   }
   
@@ -489,18 +365,19 @@ function loadOrders() {
       <div class="order-header">
         <div class="order-id">${order.id}</div>
         <div class="badges">
-          <span class="badge badge-pay">${order.payMethod || 'UPI'}</span>
-          <span class="badge" style="background:${order.status === 'pending' ? '#ffede3' : order.status === 'ready' ? '#fff8e0' : '#e0e0e0'}; color:${order.status === 'pending' ? '#b7410e' : order.status === 'ready' ? '#c99c00' : '#666'}">
+          <span class="badge badge-pay">${order.payMethod}</span>
+          <span class="badge" style="background:${order.status === 'pending' ? '#ffede3' : order.status === 'ready' ? '#fff8e0' : '#e0e0e0'}">
             ${order.status === 'pending' ? '⏳ Pending' : order.status === 'ready' ? '🔥 Ready' : '✅ Done'}
           </span>
         </div>
       </div>
       <div class="order-items">
-        ${order.lines.map(line => `<span>${line.name} × ${line.qty} — ₹${line.price}</span>`).join('')}
+        ${order.lines.map(l => `${l.name} × ${l.qty} — ₹${l.total}`).join('<br>')}
+        ${order.gstRate > 0 ? `<br><small>GST ${order.gstRate}% (CGST:₹${order.cgst?.toFixed(2)} | SGST:₹${order.sgst?.toFixed(2)})</small>` : ''}
       </div>
       <div class="order-footer">
         <div class="order-total">₹${order.total}</div>
-        <div class="order-time">🕐 ${order.time || 'Just now'}</div>
+        <div><small>${order.date} | ${order.time}</small></div>
         ${order.status !== 'done' ? `<button class="action-btn" onclick="updateOrderStatus(${idx}, '${order.status === 'pending' ? 'ready' : 'done'}')">
           ${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}
         </button>` : ''}
@@ -515,24 +392,43 @@ function updateOrderStatus(orderIndex, newStatus) {
     orders[orderIndex].status = newStatus;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
     loadOrders();
-    if (newStatus === 'ready') playNewOrderSound();
     showToast(`Order ${orders[orderIndex].id} marked as ${newStatus}`);
   }
 }
 
-// LOGIN FUNCTIONS
+function openGSTModal() {
+  document.getElementById('gstEnabled').value = localStorage.getItem(GST_ENABLED_KEY);
+  document.getElementById('gstRate').value = localStorage.getItem(GST_RATE_KEY);
+  document.getElementById('gstModal').style.display = 'flex';
+}
+
+function closeGSTModal() {
+  document.getElementById('gstModal').style.display = 'none';
+}
+
+function saveGSTSettings() {
+  const enabled = document.getElementById('gstEnabled').value === 'true';
+  const rate = parseFloat(document.getElementById('gstRate').value);
+  if (isNaN(rate) || rate < 0 || rate > 28) {
+    showToast('❌ Please enter valid GST rate (0-28%)');
+    return;
+  }
+  localStorage.setItem(GST_ENABLED_KEY, enabled);
+  localStorage.setItem(GST_RATE_KEY, rate);
+  closeGSTModal();
+  showToast(`✅ GST ${enabled ? 'Enabled' : 'Disabled'} | Rate: ${rate}%`);
+}
+
 function checkLogin() {
-  const password = document.getElementById('loginPassword').value;
-  const savedPassword = localStorage.getItem(PASSWORD_KEY);
-  
-  if (password === savedPassword) {
+  const pwd = document.getElementById('loginPassword').value;
+  if (pwd === localStorage.getItem(PASSWORD_KEY)) {
     document.getElementById('loginModal').style.display = 'none';
     document.getElementById('adminContent').style.display = 'block';
     startAutoRefresh();
     loadOrders();
-    showToast('✅ Login successful!');
+    showToast('✅ Login successful');
   } else {
-    document.getElementById('loginError').innerText = '❌ Incorrect password!';
+    document.getElementById('loginError').innerText = '❌ Incorrect password';
   }
 }
 
@@ -540,65 +436,18 @@ function logout() {
   document.getElementById('adminContent').style.display = 'none';
   document.getElementById('loginModal').style.display = 'flex';
   document.getElementById('loginPassword').value = '';
-  document.getElementById('loginError').innerText = '';
   if (refreshInterval) clearInterval(refreshInterval);
-  showToast('🔒 Logged out successfully');
-}
-
-// CHANGE PASSWORD FUNCTIONS
-function openChangePwdModal() {
-  document.getElementById('changePwdModal').style.display = 'flex';
-  document.getElementById('oldPassword').value = '';
-  document.getElementById('newPassword').value = '';
-  document.getElementById('confirmPassword').value = '';
-}
-
-function closeChangePwdModal() {
-  document.getElementById('changePwdModal').style.display = 'none';
-}
-
-function changePassword() {
-  const oldPwd = document.getElementById('oldPassword').value;
-  const newPwd = document.getElementById('newPassword').value;
-  const confirmPwd = document.getElementById('confirmPassword').value;
-  const savedPwd = localStorage.getItem(PASSWORD_KEY);
-  
-  if (oldPwd !== savedPwd) {
-    showToast('❌ Current password is incorrect!', true);
-    return;
-  }
-  
-  if (newPwd.length < 4) {
-    showToast('❌ New password must be at least 4 characters!', true);
-    return;
-  }
-  
-  if (newPwd !== confirmPwd) {
-    showToast('❌ New passwords do not match!', true);
-    return;
-  }
-  
-  localStorage.setItem(PASSWORD_KEY, newPwd);
-  closeChangePwdModal();
-  showToast('✅ Password changed successfully!');
+  showToast('🔒 Logged out');
 }
 
 function startAutoRefresh() {
   if (refreshInterval) clearInterval(refreshInterval);
-  refreshInterval = setInterval(() => loadOrders(), 3000);
+  refreshInterval = setInterval(loadOrders, 3000);
 }
 
 window.addEventListener('storage', (e) => {
-  if (e.key === STORAGE_KEY && document.getElementById('adminContent').style.display === 'block') {
-    loadOrders();
-  }
+  if (e.key === STORAGE_KEY && document.getElementById('adminContent').style.display === 'block') loadOrders();
 });
-
-// Check if already logged in (optional - session persistence)
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('logout') === '1') {
-  logout();
-}
 </script>
 </body>
 </html>
