@@ -34,7 +34,6 @@ body {
   color: var(--azh-text);
 }
 
-/* Navigation */
 .app-nav {
   display: flex;
   background: var(--azh-dark);
@@ -67,7 +66,6 @@ body {
   display: flex;
 }
 
-/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%);
   padding: 28px 24px 32px;
@@ -135,7 +133,6 @@ body {
   50% { opacity: 0.5; transform: scale(1.2);}
 }
 
-/* Filter Bar */
 .fbar {
   display: flex;
   gap: 12px;
@@ -164,7 +161,6 @@ body {
   border-color: var(--azh-primary);
 }
 
-/* Menu Grid */
 .mgrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -265,7 +261,6 @@ body {
   text-align: center;
 }
 
-/* Cart Bar */
 .cbar {
   background: var(--azh-dark);
   color: white;
@@ -297,7 +292,6 @@ body {
   cursor: not-allowed;
 }
 
-/* Modal */
 .moverlay {
   position: fixed;
   inset: 0;
@@ -500,8 +494,6 @@ body {
   pointer-events: none;
 }
 .toast.show { opacity: 1; }
-
-/* App Buttons Row */
 .app-buttons {
   display: flex;
   gap: 12px;
@@ -522,24 +514,10 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.2s;
 }
-.app-btn.gpay {
-  background: #1a73e8;
-  color: white;
-}
-.app-btn.phonepe {
-  background: #5f259f;
-  color: white;
-}
-.app-btn.paytm {
-  background: #00baf2;
-  color: white;
-}
-.app-btn.whatsapp {
-  background: #25d366;
-  color: white;
-}
+.app-btn.gpay { background: #1a73e8; color: white; }
+.app-btn.phonepe { background: #5f259f; color: white; }
+.app-btn.paytm { background: #00baf2; color: white; }
 </style>
 </head>
 <body>
@@ -549,7 +527,6 @@ body {
   <div class="nt" data-view="imgtool">🖼️ Images</div>
 </nav>
 
-<!-- CUSTOMER VIEW -->
 <div class="view active" id="view-customer">
   <div class="hero">
     <div class="hero-row">
@@ -570,7 +547,6 @@ body {
   </div>
 </div>
 
-<!-- IMAGE TOOL VIEW -->
 <div class="view" id="view-imgtool">
   <div class="ithdr" style="background:#2c1a0f; padding:22px 24px; color:white;">
     <h2>📸 Dish Images</h2>
@@ -579,7 +555,6 @@ body {
   <div class="ibody" style="padding:20px; display:flex; flex-direction:column; gap:20px;" id="imgBody"></div>
 </div>
 
-<!-- PAYMENT MODAL -->
 <div class="moverlay" id="payModal">
   <div class="msheet">
     <div class="shandle"></div>
@@ -588,7 +563,6 @@ body {
       <div class="shdr"><div class="stitle">✨ Complete Order</div><button class="xbtn" onclick="closeModal()">✕</button></div>
       <div class="osum"><div class="slbl">Your selection</div><div id="summaryLines"></div><div class="strow"><span>Total</span><span id="summaryTotal">₹0</span></div></div>
       
-      <!-- DIRECT APP BUTTONS SECTION -->
       <div class="pmethods">
         <div class="slbl">📱 Pay via App (Opens Directly)</div>
         <div class="app-buttons" id="directAppButtons"></div>
@@ -610,7 +584,7 @@ body {
         <div class="qrbox"><div class="qrcw" id="qrWrap"></div><div class="qru" id="qrLabel">UPI Payment</div><div class="qra" id="qrAmt">₹0</div></div>
         <div class="app-buttons" id="qrAppButtons"></div>
         <div class="urow"><div class="uid" id="upiIdTxt">azhagu@okhdfcbank</div><button class="cpbtn" onclick="copyUPI()">Copy ID</button></div>
-        <button class="pcbtn paid" style="background:#2a7f49; margin-top:12px;" onclick="confirmPay()">✅ I have paid</button>
+        <button class="pcbtn paid" style="background:#2a7f49; margin-top:12px;" onclick="autoConfirmAfterPay()">✅ I have paid (Confirm Order)</button>
         <button class="backlink" style="margin-top:12px; background:none; border:none; color:#9b7b5c;" onclick="showStep('stepMethod')">← Back</button>
       </div>
     </div>
@@ -618,7 +592,7 @@ body {
     <div id="stepCash" style="display:none">
       <div class="shdr"><div class="stitle">💵 Pay at Counter</div><button class="xbtn" onclick="closeModal()">✕</button></div>
       <div class="cashsec"><div class="camt" id="cashAmt">₹0</div><div class="cnote">Please pay at the front desk.<br>We'll prepare your order immediately.</div>
-      <button class="pcbtn" style="margin:18px 0 8px;" onclick="confirmPay()">✅ Confirm Order</button>
+      <button class="pcbtn" style="margin:18px 0 8px;" onclick="autoConfirmAfterPay()">✅ Confirm Order</button>
       <button class="backlink" onclick="showStep('stepMethod')">← Change method</button></div>
     </div>
 
@@ -627,7 +601,7 @@ body {
       <div class="sucsub">Your delicious food is being prepared.<br>Azhagu Hotel thanks you.</div>
       <div class="oidbadge" id="sucOrderId">ORD-001</div>
       <div>Payment: <span id="sucPayMethod">UPI</span></div>
-      <button class="donebtn" style="background:#b7410e; color:white; margin-top:20px; padding:12px 28px; border:none; border-radius:40px; cursor:pointer;" onclick="closeModal()">🍽️ Order More</button></div>
+      <button class="donebtn" style="background:#b7410e; color:white; margin-top:20px; padding:12px 28px; border:none; border-radius:40px; cursor:pointer;" onclick="closeModalAndReset()">🍽️ Order More</button>
     </div>
   </div>
 </div>
@@ -635,7 +609,6 @@ body {
 <div class="toast" id="toast"></div>
 
 <script>
-// ==================== MENU DATA ====================
 const menuData = [
   {id:1, name:'Ghee Roast Dosa', price:55, category:'tiffin', note:'crispy + chutney', emoji:'🥞', img:null},
   {id:2, name:'Mini Idly', price:25, category:'tiffin', note:'10 pcs', emoji:'🍚', img:null},
@@ -646,23 +619,19 @@ const menuData = [
   {id:7, name:'Elaneer Juice', price:45, category:'drinks', note:'tender coconut', emoji:'🥥', img:null}
 ];
 
-// ==================== GLOBAL STATE ====================
 let cart = {};
 let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
 let orderCounter = orders.length + 1;
 let curFilter = 'all';
 let selPayMethod = 'upi';
 let timerInterval = null;
+let pendingOrderData = null;
 
 const UPI_ID = 'azhagu@okhdfcbank';
 const UPI_NAME = 'Azhagu Hotel';
 
-// ==================== SAVE ORDERS TO LOCALSTORAGE ====================
-function saveOrders() {
-  localStorage.setItem('azhagu_orders', JSON.stringify(orders));
-}
+function saveOrders() { localStorage.setItem('azhagu_orders', JSON.stringify(orders)); }
 
-// ==================== MENU RENDER ====================
 function renderMenu() {
   const grid = document.getElementById('menuGrid');
   const filtered = curFilter === 'all' ? menuData : menuData.filter(i => i.category === curFilter);
@@ -701,68 +670,35 @@ function getTotal() {
   return t;
 }
 
-// ==================== DIRECT APP OPENING (INTENTS) ====================
 function openUPIApp(appName, amount) {
-  const packageName = {
-    gpay: 'com.google.android.apps.nbu.paisa.user',
-    phonepe: 'com.phonepe.app',
-    paytm: 'net.one97.paytm',
-    amazonpay: 'in.amazon.mShop.android.shopping'
-  };
-  
   const upiIntent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=AzhaguHotelOrder`;
-  
-  if (appName === 'gpay') {
-    window.location.href = `intent://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${amount}&cu=INR#Intent;scheme=upi;package=${packageName.gpay};end`;
-    setTimeout(() => { window.location.href = upiIntent; }, 500);
-  } else if (appName === 'phonepe') {
-    window.location.href = `intent://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${amount}&cu=INR#Intent;scheme=upi;package=${packageName.phonepe};end`;
-    setTimeout(() => { window.location.href = upiIntent; }, 500);
-  } else if (appName === 'paytm') {
-    window.location.href = `intent://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${amount}&cu=INR#Intent;scheme=upi;package=${packageName.paytm};end`;
-    setTimeout(() => { window.location.href = upiIntent; }, 500);
-  } else {
-    window.location.href = upiIntent;
-  }
+  window.location.href = upiIntent;
+  setTimeout(() => { showToast('📱 Check your payment app'); }, 1000);
 }
 
 function renderDirectAppButtons(containerId, amount) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  
   container.innerHTML = `
-    <button class="app-btn gpay" onclick="openUPIApp('gpay', ${amount})">
-      <span>🅖</span> Google Pay
-    </button>
-    <button class="app-btn phonepe" onclick="openUPIApp('phonepe', ${amount})">
-      <span>💜</span> PhonePe
-    </button>
-    <button class="app-btn paytm" onclick="openUPIApp('paytm', ${amount})">
-      <span>🎯</span> Paytm
-    </button>
+    <button class="app-btn gpay" onclick="openUPIApp('gpay', ${amount})"><span>🅖</span> Google Pay</button>
+    <button class="app-btn phonepe" onclick="openUPIApp('phonepe', ${amount})"><span>💜</span> PhonePe</button>
+    <button class="app-btn paytm" onclick="openUPIApp('paytm', ${amount})"><span>🎯</span> Paytm</button>
   `;
 }
 
-// ==================== PAYMENT MODAL ====================
 function openPayModal() {
   if (!Object.keys(cart).length) return;
-  
   const total = getTotal();
   selPayMethod = 'upi';
-  
   document.querySelectorAll('.popt').forEach(p => p.classList.remove('selected'));
   document.getElementById('opt-upi').classList.add('selected');
-  
   const sumDiv = document.getElementById('summaryLines');
   sumDiv.innerHTML = Object.entries(cart).map(([id, qty]) => {
     const it = menuData.find(i => i.id == id);
     return `<div class="sline"><span>${it.name} × ${qty}</span><span>₹${it.price * qty}</span></div>`;
   }).join('');
   document.getElementById('summaryTotal').innerHTML = '₹' + total;
-  
-  // Render direct app buttons in stepMethod
   renderDirectAppButtons('directAppButtons', total);
-  
   showStep('stepMethod');
   document.getElementById('payModal').classList.add('open');
 }
@@ -770,6 +706,12 @@ function openPayModal() {
 function closeModal() {
   document.getElementById('payModal').classList.remove('open');
   if (timerInterval) clearInterval(timerInterval);
+  pendingOrderData = null;
+}
+
+function closeModalAndReset() {
+  closeModal();
+  location.reload();
 }
 
 function selPay(m) {
@@ -827,13 +769,15 @@ function copyUPI() {
   showToast('✅ UPI ID copied!');
 }
 
-function confirmPay() {
+// AUTO CONFIRM ORDER AFTER PAYMENT
+function autoConfirmAfterPay() {
   if (timerInterval) clearInterval(timerInterval);
   const payLabel = selPayMethod === 'cash' ? 'Cash' : 'UPI';
   const orderId = finalizeOrder(payLabel);
   document.getElementById('sucOrderId').innerText = orderId;
   document.getElementById('sucPayMethod').innerText = payLabel;
   showStep('stepSuccess');
+  showToast(`🎉 Order ${orderId} confirmed automatically!`);
 }
 
 function finalizeOrder(payMethod) {
@@ -857,7 +801,6 @@ function finalizeOrder(payMethod) {
   cart = {};
   renderMenu();
   updateCartBar();
-  showToast(`🎉 Order ${newOrder.id} placed!`);
   return newOrder.id;
 }
 
@@ -868,24 +811,23 @@ function showStep(id) {
   });
 }
 
-// ==================== IMAGE TOOL ====================
 function renderImgTool() {
   const body = document.getElementById('imgBody');
   if (!body) return;
   body.innerHTML = menuData.map(item => `
-    <div class="ie" style="background:white; border-radius:28px; overflow:hidden; border:1px solid #f0e2cf;">
-      <div class="iehead" style="background:#fff4ea; padding:14px 20px; display:flex; justify-content:space-between;">
+    <div style="background:white; border-radius:28px; overflow:hidden; border:1px solid #f0e2cf;">
+      <div style="background:#fff4ea; padding:14px 20px; display:flex; justify-content:space-between;">
         <span style="font-weight:700;">${item.emoji} ${item.name}</span>
         <span style="color:#b7410e; font-weight:700;">₹${item.price}</span>
       </div>
-      <div class="iebody" style="display:flex; gap:16px; padding:18px; flex-wrap:wrap;">
-        <div class="iprev" id="prev-${item.id}" onclick="document.getElementById('fi-${item.id}').click()" style="width:100px; height:100px; border-radius:20px; background:#fcf2e6; border:2px dashed #e2cfb5; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+      <div style="display:flex; gap:16px; padding:18px; flex-wrap:wrap;">
+        <div onclick="document.getElementById('fi-${item.id}').click()" style="width:100px; height:100px; border-radius:20px; background:#fcf2e6; border:2px dashed #e2cfb5; overflow:hidden; display:flex; align-items:center; justify-content:center; cursor:pointer;">
           ${item.img ? `<img src="${item.img}" style="width:100%; height:100%; object-fit:cover;">` : `<div style="font-size:30px;">📷</div>`}
         </div>
         <input type="file" accept="image/*" style="display:none" id="fi-${item.id}" onchange="handleImgUp(event,${item.id})">
         <div>
-          <button class="upbtn" onclick="document.getElementById('fi-${item.id}').click()" style="background:#b7410e; color:white; border:none; padding:8px 16px; border-radius:30px; margin-right:8px; cursor:pointer;">Upload</button>
-          <button class="rmbtn" onclick="removeImg(${item.id})" style="background:#f2e0d0; border:none; padding:8px 16px; border-radius:30px; cursor:pointer;">Remove</button>
+          <button onclick="document.getElementById('fi-${item.id}').click()" style="background:#b7410e; color:white; border:none; padding:8px 16px; border-radius:30px; margin-right:8px; cursor:pointer;">Upload</button>
+          <button onclick="removeImg(${item.id})" style="background:#f2e0d0; border:none; padding:8px 16px; border-radius:30px; cursor:pointer;">Remove</button>
           <div style="font-size:11px; margin-top:6px;">${item.img ? '✓ image set' : 'no image'}</div>
         </div>
       </div>
@@ -922,7 +864,6 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ==================== NAVIGATION ====================
 document.querySelectorAll('.nt').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
@@ -942,7 +883,6 @@ document.querySelectorAll('.fpill').forEach(p => {
   });
 });
 
-// ==================== INIT ====================
 renderMenu();
 renderImgTool();
 updateCartBar();
