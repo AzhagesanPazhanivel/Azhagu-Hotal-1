@@ -17,67 +17,56 @@
             --azh-dark: #2c1a0f;
             --azh-card: #ffffff;
             --azh-border: #f0e2cf;
-            --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
         }
-        body { font-family: 'DM Sans', sans-serif; background: var(--azh-cream); color: var(--azh-dark); overflow-x: hidden; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--azh-cream); color: var(--azh-dark); }
         .app-nav { display: flex; background: var(--azh-dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; }
-        .nt { padding: 14px 18px; font-size: 13px; font-weight: 600; color: rgba(255,248,235,0.7); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s ease; }
+        .nt { padding: 14px 18px; font-size: 13px; font-weight: 600; color: rgba(255,248,235,0.7); cursor: pointer; border-bottom: 3px solid transparent; }
         .nt.active { color: var(--azh-gold); border-bottom-color: var(--azh-gold); }
         .view { display: none; min-height: 100vh; flex-direction: column; }
         .view.active { display: flex; }
-        .hero { background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%); padding: 20px 20px 28px; color: white; position: relative; overflow: hidden; }
-        .hero::before { content: "🍛"; position: absolute; right: -20px; bottom: -20px; font-size: 100px; opacity: 0.1; }
-        .hero-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; position: relative; z-index: 2; }
+        .hero { background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%); padding: 20px; color: white; }
+        .hero-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .logo-box { width: 50px; height: 50px; border-radius: 20px; background: var(--azh-gold); display: flex; align-items: center; justify-content: center; font-size: 28px; }
-        .logo-text h1 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; }
-        .logo-text p { font-size: 11px; opacity: 0.8; }
-        .welcome-name { margin-left: auto; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 40px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .logo-text h1 { font-family: 'Playfair Display', serif; font-size: 22px; }
+        .welcome-name { margin-left: auto; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 40px; font-size: 12px; cursor: pointer; }
         .live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; width: fit-content; }
         .ld { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         .offer-banner { background: var(--azh-gold); color: var(--azh-dark); padding: 8px 16px; text-align: center; font-size: 12px; font-weight: 600; }
         .search-bar { padding: 12px 16px; background: white; border-bottom: 1px solid var(--azh-border); }
-        .search-input { width: 100%; padding: 12px 16px; border: 2px solid var(--azh-border); border-radius: 50px; font-size: 14px; font-family: inherit; transition: all 0.2s; }
-        .search-input:focus { outline: none; border-color: var(--azh-primary); }
-        .fbar { display: flex; gap: 10px; padding: 12px 16px; overflow-x: auto; background: white; border-bottom: 1px solid var(--azh-border); position: sticky; top: 52px; z-index: 99; scrollbar-width: thin; }
-        .fpill { padding: 6px 18px; border-radius: 40px; border: 1.5px solid var(--azh-border); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; background: white; color: #9b7b5c; transition: all 0.2s; }
-        .fpill.active { background: var(--azh-primary); color: white; border-color: var(--azh-primary); }
-        .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 16px; flex: 1; }
+        .search-input { width: 100%; padding: 12px 16px; border: 2px solid var(--azh-border); border-radius: 50px; font-size: 14px; }
+        .fbar { display: flex; gap: 10px; padding: 12px 16px; overflow-x: auto; background: white; border-bottom: 1px solid var(--azh-border); }
+        .fpill { padding: 6px 18px; border-radius: 40px; border: 1.5px solid var(--azh-border); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; background: white; color: #9b7b5c; }
+        .fpill.active { background: var(--azh-primary); color: white; }
+        .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 16px; }
         @media (max-width: 480px) { .mgrid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; } }
-        .mc { background: var(--azh-card); border-radius: 24px; overflow: hidden; border: 1px solid var(--azh-border); transition: all 0.25s ease; position: relative; }
+        .mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--azh-border); position: relative; }
         .offer-tag { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; z-index: 10; }
         .mi { position: relative; width: 100%; padding-top: 75%; background: #faeedb; overflow: hidden; }
-        .mi img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .mi .me { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
         .mb { padding: 10px 12px 14px; }
         .mn { font-size: 15px; font-weight: 700; }
-        .mnote { font-size: 10px; color: #9b7b5c; margin-top: 3px; }
         .mrow { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .mprice { font-size: 16px; font-weight: 800; color: var(--azh-primary); }
         .original-price { font-size: 12px; text-decoration: line-through; color: #999; margin-right: 5px; }
-        .qw { display: flex; align-items: center; gap: 6px; background: #fef6ed; padding: 2px 6px 2px 4px; border-radius: 40px; }
-        .qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; transition: all 0.15s; }
+        .qw { display: flex; align-items: center; gap: 6px; background: #fef6ed; padding: 2px 6px; border-radius: 40px; }
+        .qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; }
         .qb.plus { background: var(--azh-primary); color: white; }
         .qb.minus { border: 1px solid #e2cfb5; }
-        .unavailable { opacity: 0.6; filter: grayscale(0.3); }
-        .unavailable-badge { position: absolute; top: 10px; left: 10px; background: #999; color: white; font-size: 10px; padding: 3px 8px; border-radius: 20px; }
-        .cbar { background: var(--azh-dark); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; z-index: 150; }
+        .cbar { background: var(--azh-dark); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; }
         .ct { font-size: 22px; font-weight: 800; }
-        .pbtn { background: var(--azh-gold); color: var(--azh-dark); border: none; border-radius: 40px; padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .pbtn { background: var(--azh-gold); color: var(--azh-dark); border: none; border-radius: 40px; padding: 10px 24px; font-weight: 700; cursor: pointer; }
         .pbtn:disabled { background: #9b7b5c; opacity: 0.5; cursor: not-allowed; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(44,26,15,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
-        .modal-card { background: white; border-radius: 32px; padding: 32px; width: 90%; max-width: 400px; text-align: center; animation: modalPop 0.3s ease; }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-        .modal-card h3 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--azh-primary); margin-bottom: 8px; }
-        .modal-input { width: 100%; padding: 14px 18px; border: 2px solid var(--azh-border); border-radius: 60px; font-size: 16px; margin-bottom: 20px; font-family: inherit; text-align: center; }
+        .modal-card { background: white; border-radius: 32px; padding: 32px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-input { width: 100%; padding: 14px 18px; border: 2px solid var(--azh-border); border-radius: 60px; font-size: 16px; margin-bottom: 20px; }
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; opacity: 0; transition: opacity 0.2s; z-index: 999; pointer-events: none; white-space: nowrap; }
         .toast.show { opacity: 1; }
         @media (max-width: 480px) { .toast { white-space: normal; max-width: 85%; } }
         .order-history-list { padding: 16px; }
         .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--azh-border); cursor: pointer; }
-        .history-header { display: flex; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; }
+        .history-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .history-id { font-weight: 800; color: var(--azh-primary); font-size: 13px; }
         .history-date { font-size: 11px; color: #9b7b5c; }
         .history-total { font-weight: 800; font-size: 14px; color: var(--azh-green); }
@@ -101,9 +90,9 @@
     </div>
     <div id="offerBanner" class="offer-banner" style="display:none;"></div>
     <div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Search dishes..."></div>
-    <div class="fbar" id="filterBar"><div class="fpill active" data-cat="all">🍽️ All</div></div>
+    <div class="fbar" id="filterBar"><div class="fpill active" data-cat="all">🍽️ All</div><div class="fpill" data-cat="tiffin">🥞 Tiffin</div><div class="fpill" data-cat="drinks">🥤 Drinks</div><div class="fpill" data-cat="rice">🍚 Rice</div></div>
     <div class="mgrid" id="menuGrid"><div style="text-align:center; padding:40px;">Loading menu...</div></div>
-    <div class="cbar"><div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div><button class="pbtn" id="placeBtn" disabled onclick="proceedToPayment()">Order →</button></div>
+    <div class="cbar"><div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div><button class="pbtn" id="placeBtn" disabled onclick="placeOrder()">Order →</button></div>
 </div>
 
 <div class="view" id="view-orders">
@@ -114,6 +103,7 @@
 </div>
 
 <div id="nameModal" class="modal-overlay"><div class="modal-card"><h3>👤 Welcome!</h3><p>Please enter your name</p><input type="text" id="customerNameInput" class="modal-input" placeholder="Your name"><button class="pbtn" onclick="saveCustomerName()" style="width:100%;">Continue →</button></div></div>
+<div id="paymentModal" class="modal-overlay"><div class="modal-card"><h3>💵 Confirm Order</h3><p id="paymentAmount" style="font-size:24px; margin:20px;">Total: ₹0</p><button class="pbtn" onclick="confirmOrderDirect()" style="background:#2a7f49; color:white; width:100%;">Confirm Order</button><button onclick="closePaymentModal()" style="margin-top:10px; background:none; border:none; color:#999;">Cancel</button></div></div>
 
 <div id="toast" class="toast"></div>
 
@@ -132,11 +122,9 @@
     let customerName = localStorage.getItem('customerName') || '';
     let currentFilter = 'all';
     let searchQuery = '';
-    let currentBillOrder = null;
     let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
     let customerOrders = JSON.parse(localStorage.getItem('azhagu_customer_orders') || '[]');
     let orderCounter = Math.max(orders.length, customerOrders.length, 1);
-    
     let gstRate = 5;
     let gstEnabled = true;
     
@@ -168,7 +156,7 @@
         let subtotal = 0;
         for (const [id, qty] of Object.entries(cart)) {
             const item = menuItems.find(i => i.id == id);
-            if (item && item.available) {
+            if (item && item.available && item.approved) {
                 const price = getDiscountedPrice(item.price, item.id);
                 subtotal += price * qty;
             }
@@ -190,18 +178,17 @@
             const originalPrice = item.price;
             const discountedPrice = getDiscountedPrice(originalPrice, item.id);
             const hasOffer = discountedPrice < originalPrice;
-            const imgHtml = item.img ? `<img src="${item.img}">` : `<div class="me">${item.emoji}</div>`;
             
             return `<div class="mc">
                 ${hasOffer ? `<div class="offer-tag">${Math.round((1 - discountedPrice/originalPrice)*100)}% OFF</div>` : ''}
-                <div class="mi">${imgHtml}</div>
+                <div class="mi"><div class="me">${item.emoji || '🍽️'}</div></div>
                 <div class="mb">
                     <div class="mn">${item.name}</div>
                     <div class="mrow">
                         <div class="mprice">${hasOffer ? `<span class="original-price">₹${originalPrice}</span> ₹${discountedPrice}` : `₹${originalPrice}`}</div>
                         <div class="qw">
-                            ${qty > 0 ? `<button class="qb minus" onclick="updateCart(${item.id}, -1)">−</button><span class="qn">${qty}</span>` : ''}
-                            <button class="qb plus" onclick="updateCart(${item.id}, 1)">+</button>
+                            ${qty > 0 ? `<button class="qb minus" onclick="updateCart('${item.id}', -1)">−</button><span class="qn">${qty}</span>` : ''}
+                            <button class="qb plus" onclick="updateCart('${item.id}', 1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -211,7 +198,7 @@
     
     function updateCart(id, delta) {
         const item = menuItems.find(i => i.id == id);
-        if (!item || !item.available) return;
+        if (!item || !item.available || !item.approved) return;
         const newQty = Math.max(0, (cart[id] || 0) + delta);
         if (newQty === 0) delete cart[id];
         else cart[id] = newQty;
@@ -239,18 +226,21 @@
         showToast(`Welcome ${customerName}!`);
     }
     
-    function proceedToPayment() {
+    function placeOrder() {
         if (Object.keys(cart).length === 0) return;
         if (!customerName) { openNameModal(); return; }
-        showToast('Proceed to payment - Order will be confirmed');
-        confirmOrderDirect();
+        const { total } = getCartTotal();
+        document.getElementById('paymentAmount').innerHTML = `Total: ₹${total.toFixed(2)}`;
+        document.getElementById('paymentModal').classList.add('open');
     }
+    
+    function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
     
     async function confirmOrderDirect() {
         let subtotal = 0, itemsList = [];
         for (const [id, qty] of Object.entries(cart)) {
-            const item = menuItems.find(i => i.id == parseInt(id));
-            if (item && item.available) {
+            const item = menuItems.find(i => i.id == id);
+            if (item && item.available && item.approved) {
                 const price = getDiscountedPrice(item.price, item.id);
                 itemsList.push({ name: item.name, qty, price: price, total: price * qty });
                 subtotal += price * qty;
@@ -277,8 +267,9 @@
             localStorage.setItem('azhagu_orders', JSON.stringify(orders));
             localStorage.setItem('azhagu_customer_orders', JSON.stringify(customerOrders));
             cart = {}; renderMenu(); updateCartBar();
+            closePaymentModal();
             showToast(`✅ Order ${order.id} placed!`);
-        } catch(e) { showToast('Order failed', true); }
+        } catch(e) { showToast('Order failed: ' + e.message, true); }
     }
     
     function loadOrderHistory() {
@@ -288,44 +279,64 @@
         container.innerHTML = userOrders.map(order => `<div class="history-item"><div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div><div>${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div><div class="history-total">₹${order.total}</div></div>`).join('');
     }
     
-    // Load data from Firebase
-    async function loadMenuAndOffers() {
+    // Initialize Firebase Data
+    async function initializeFirebaseData() {
         try {
+            // Check if menu exists
             const menuSnapshot = await db.collection('menu').get();
-            if (!menuSnapshot.empty) {
-                menuItems = [];
-                menuSnapshot.forEach(doc => menuItems.push({ id: doc.id, ...doc.data() }));
-            } else {
-                // Default menu if empty
-                menuItems = [
-                    { id: "1", name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                    { id: "2", name: 'Mini Idly', price: 30, category: 'tiffin', emoji: '🍚', approved: true, available: true },
-                    { id: "3", name: 'Masala Dosa', price: 70, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                    { id: "4", name: 'Filter Coffee', price: 22, category: 'drinks', emoji: '☕', approved: true, available: true },
-                    { id: "5", name: 'Badam Milk', price: 35, category: 'drinks', emoji: '🥛', approved: true, available: true }
+            if (menuSnapshot.empty) {
+                const defaultMenu = [
+                    { name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞', approved: true, available: true },
+                    { name: 'Mini Idly', price: 30, category: 'tiffin', emoji: '🍚', approved: true, available: true },
+                    { name: 'Masala Dosa', price: 70, category: 'tiffin', emoji: '🥞', approved: true, available: true },
+                    { name: 'Vada', price: 15, category: 'tiffin', emoji: '🍩', approved: true, available: true },
+                    { name: 'Pongal', price: 55, category: 'tiffin', emoji: '🍲', approved: true, available: true },
+                    { name: 'Filter Coffee', price: 22, category: 'drinks', emoji: '☕', approved: true, available: true },
+                    { name: 'Badam Milk', price: 35, category: 'drinks', emoji: '🥛', approved: true, available: true },
+                    { name: 'Elaneer Juice', price: 45, category: 'drinks', emoji: '🥥', approved: true, available: true },
+                    { name: 'Lemon Rice', price: 50, category: 'rice', emoji: '🍚', approved: true, available: true },
+                    { name: 'Curd Rice', price: 45, category: 'rice', emoji: '🍚', approved: true, available: true }
                 ];
+                for (const item of defaultMenu) await db.collection('menu').add(item);
+                showToast('Default menu loaded!');
             }
             
+            // Load menu
+            const allMenu = await db.collection('menu').get();
+            menuItems = [];
+            allMenu.forEach(doc => menuItems.push({ id: doc.id, ...doc.data() }));
+            
+            // Load offers
             const offersSnapshot = await db.collection('offers').get();
             activeOffers = [];
             offersSnapshot.forEach(doc => { const data = doc.data(); if (data.active) activeOffers.push(data); });
             
-            const settingsSnapshot = await db.collection('settings').doc('gst').get();
-            if (settingsSnapshot.exists) {
-                gstRate = settingsSnapshot.data().rate || 5;
-                gstEnabled = settingsSnapshot.data().enabled !== false;
+            // Load GST settings
+            const settingsDoc = await db.collection('settings').doc('gst').get();
+            if (settingsDoc.exists) {
+                gstRate = settingsDoc.data().rate || 5;
+                gstEnabled = settingsDoc.data().enabled !== false;
+            } else {
+                await db.collection('settings').doc('gst').set({ enabled: true, rate: 5 });
             }
             
             renderMenu();
             if (activeOffers.length > 0) {
-                const banner = document.getElementById('offerBanner');
-                banner.innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
-                banner.style.display = 'block';
+                document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
+                document.getElementById('offerBanner').style.display = 'block';
             }
-        } catch(e) { console.error('Error loading:', e); }
+        } catch(e) { console.error('Init error:', e); showToast('Loading menu...', false); }
     }
     
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMenu(); });
+    document.querySelectorAll('.fpill').forEach(p => {
+        p.addEventListener('click', () => {
+            document.querySelectorAll('.fpill').forEach(f => f.classList.remove('active'));
+            p.classList.add('active');
+            currentFilter = p.dataset.cat;
+            renderMenu();
+        });
+    });
     document.querySelectorAll('.nt').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
@@ -339,7 +350,7 @@
     if (customerName) document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName.substring(0, 15)}`;
     else setTimeout(() => openNameModal(), 500);
     
-    loadMenuAndOffers();
+    initializeFirebaseData();
     updateCartBar();
 </script>
 </body>
