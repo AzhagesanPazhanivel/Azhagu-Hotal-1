@@ -2,880 +2,133 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Azhagu Hotel – Menu + Admin Panel (Live Orders)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azhagu Hotel – Admin Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --azh-primary: #b7410e;
   --azh-deep: #8b2c0d;
   --azh-gold: #e6b422;
   --azh-cream: #fff9ef;
-  --azh-green: #2a7f49;
   --azh-dark: #2c1a0f;
-  --azh-card: #ffffff;
   --azh-border: #f0e2cf;
-  --azh-text: #2b1e12;
-  --azh-muted: #9b7b5c;
   --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
 }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--azh-cream);
-  color: var(--azh-text);
-}
-
-/* Main Tab Bar */
-.main-tabs {
-  display: flex;
-  background: var(--azh-dark);
-  padding: 0 20px;
-  gap: 4px;
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-.main-tab {
-  padding: 16px 28px;
-  font-size: 16px;
-  font-weight: 700;
-  color: rgba(255, 248, 235, 0.7);
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s ease;
-}
-.main-tab.active {
-  color: var(--azh-gold);
-  border-bottom-color: var(--azh-gold);
-}
-.main-tab.admin-tab {
-  background: rgba(231, 76, 60, 0.2);
-}
-.main-tab.admin-tab.active {
-  background: transparent;
-}
-
-/* Panel visibility */
-.panel {
-  display: none;
-}
-.panel.active {
-  display: block;
-}
-
-/* Customer Panel Styles */
-.hero {
-  background: linear-gradient(135deg, var(--azh-primary) 0%, var(--azh-deep) 100%);
-  padding: 20px 20px 28px;
-  color: white;
-  position: relative;
-}
-.hero::before {
-  content: "🍛";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  font-size: 100px;
-  opacity: 0.1;
-}
-.hero-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 2;
-}
-.logo-box {
-  width: 50px;
-  height: 50px;
-  border-radius: 20px;
-  background: var(--azh-gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-}
-.logo-text h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 800;
-}
-.live-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 40px;
-  padding: 5px 12px;
-  font-size: 11px;
-  width: fit-content;
-}
-.ld {
-  width: 7px;
-  height: 7px;
-  background: #4caf50;
-  border-radius: 50%;
-  animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-  0%,100%{opacity:1} 50%{opacity:0.4}
-}
-.fbar {
-  display: flex;
-  gap: 10px;
-  padding: 12px 16px;
-  overflow-x: auto;
-  background: var(--azh-cream);
-  border-bottom: 1px solid var(--azh-border);
-  position: sticky;
-  top: 60px;
-  z-index: 99;
-}
-.fpill {
-  padding: 6px 18px;
-  border-radius: 40px;
-  border: 1.5px solid var(--azh-border);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  background: white;
-  color: var(--azh-muted);
-}
-.fpill.active {
-  background: var(--azh-primary);
-  color: white;
-  border-color: var(--azh-primary);
-}
-.mgrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 15px;
-  padding: 20px 16px;
-}
-@media (max-width: 480px) {
-  .mgrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 16px;
-  }
-}
-.mc {
-  background: var(--azh-card);
-  border-radius: 24px;
-  overflow: hidden;
-  border: 1px solid var(--azh-border);
-  transition: all 0.2s;
-  cursor: pointer;
-}
-.mc:active {
-  transform: scale(0.98);
-}
-.mi {
-  position: relative;
-  width: 100%;
-  padding-top: 75%;
-  background: #faeedb;
-  overflow: hidden;
-}
-.mi .me {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-}
-.mb {
-  padding: 10px 12px 14px;
-}
-.mn {
-  font-size: 15px;
-  font-weight: 700;
-}
-.mrow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-}
-.mprice {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--azh-primary);
-}
-.qw {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #fef6ed;
-  padding: 2px 6px 2px 4px;
-  border-radius: 40px;
-}
-.qb {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  border: none;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  background: white;
-}
-.qb.plus {
-  background: var(--azh-primary);
-  color: white;
-}
-.qb.minus {
-  border: 1px solid #e2cfb5;
-}
-.qn {
-  font-size: 14px;
-  font-weight: 700;
-  min-width: 18px;
-  text-align: center;
-}
-.cbar {
-  background: var(--azh-dark);
-  color: white;
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  bottom: 0;
-  z-index: 150;
-}
-.ct {
-  font-size: 22px;
-  font-weight: 800;
-}
-.pbtn {
-  background: var(--azh-gold);
-  color: var(--azh-dark);
-  border: none;
-  border-radius: 40px;
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.pbtn:disabled {
-  background: #9b7b5c;
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Admin Panel Styles */
-.admin-header {
-  background: linear-gradient(135deg, #2c1a0f 0%, #3f2618 100%);
-  padding: 20px 28px;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-.admin-header h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-}
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 15px;
-  padding: 20px 28px;
-}
-.stat-card {
-  background: white;
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--azh-border);
-}
-.stat-card h4 {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--azh-muted);
-  margin-bottom: 5px;
-}
-.stat-number {
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--azh-primary);
-}
-.orders-container {
-  padding: 0 28px 28px;
-  max-height: 55vh;
-  overflow-y: auto;
-}
-.order-card {
-  background: white;
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 12px;
-  border-left: 5px solid var(--azh-primary);
-  box-shadow: var(--shadow-sm);
-}
-.order-card.ready {
-  border-left-color: #f39c12;
-}
-.order-card.done {
-  border-left-color: #95a5a6;
-  opacity: 0.7;
-}
-.order-header {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-.order-id {
-  font-weight: 800;
-  font-size: 16px;
-}
-.customer-info {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.customer-badge {
-  background: #f0e4d4;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-}
-.order-items {
-  background: #faf6f0;
-  border-radius: 12px;
-  padding: 10px;
-  margin: 10px 0;
-  font-size: 12px;
-}
-.order-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-.order-total {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--azh-primary);
-}
-.status-btn {
-  background: var(--azh-primary);
-  color: white;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 600;
-}
-.empty-state {
-  text-align: center;
-  padding: 50px;
-  color: var(--azh-muted);
-}
-
-/* Modals (same as before) */
-.moverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(44, 26, 15, 0.8);
-  z-index: 500;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-.moverlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-.msheet {
-  background: #fffcf5;
-  border-radius: 28px 28px 0 0;
-  width: 100%;
-  max-width: 500px;
-  transform: translateY(60px);
-  transition: transform 0.35s;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-.moverlay.open .msheet {
-  transform: translateY(0);
-}
-.shandle {
-  width: 45px;
-  height: 4px;
-  background: #e2cfb5;
-  border-radius: 10px;
-  margin: 12px auto 6px;
-}
-.shdr {
-  padding: 14px 20px;
-  border-bottom: 1px solid var(--azh-border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.stitle {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--azh-primary);
-}
-.xbtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #f0e4d4;
-  border: none;
-  cursor: pointer;
-}
-.input-group {
-  padding: 16px 20px;
-}
-.input-group input {
-  width: 100%;
-  padding: 12px;
-  border: 1.5px solid var(--azh-border);
-  border-radius: 40px;
-  margin-top: 8px;
-}
-.otp-row {
-  display: flex;
-  gap: 10px;
-  padding: 0 20px 16px;
-}
-.send-otp-btn, .verify-otp-btn {
-  background: var(--azh-primary);
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 40px;
-  cursor: pointer;
-}
-.pcbtn {
-  width: calc(100% - 40px);
-  margin: 10px 20px;
-  padding: 12px;
-  background: var(--azh-primary);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #2c1a0f;
-  color: #ffecb3;
-  padding: 10px 20px;
-  border-radius: 40px;
-  font-size: 12px;
-  z-index: 999;
-  display: none;
-}
+body { font-family: 'DM Sans', sans-serif; background: #f5efe6; }
+.admin-header { background: linear-gradient(135deg, #2c1a0f 0%, #3f2618 100%); padding: 20px 28px; color: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+.admin-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; }
+.live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; }
+.ld { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 20px 28px; }
+.stat-card { background: white; border-radius: 20px; padding: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--azh-border); }
+.stat-card h4 { font-size: 11px; text-transform: uppercase; color: #9b7b5c; margin-bottom: 5px; }
+.stat-number { font-size: 28px; font-weight: 800; color: var(--azh-primary); }
+.orders-container { padding: 0 28px 28px; max-height: 60vh; overflow-y: auto; }
+.order-card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; border-left: 5px solid var(--azh-primary); box-shadow: var(--shadow-sm); animation: slideIn 0.3s ease; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+.order-card.ready { border-left-color: #f39c12; }
+.order-card.done { border-left-color: #95a5a6; opacity: 0.7; }
+.order-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px; }
+.order-id { font-weight: 800; font-size: 16px; color: var(--azh-primary); }
+.customer-info { display: flex; gap: 10px; flex-wrap: wrap; }
+.customer-badge { background: #f0e4d4; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.order-items { background: #faf6f0; border-radius: 12px; padding: 10px; margin: 10px 0; font-size: 12px; }
+.order-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+.order-total { font-size: 20px; font-weight: 800; color: var(--azh-primary); }
+.status-btn { background: var(--azh-primary); color: white; border: none; padding: 6px 16px; border-radius: 30px; cursor: pointer; font-size: 12px; font-weight: 600; }
+.status-btn:hover { background: var(--azh-deep); }
+.empty-state { text-align: center; padding: 50px; color: #9b7b5c; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; z-index: 999; display: none; }
 .toast.show { display: block; animation: fadeInOut 2s ease; }
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { opacity: 0; }
-}
+@keyframes fadeInOut { 0% { opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
+.refresh-btn { background: var(--azh-primary); color: white; border: none; padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; }
 </style>
 </head>
 <body>
-
-<!-- Main Tab Switcher -->
-<div class="main-tabs">
-  <div class="main-tab active" data-panel="customer">🍛 Customer Menu</div>
-  <div class="main-tab admin-tab" data-panel="admin">👑 Admin Dashboard</div>
-</div>
-
-<!-- Customer Panel -->
-<div id="panel-customer" class="panel active">
-  <div class="hero">
-    <div class="hero-row">
-      <div class="logo-box">✨</div>
-      <div class="logo-text">
-        <h1>Azhagu Hotel</h1>
-        <p>Pure Veg · Authentic Taste</p>
-      </div>
-    </div>
-    <div class="live-pill"><div class="ld"></div> LIVE ORDERS ACTIVE</div>
-  </div>
-  <div class="fbar" id="filterBar">
-    <div class="fpill active" data-cat="all">All Items</div>
-    <div class="fpill" data-cat="tiffin">Tiffin</div>
-    <div class="fpill" data-cat="drinks">Drinks</div>
-  </div>
-  <div class="mgrid" id="menuGrid"></div>
-  <div class="cbar">
-    <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
-    <button class="pbtn" id="placeBtn" disabled onclick="openOrderModal()">Order →</button>
+<div class="admin-header">
+  <h2>👑 Azhagu Admin Dashboard</h2>
+  <div style="display: flex; gap: 15px; align-items: center;">
+    <div class="live-pill"><div class="ld"></div> REAL-TIME: 1s</div>
+    <button class="refresh-btn" onclick="loadOrders()">⟳ Refresh</button>
   </div>
 </div>
-
-<!-- Admin Panel -->
-<div id="panel-admin" class="panel">
-  <div class="admin-header">
-    <h2>👑 Azhagu Admin Dashboard</h2>
-    <div class="live-pill"><div class="ld"></div> REAL-TIME: 0.1s</div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card"><h4>📊 Total Orders</h4><div class="stat-number" id="adminTotalOrders">0</div></div>
-    <div class="stat-card"><h4>⏳ Pending</h4><div class="stat-number" id="adminPendingOrders">0</div></div>
-    <div class="stat-card"><h4>✅ Completed</h4><div class="stat-number" id="adminCompletedOrders">0</div></div>
-    <div class="stat-card"><h4>💰 Revenue</h4><div class="stat-number" id="adminRevenue">₹0</div></div>
-  </div>
-  <div class="orders-container" id="adminOrdersList">
-    <div class="empty-state">No orders yet. Waiting for customers...</div>
-  </div>
+<div class="stats-grid">
+  <div class="stat-card"><h4>📊 Total Orders</h4><div class="stat-number" id="totalOrders">0</div></div>
+  <div class="stat-card"><h4>⏳ Pending</h4><div class="stat-number" id="pendingOrders">0</div></div>
+  <div class="stat-card"><h4>✅ Completed</h4><div class="stat-number" id="completedOrders">0</div></div>
+  <div class="stat-card"><h4>💰 Revenue</h4><div class="stat-number" id="revenue">₹0</div></div>
 </div>
-
-<!-- Order Modal -->
-<div class="moverlay" id="orderModal">
-  <div class="msheet">
-    <div class="shandle"></div>
-    <div class="shdr"><div class="stitle">📝 Place Order</div><button class="xbtn" onclick="closeOrderModal()">✕</button></div>
-    <div class="input-group"><label>📞 Mobile Number</label><input type="tel" id="modalMobile" placeholder="10 digits" maxlength="10"></div>
-    <div class="otp-row"><input type="text" id="modalOtp" placeholder="Enter OTP" disabled><button id="sendOtpBtnModal" onclick="sendOTPModal()">Send OTP</button><button id="verifyOtpBtnModal" onclick="verifyOTPModal()" disabled>Verify</button></div>
-    <div class="input-group"><label>🧑 Name</label><input type="text" id="modalName" placeholder="Your name" disabled></div>
-    <div id="modalStatus" style="font-size:12px; padding:0 20px; color:#e67e22;"></div>
-    <button id="proceedBtn" class="pcbtn" disabled onclick="proceedToPayment()">Proceed to Payment</button>
-  </div>
-</div>
-
-<!-- Payment Modal -->
-<div class="moverlay" id="paymentModal">
-  <div class="msheet">
-    <div class="shandle"></div>
-    <div class="shdr"><div class="stitle">💰 Payment</div><button class="xbtn" onclick="closePaymentModal()">✕</button></div>
-    <div id="paymentContent"></div>
-  </div>
-</div>
-
+<div class="orders-container" id="ordersList"><div class="empty-state">📭 Waiting for orders... Customers will appear here when they place orders.</div></div>
 <div id="toast" class="toast"></div>
 
 <script>
-// ============ DATA ============
 const STORAGE_KEY = 'azhagu_orders';
-const UPI_ID = 'azhagumani20-3@okicici';
-const GST_RATE = 5;
-
-const menuData = [
-  {id:1, name:'Ghee Roast Dosa', price:55, category:'tiffin', emoji:'🥞'},
-  {id:2, name:'Mini Idly', price:25, category:'tiffin', emoji:'🍚'},
-  {id:3, name:'Kuzhi Paniyaram', price:40, category:'tiffin', emoji:'🍘'},
-  {id:4, name:'Podi Pongal', price:50, category:'tiffin', emoji:'🍲'},
-  {id:5, name:'Filter Coffee', price:22, category:'drinks', emoji:'☕'},
-  {id:6, name:'Badam Milk', price:35, category:'drinks', emoji:'🥛'},
-  {id:7, name:'Elaneer Juice', price:45, category:'drinks', emoji:'🥥'}
-];
-
-let cart = {};
 let allOrders = [];
-let orderCounter = 1;
-let currentFilter = 'all';
-let pendingCustomer = { mobile: null, name: null, verified: false, otp: null };
+let lastOrderCount = 0;
 
-// Load orders from localStorage
 function loadOrders() {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    allOrders = JSON.parse(stored);
-    orderCounter = Math.max(allOrders.length + 1, 1);
-  } else {
-    allOrders = [];
-  }
-  refreshAdminPanel();
-}
-
-function saveOrders() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
-  refreshAdminPanel();
-}
-
-function refreshAdminPanel() {
+  if (stored) { allOrders = JSON.parse(stored); } else { allOrders = []; }
+  
   const pending = allOrders.filter(o => o.status === 'pending').length;
   const completed = allOrders.filter(o => o.status === 'done').length;
   const revenue = allOrders.filter(o => o.status === 'done').reduce((sum, o) => sum + o.total, 0);
   
-  document.getElementById('adminTotalOrders').innerText = allOrders.length;
-  document.getElementById('adminPendingOrders').innerText = pending;
-  document.getElementById('adminCompletedOrders').innerText = completed;
-  document.getElementById('adminRevenue').innerHTML = `₹${revenue}`;
+  document.getElementById('totalOrders').innerText = allOrders.length;
+  document.getElementById('pendingOrders').innerText = pending;
+  document.getElementById('completedOrders').innerText = completed;
+  document.getElementById('revenue').innerHTML = `₹${revenue.toFixed(2)}`;
   
-  const container = document.getElementById('adminOrdersList');
+  const container = document.getElementById('ordersList');
   if (allOrders.length === 0) {
-    container.innerHTML = '<div class="empty-state">📭 No orders yet</div>';
+    container.innerHTML = '<div class="empty-state">📭 Waiting for orders... Customers will appear here when they place orders.</div>';
     return;
   }
   
   container.innerHTML = allOrders.map((order, idx) => {
     const statusClass = order.status === 'ready' ? 'ready' : (order.status === 'done' ? 'done' : '');
     const statusText = order.status === 'pending' ? '⏳ Pending' : (order.status === 'ready' ? '🔥 Ready' : '✅ Done');
-    return `
-      <div class="order-card ${statusClass}">
-        <div class="order-header">
-          <span class="order-id">${order.id}</span>
-          <div class="customer-info">
-            <span class="customer-badge">👤 ${order.customerName || 'Guest'}</span>
-            <span class="customer-badge">📞 ${order.customerMobile ? '****' + order.customerMobile.slice(-4) : 'N/A'}</span>
-          </div>
-        </div>
-        <div class="order-items">
-          ${order.items.map(i => `<div>${i.name} × ${i.qty} = ₹${i.total}</div>`).join('')}
-          <small>GST: ₹${order.gstAmount.toFixed(2)}</small>
-        </div>
-        <div class="order-footer">
-          <span class="order-total">₹${order.total.toFixed(2)}</span>
-          <span>${order.time}</span>
-          ${order.status !== 'done' ? `<button class="status-btn" onclick="updateOrderStatus(${idx}, '${order.status === 'pending' ? 'ready' : 'done'}')">${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}</button>` : '<span>✅ Completed</span>'}
+    return `<div class="order-card ${statusClass}">
+      <div class="order-header">
+        <span class="order-id">📄 ${order.id}</span>
+        <div class="customer-info">
+          <span class="customer-badge">👤 ${order.customerName || 'Guest'}</span>
+          <span class="customer-badge">📞 ${order.customerMobile ? order.customerMobile.slice(0,3) + '****' + order.customerMobile.slice(-3) : 'N/A'}</span>
         </div>
       </div>
-    `;
+      <div class="order-items">
+        ${order.items.map(i => `<div>🍽️ ${i.name} × ${i.qty} = ₹${i.total}</div>`).join('')}
+        <small style="color:#666;">GST (5%): ₹${order.gstAmount.toFixed(2)}</small>
+      </div>
+      <div class="order-footer">
+        <span class="order-total">₹${order.total.toFixed(2)}</span>
+        <span style="font-size:11px; color:#999;">🕐 ${order.time}</span>
+        ${order.status !== 'done' ? `<button class="status-btn" onclick="updateOrderStatus(${idx}, '${order.status === 'pending' ? 'ready' : 'done'}')">${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}</button>` : '<span style="color:#95a5a6;">✅ Completed</span>'}
+      </div>
+    </div>`;
   }).join('');
+  
+  // Check for new orders
+  if (allOrders.length > lastOrderCount && lastOrderCount > 0) {
+    const newCount = allOrders.length - lastOrderCount;
+    showToast(`🔔 ${newCount} new order${newCount > 1 ? 's' : ''} received!`, false);
+  }
+  lastOrderCount = allOrders.length;
 }
 
 function updateOrderStatus(index, newStatus) {
   if (allOrders[index]) {
     allOrders[index].status = newStatus;
-    saveOrders();
-    showToast(`Order ${allOrders[index].id} marked as ${newStatus === 'ready' ? 'Ready' : 'Completed'}`);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allOrders));
+    loadOrders();
+    showToast(`✅ Order ${allOrders[index].id} marked as ${newStatus === 'ready' ? 'Ready' : 'Completed'}`);
   }
 }
 
-// Cart functions
-function renderMenu() {
-  const filtered = currentFilter === 'all' ? menuData : menuData.filter(i => i.category === currentFilter);
-  document.getElementById('menuGrid').innerHTML = filtered.map(item => {
-    const qty = cart[item.id] || 0;
-    return `<div class="mc">
-      <div class="mi"><div class="me">${item.emoji}</div></div>
-      <div class="mb">
-        <div class="mn">${item.name}</div>
-        <div class="mrow">
-          <div class="mprice">₹${item.price}</div>
-          <div class="qw">
-            ${qty > 0 ? `<button class="qb minus" onclick="updateCart(${item.id},-1)">−</button><span class="qn">${qty}</span>` : ''}
-            <button class="qb plus" onclick="updateCart(${item.id},1)">+</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function updateCart(id, delta) {
-  cart[id] = Math.max(0, (cart[id] || 0) + delta);
-  if (cart[id] === 0) delete cart[id];
-  renderMenu();
-  updateCartBar();
-}
-
-function updateCartBar() {
-  let total = 0, count = 0;
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuData.find(i => i.id == id);
-    total += item.price * qty;
-    count += qty;
-  }
-  const gst = total * GST_RATE / 100;
-  document.getElementById('cartTotal').innerHTML = `₹${(total + gst).toFixed(2)}`;
-  document.getElementById('cartLbl').innerText = count + (count === 1 ? ' item' : ' items');
-  document.getElementById('placeBtn').disabled = count === 0;
-}
-
-// Order modal functions
-let currentOTP = null;
-let mobileVerified = false;
-
-function openOrderModal() {
-  if (Object.keys(cart).length === 0) return;
-  pendingCustomer = { mobile: null, name: null, verified: false, otp: null };
-  mobileVerified = false;
-  document.getElementById('modalMobile').value = '';
-  document.getElementById('modalOtp').value = '';
-  document.getElementById('modalName').value = '';
-  document.getElementById('modalName').disabled = true;
-  document.getElementById('modalOtp').disabled = true;
-  document.getElementById('verifyOtpBtnModal').disabled = true;
-  document.getElementById('proceedBtn').disabled = true;
-  document.getElementById('sendOtpBtnModal').disabled = false;
-  document.getElementById('modalStatus').innerHTML = '';
-  document.getElementById('orderModal').classList.add('open');
-}
-
-function closeOrderModal() {
-  document.getElementById('orderModal').classList.remove('open');
-}
-
-function sendOTPModal() {
-  const mobile = document.getElementById('modalMobile').value.trim();
-  if (!/^\d{10}$/.test(mobile)) {
-    showToast('Enter valid 10-digit mobile', true);
-    return;
-  }
-  currentOTP = Math.floor(100000 + Math.random() * 900000).toString();
-  pendingCustomer.mobile = mobile;
-  pendingCustomer.otp = currentOTP;
-  document.getElementById('modalOtp').disabled = false;
-  document.getElementById('verifyOtpBtnModal').disabled = false;
-  document.getElementById('sendOtpBtnModal').disabled = true;
-  document.getElementById('modalStatus').innerHTML = `📲 OTP sent: ${currentOTP} (demo)`;
-  showToast(`OTP: ${currentOTP}`, false);
-}
-
-function verifyOTPModal() {
-  const entered = document.getElementById('modalOtp').value.trim();
-  if (entered !== currentOTP) {
-    showToast('Invalid OTP', true);
-    return;
-  }
-  mobileVerified = true;
-  pendingCustomer.verified = true;
-  document.getElementById('modalName').disabled = false;
-  document.getElementById('verifyOtpBtnModal').disabled = true;
-  document.getElementById('modalOtp').disabled = true;
-  document.getElementById('modalStatus').innerHTML = '✅ Mobile verified!';
-  document.getElementById('modalName').addEventListener('input', function checkName() {
-    const name = document.getElementById('modalName').value.trim();
-    document.getElementById('proceedBtn').disabled = name.length < 2;
-    if (name.length >= 2) pendingCustomer.name = name;
-  });
-}
-
-function proceedToPayment() {
-  const name = document.getElementById('modalName').value.trim();
-  if (!mobileVerified || name.length < 2) {
-    showToast('Please verify mobile and enter name', true);
-    return;
-  }
-  pendingCustomer.name = name;
-  closeOrderModal();
-  
-  // Calculate total with GST
-  let subtotal = 0;
-  const items = [];
-  for (const [id, qty] of Object.entries(cart)) {
-    const item = menuData.find(i => i.id == id);
-    subtotal += item.price * qty;
-    items.push({ name: item.name, qty, price: item.price, total: item.price * qty });
-  }
-  const gstAmount = subtotal * GST_RATE / 100;
-  const total = subtotal + gstAmount;
-  
-  document.getElementById('paymentContent').innerHTML = `
-    <div style="padding:20px">
-      <h3>Order Summary</h3>
-      ${items.map(i => `<div>${i.name} x${i.qty} = ₹${i.total}</div>`).join('')}
-      <div style="margin:10px 0">GST (5%): ₹${gstAmount.toFixed(2)}</div>
-      <div style="font-size:20px; font-weight:800">Total: ₹${total.toFixed(2)}</div>
-      <div class="qrbox" style="margin:20px 0; text-align:center">
-        <div id="qrCodeDiv" style="width:180px; height:180px; margin:0 auto"></div>
-        <div style="margin-top:10px">UPI: ${UPI_ID}</div>
-        <button class="cpbtn" style="margin-top:10px" onclick="copyUPI()">Copy UPI ID</button>
-      </div>
-      <div class="checkbox-row" style="margin:10px 0">
-        <input type="checkbox" id="paymentConfirm"> <label>✅ I have completed the payment</label>
-      </div>
-      <input type="text" id="utrInput" placeholder="UTR (optional)" style="width:100%; padding:10px; margin:10px 0; border-radius:30px; border:1px solid #ccc">
-      <button class="pcbtn" onclick="finalizeOrder(${total}, '${JSON.stringify(items).replace(/"/g, '&quot;')}', ${subtotal}, ${gstAmount})">Confirm Order</button>
-    </div>
-  `;
-  
-  // Generate QR
-  const qrUrl = `upi://pay?pa=${UPI_ID}&pn=Azhagu&am=${total}&cu=INR`;
-  setTimeout(() => {
-    const qrDiv = document.getElementById('qrCodeDiv');
-    if (qrDiv && typeof QRCode !== 'undefined') {
-      new QRCode(qrDiv, { text: qrUrl, width: 170, height: 170 });
-    }
-  }, 100);
-  
-  document.getElementById('paymentModal').classList.add('open');
-}
-
-function copyUPI() {
-  navigator.clipboard.writeText(UPI_ID);
-  showToast('UPI ID copied!');
-}
-
-function finalizeOrder(total, itemsJson, subtotal, gstAmount) {
-  const confirmCheck = document.getElementById('paymentConfirm');
-  if (!confirmCheck || !confirmCheck.checked) {
-    showToast('Please confirm payment completion', true);
-    return;
-  }
-  
-  const items = JSON.parse(itemsJson);
-  const orderId = `ORD-${String(orderCounter++).padStart(3, '0')}`;
-  const now = new Date();
-  
-  const newOrder = {
-    id: orderId,
-    customerName: pendingCustomer.name,
-    customerMobile: pendingCustomer.mobile,
-    items: items,
-    subtotal: subtotal,
-    gstAmount: gstAmount,
-    total: total,
-    status: 'pending',
-    time: now.toLocaleTimeString(),
-    date: now.toLocaleDateString(),
-    timestamp: Date.now()
-  };
-  
-  allOrders.unshift(newOrder);
-  saveOrders();
-  
-  // Clear cart
-  cart = {};
-  renderMenu();
-  updateCartBar();
-  
-  closePaymentModal();
-  showToast(`✅ Order ${orderId} placed successfully!`);
-  
-  // Switch to admin view to show order
-  setTimeout(() => {
-    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelector('.main-tab[data-panel="admin"]').classList.add('active');
-    document.getElementById('panel-admin').classList.add('active');
-    showToast('🔔 New order received in Admin Panel!');
-  }, 500);
-}
-
-function closePaymentModal() {
-  document.getElementById('paymentModal').classList.remove('open');
-}
-
-function showToast(msg, isError = false) {
+function showToast(msg, isError=false) {
   const toast = document.getElementById('toast');
   toast.textContent = msg;
   toast.style.background = isError ? '#c0392b' : '#2c1a0f';
@@ -883,43 +136,9 @@ function showToast(msg, isError = false) {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// Tab switching
-document.querySelectorAll('.main-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(`panel-${tab.dataset.panel}`).classList.add('active');
-    if (tab.dataset.panel === 'admin') refreshAdminPanel();
-  });
-});
-
-// Filter
-document.querySelectorAll('.fpill').forEach(p => {
-  p.addEventListener('click', () => {
-    document.querySelectorAll('.fpill').forEach(f => f.classList.remove('active'));
-    p.classList.add('active');
-    currentFilter = p.dataset.cat;
-    renderMenu();
-  });
-});
-
-// Auto refresh admin every 0.1 seconds
-setInterval(() => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored) {
-    const newOrders = JSON.parse(stored);
-    if (JSON.stringify(newOrders) !== JSON.stringify(allOrders)) {
-      allOrders = newOrders;
-      refreshAdminPanel();
-    }
-  }
-}, 100);
-
-// Initial load
+// Auto-refresh every 1 second
+setInterval(() => { loadOrders(); }, 1000);
 loadOrders();
-renderMenu();
-updateCartBar();
 </script>
 </body>
 </html>
