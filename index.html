@@ -732,10 +732,17 @@
     }
     
     function showBill(order) {
-        const billHtml = generateBillHTML(order);
-        document.getElementById('billContent').innerHTML = billHtml + `<button class="print-btn" onclick="printBill()">🖨️ Print Bill</button>`;
-        document.getElementById('billModal').style.display = 'flex';
-    }
+    const billHtml = generateBillHTML(order);
+    document.getElementById('billContent').innerHTML = billHtml + `
+        <button class="print-btn" onclick="printBill()">🖨️ Print Bill</button>
+        <button class="close-bill-btn" onclick="closeBillModal()">← Back to Menu</button>
+    `;
+    document.getElementById('billModal').style.display = 'flex';
+}
+
+function closeBillModal() {
+    document.getElementById('billModal').style.display = 'none';
+}
     
     function printBill() {
         const html = generateBillHTML(currentBillOrder);
