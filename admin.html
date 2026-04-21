@@ -17,7 +17,6 @@
             --border: #f0e2cf;
         }
         
-        /* Login Modal */
         .login-overlay {
             position: fixed; inset: 0; background: linear-gradient(135deg, rgba(44,26,15,0.98), rgba(44,26,15,0.95));
             z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);
@@ -26,11 +25,14 @@
             background: white; border-radius: 48px; padding: 48px 40px; width: 90%; max-width: 420px; text-align: center;
         }
         .login-card h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--primary); margin-bottom: 8px; }
+        .login-card p { color: #666; margin-bottom: 25px; font-size: 14px; }
         .login-input-group { margin-bottom: 20px; text-align: left; }
         .login-input-group label { display: block; font-size: 12px; font-weight: 600; color: #9b7b5c; margin-bottom: 5px; text-transform: uppercase; }
         .login-input { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 60px; font-size: 15px; }
+        .login-input:focus { outline: none; border-color: var(--primary); }
         .login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--deep)); color: white; border: none; border-radius: 60px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .error-msg { color: #e74c3c; font-size: 13px; margin-top: 12px; }
+        .error-msg { color: #e74c3c; font-size: 13px; margin-top: 12px; padding: 10px; background: #ffe; border-radius: 12px; }
+        .info-msg { background: #e3f2fd; color: #1565c0; font-size: 12px; margin-top: 15px; padding: 10px; border-radius: 12px; }
         
         .admin-content { display: none; }
         .admin-header {
@@ -101,18 +103,22 @@
 <!-- LOGIN MODAL -->
 <div id="loginModal" class="login-overlay">
     <div class="login-card">
-        <h2>🔐 Secure Admin Login</h2>
-        <div class="hotel-name">🍛 Azhagu Unavagam</div>
-        <div class="login-input-group"><label>📧 Email</label><input type="email" id="loginEmail" class="login-input" placeholder="azhagumani20@gmail.com"></div>
-        <div class="login-input-group"><label>🔒 Password</label><input type="password" id="loginPassword" class="login-input" placeholder="Azhagesan09@" onkeypress="if(event.key==='Enter') checkLogin()"></div>
-        <button class="login-btn" onclick="checkLogin()">Secure Login →</button>
+        <h2>🔐 Admin Login</h2>
+        <p>Enter your credentials to access dashboard</p>
+        <div class="login-input-group"><label>📧 Email Address</label><input type="email" id="loginEmail" class="login-input" placeholder="admin@example.com" value="azhagumani20@gmail.com"></div>
+        <div class="login-input-group"><label>🔒 Password</label><input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()"></div>
+        <button class="login-btn" onclick="checkLogin()">Login →</button>
         <div id="loginError" class="error-msg"></div>
+        <div class="info-msg">
+            ⚠️ Make sure Email/Password sign-in is ENABLED in:<br>
+            Firebase Console → Authentication → Sign-in methods
+        </div>
     </div>
 </div>
 
 <div id="adminContent" class="admin-content">
     <div class="admin-header">
-        <div><h1>🍛 Azhagu <span>Admin</span></h1><p style="font-size:12px;">Secure Control Panel</p></div>
+        <div><h1>🍛 Azhagu <span>Unavagam</span></h1><p style="font-size:12px;">Secure Admin Panel</p></div>
         <div class="header-right">
             <div class="datetime" id="datetimeDisplay"></div>
             <div class="live-badge"><div class="pulse-dot"></div><span>Live</span></div>
@@ -139,7 +145,7 @@
     
     <div id="tab-menu" class="tab-pane">
         <button class="add-btn" onclick="openAddDishModal()">+ Add New Dish</button>
-        <table class="data-table"><thead><tr><th>Dish</th><th>Price</th><th>Category</th><th>Status</th><th>Approval</th><th>Actions</th></tr></thead><tbody id="menuTableBody"></tbody></table>
+        <table class="data-table"><thead><tr><th>Dish</th><th>Price</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead><tbody id="menuTableBody"></tbody></table>
     </div>
     
     <div id="tab-offers" class="tab-pane">
@@ -149,6 +155,31 @@
 </div>
 
 <div id="toast" class="toast"></div>
+
+<!-- MODALS -->
+<div id="dishModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3 id="dishModalTitle">Add New Dish</h3>
+        <input type="text" id="dishName" placeholder="Dish Name">
+        <input type="number" id="dishPrice" placeholder="Price (₹)">
+        <select id="dishCategory"><option value="tiffin">Tiffin</option><option value="drinks">Drinks</option><option value="rice">Rice</option></select>
+        <input type="text" id="dishEmoji" placeholder="Emoji (e.g., 🥞)">
+        <input type="hidden" id="dishId">
+        <button onclick="saveDish()">Save Dish</button>
+        <button class="cancel-btn" onclick="closeDishModal()">Cancel</button>
+    </div>
+</div>
+
+<div id="offerModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Add Offer</h3>
+        <input type="text" id="offerTitle" placeholder="Offer Title">
+        <input type="number" id="offerValue" placeholder="Discount %">
+        <select id="offerItem"><option value="all">All Items</option></select>
+        <button onclick="saveOffer()">Save Offer</button>
+        <button class="cancel-btn" onclick="closeOfferModal()">Cancel</button>
+    </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -185,6 +216,8 @@
             return;
         }
         
+        document.getElementById('loginError').innerHTML = '⏳ Logging in...';
+        
         try {
             await auth.signInWithEmailAndPassword(email, password);
             document.getElementById('loginModal').style.display = 'none';
@@ -194,7 +227,15 @@
             loadOffers();
             showToast(`✅ Welcome ${email}!`);
         } catch(error) {
-            document.getElementById('loginError').innerHTML = '❌ ' + error.message;
+            let errorMsg = error.message;
+            if (error.code === 'auth/configuration-not-found') {
+                errorMsg = '❌ Authentication not enabled! Go to Firebase Console → Authentication → Sign-in methods → Enable Email/Password';
+            } else if (error.code === 'auth/user-not-found') {
+                errorMsg = '❌ User not found! Create user in Firebase Console → Authentication → Users → Add user';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMsg = '❌ Wrong password! Please try again.';
+            }
+            document.getElementById('loginError').innerHTML = errorMsg;
         }
     }
     
@@ -204,7 +245,7 @@
             if (unsubscribeOrders) unsubscribeOrders();
             document.getElementById('adminContent').style.display = 'none';
             document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginEmail').value = 'azhagumani20@gmail.com';
             document.getElementById('loginPassword').value = '';
             document.getElementById('loginError').innerHTML = '';
             showToast('🔒 Logged out securely');
@@ -235,14 +276,16 @@
     
     function renderMenuTable() {
         const tbody = document.getElementById('menuTableBody');
-        if (menuItems.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No items</td></tr>'; return; }
+        if (menuItems.length === 0) { 
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No items. Click "Add New Dish" to create.</td></tr>'; 
+            return; 
+        }
         tbody.innerHTML = menuItems.map(item => `
             <tr>
                 <td>${item.emoji || '🍽️'} ${item.name}</td>
                 <td>₹${item.price}</td>
                 <td>${item.category === 'tiffin' ? 'Tiffin' : item.category === 'drinks' ? 'Drinks' : 'Rice'}</td>
                 <td><span class="status-badge ${item.available ? 'status-available' : 'status-unavailable'}">${item.available ? 'Available' : 'Unavailable'}</span></td>
-                <td><span class="status-badge status-approved">Approved</span></td>
                 <td>
                     <button class="action-btn-sm btn-edit" onclick="editDish('${item.id}')">Edit</button>
                     <button class="action-btn-sm btn-toggle" onclick="toggleAvailability('${item.id}', ${!item.available})">${item.available ? 'Disable' : 'Enable'}</button>
@@ -261,7 +304,10 @@
     
     function renderOffersTable() {
         const tbody = document.getElementById('offersTableBody');
-        if (offers.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No offers</td></tr>'; return; }
+        if (offers.length === 0) { 
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No offers. Click "Add New Offer" to create.</td></tr>'; 
+            return; 
+        }
         tbody.innerHTML = offers.map(offer => `
             <tr>
                 <td>${offer.title || 'Offer'}</td>
@@ -288,8 +334,10 @@
             snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
             renderOrders(orders);
             updateOrderStats(orders);
-            if (window.lastOrderCount && orders.length > window.lastOrderCount) { playSound(); showToast(`🔔 New order!`); }
+            if (window.lastOrderCount && orders.length > window.lastOrderCount) { playSound(); showToast(`🔔 New order received!`); }
             window.lastOrderCount = orders.length;
+        }, (error) => {
+            console.error("Order listener error:", error);
         });
     }
     
@@ -303,7 +351,7 @@
                 <div class="order-footer">
                     <div style="font-size:20px; font-weight:800;">₹${(order.total || 0).toFixed(2)}</div>
                     <div>🕐 ${order.time || 'Just now'}</div>
-                    ${order.status !== 'done' ? `<button class="action-btn-sm btn-approve" onclick="updateOrderStatus('${order.id}', '${order.status === 'pending' ? 'ready' : 'done'}')">${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}</button>` : '<span style="color:#888;">✅ Done</span>'}
+                    ${order.status !== 'done' ? `<button class="action-btn-sm btn-approve" onclick="updateOrderStatus('${order.id}', '${order.status === 'pending' ? 'ready' : 'done'}')">${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}</button>` : '<span style="color:#888;">✅ Completed</span>'}
                 </div>
             </div>
         `).join('');
