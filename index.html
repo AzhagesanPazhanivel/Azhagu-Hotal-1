@@ -640,42 +640,42 @@
     }
     
     function generateBillHTML(order) {
-        const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
-        const payMethodMap = { 'gpay': 'Google Pay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
-        return `<!DOCTYPE html>
-        <html><head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
-        <style>
-            body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}
-            .header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:15px;}
-            .hotel-name{font-size:22px;font-weight:bold;color:#b7410e;}
-            .info-row{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}
-            .items-table{width:100%;margin:15px 0;border-collapse:collapse;}
-            .items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}
-            .grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}
-            .footer{text-align:center;margin-top:25px;font-size:10px;}
-            .security-stamp{color:green;margin-top:10px;}
-            @media print{body{padding:10px;}}
-        </style>
-        </head><body>
-            <div class="header">
-                <div class="hotel-name">🍛 ${HOTEL_NAME}</div>
-                <div>${HOTEL_ADDRESS}</div>
-                <div class="bill-title">TAX INVOICE</div>
-            </div>
-            <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
-            <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
-            <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
-            <div class="info-row"><span><strong>Trans ID:</strong> ${order.transactionId || 'N/A'}</span><span><strong>Status:</strong> Paid ✓</span></div>
-            <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
-            ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td>₹${l.total}</td></tr>`).join('')}</table>
-            <div class="grand-total">Total: ₹${order.total}</div>
-            <div class="footer">
-                <div>✨ Thank you! Visit Again ✨</div>
-                <div>UPI: ${UPI_ID}</div>
-                <div class="security-stamp">🔒 This is a system generated bill</div>
-            </div>
-        </body></html>`;
-    }
+    const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
+    const payMethodMap = { 'gpay': 'Google Pay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
+    return `<!DOCTYPE html>
+    <html><head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
+    <style>
+        body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}
+        .header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:15px;}
+        .hotel-name{font-size:22px;font-weight:bold;color:#b7410e;}
+        .info-row{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}
+        .items-table{width:100%;margin:15px 0;border-collapse:collapse;}
+        .items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}
+        .grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}
+        .footer{text-align:center;margin-top:25px;font-size:10px;}
+        .security-stamp{color:green;margin-top:10px;}
+        @media print{body{padding:10px;}}
+    </style>
+    </head><body>
+        <div class="header">
+            <div class="hotel-name">🍛 ${HOTEL_NAME}</div>
+            <div>${HOTEL_ADDRESS}</div>
+            <div class="bill-title">TAX INVOICE</div>
+        </div>
+        <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
+        <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
+        <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
+        <div class="info-row"><span><strong>Trans ID:</strong> ${order.transactionId || 'N/A'}</span><span><strong>Status:</strong> Paid ✓</span></div>
+        <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
+        ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')}</table>
+        <div class="grand-total">Total: ₹${order.total}</div>
+        <div class="footer">
+            <div>✨ Thank you! Visit Again ✨</div>
+            <div>UPI: ${UPI_ID}</div>
+            <div class="security-stamp">🔒 This is a system generated bill</div>
+        </div>
+    </body></html>`;
+}
     
     async function confirmOrderAndPlace() {
         const chk = document.getElementById('paymentConfirmCheckbox');
