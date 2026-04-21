@@ -116,125 +116,28 @@
         
         .bill-preview { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; display: none; }
         .bill-card { background: white; border-radius: 24px; width: 90%; max-width: 400px; padding: 24px; max-height: 85vh; overflow-y: auto; }
-        .bill-header { text-align: center; border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px; }
-        .bill-header { 
-    text-align: center; border-bottom: 1px dashed #ccc; 
-    padding-bottom: 10px; margin-bottom: 15px; 
-    display: flex; justify-content: space-between; align-items: center;
-}
-.bill-header h2 { color: var(--primary); margin: 0; }
-.bill-close-btn {
-    background: #ccc;
-    border: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-    font-weight: bold;
-}
-.bill-close-btn:hover { background: #999; }
-.print-btn { 
-    background: var(--primary); color: white; border: none; 
-    padding: 10px; border-radius: 40px; cursor: pointer; 
-    width: 100%; margin-top: 15px; font-weight: 600; 
-}
-.close-bill-btn {
-    background: #ccc;
-    color: #333;
-    border: none;
-    padding: 10px;
-    border-radius: 40px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 10px;
-    font-weight: 600;
-}
-.close-bill-btn:hover { background: #bbb; }
+        .bill-header { text-align: center; border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .bill-header h2 { color: var(--primary); margin: 0; }
+        .bill-close-btn { background: #ccc; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 18px; cursor: pointer; font-weight: bold; }
+        .bill-close-btn:hover { background: #999; }
         .print-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 40px; cursor: pointer; width: 100%; margin-top: 15px; font-weight: 600; }
-            /* Additional Styles for Payment Apps */
-        .payment-app-section {
-            margin-bottom: 20px;
-        }
-        .app-payment-box {
-            background: #f9efe2;
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-        }
-        .app-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
-        .app-name {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        .app-amount {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 10px 0;
-        }
-        .app-pay-btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin: 10px 0;
-            transition: all 0.2s;
-        }
-        .app-pay-btn:hover {
-            transform: scale(1.02);
-        }
+        .close-bill-btn { background: #ccc; color: #333; border: none; padding: 10px; border-radius: 40px; cursor: pointer; width: 100%; margin-top: 10px; font-weight: 600; }
+        .close-bill-btn:hover { background: #bbb; }
+        
+        .payment-app-section { margin-bottom: 20px; }
+        .app-payment-box { background: #f9efe2; border-radius: 20px; padding: 20px; text-align: center; }
+        .app-icon { font-size: 48px; margin-bottom: 10px; }
+        .app-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .app-amount { font-size: 24px; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        .app-pay-btn { width: 100%; padding: 14px; border: none; border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; margin: 10px 0; transition: all 0.2s; }
+        .app-pay-btn:hover { transform: scale(1.02); }
         .gpay-btn { background: #1a73e8; color: white; }
         .phonepe-btn { background: #5f259f; color: white; }
         .paytm-btn { background: #00baf2; color: white; }
-        .app-note {
-            font-size: 11px;
-            color: #666;
-            margin-top: 10px;
-        }
-        .transaction-input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid var(--border);
-            border-radius: 60px;
-            margin-top: 10px;
-            font-size: 12px;
-        }
-        .payment-methods {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .pay-method {
-            flex: 1;
-            padding: 12px 5px;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            text-align: center;
-            cursor: pointer;
-            background: white;
-            transition: all 0.2s;
-        }
-        .pay-method.selected {
-            border-color: var(--green);
-            background: #e8f5e9;
-        }
-        .pay-method .icon {
-            font-size: 24px;
-        }
-        .pay-method div:last-child {
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 5px;
-        }
+        .app-note { font-size: 11px; color: #666; margin-top: 10px; }
+        .transaction-input { width: 100%; padding: 10px; border: 2px solid var(--border); border-radius: 60px; margin-top: 10px; font-size: 12px; }
+        .pay-method .icon { font-size: 24px; }
+        .pay-method div:last-child { font-size: 12px; font-weight: 600; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -310,89 +213,62 @@
     </div>
 </div>
 
-<!-- PAYMENT MODAL -->
+<!-- PAYMENT MODAL - AUTOMATIC CONFIRMATION -->
 <div id="paymentModal" class="modal-overlay">
     <div class="modal-card">
         <h3>💳 Select Payment Method</h3>
         <div class="payment-amount"><div class="amount" id="paymentTotalAmount">₹0</div></div>
         
-        <!-- Payment Methods -->
         <div class="payment-methods">
-            <div class="pay-method selected" data-method="gpay" onclick="selectPaymentMethod('gpay')">
-                <div class="icon">🅖</div>
-                <div>Google Pay</div>
-            </div>
-            <div class="pay-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')">
-                <div class="icon">💜</div>
-                <div>PhonePe</div>
-            </div>
-            <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')">
-                <div class="icon">🎯</div>
-                <div>Paytm</div>
-            </div>
-            <div class="pay-method" data-method="upi" onclick="selectPaymentMethod('upi')">
-                <div class="icon">📱</div>
-                <div>UPI QR</div>
-            </div>
+            <div class="pay-method selected" data-method="gpay" onclick="selectPaymentMethod('gpay')"><div class="icon">🅖</div><div>Google Pay</div></div>
+            <div class="pay-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')"><div class="icon">💜</div><div>PhonePe</div></div>
+            <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')"><div class="icon">🎯</div><div>Paytm</div></div>
+            <div class="pay-method" data-method="upi" onclick="selectPaymentMethod('upi')"><div class="icon">📱</div><div>UPI QR</div></div>
         </div>
         
-        <!-- Google Pay Section -->
         <div id="gpaySection" class="payment-app-section">
             <div class="app-payment-box">
                 <div class="app-icon">🅖</div>
                 <div class="app-name">Google Pay</div>
                 <div class="app-amount" id="gpayAmount">₹0</div>
-                <button class="app-pay-btn gpay-btn" onclick="openPaymentApp('gpay')">Pay with Google Pay →</button>
-                <div class="app-note">After payment, please confirm below</div>
+                <button class="app-pay-btn gpay-btn" onclick="openPaymentAppAndPlaceOrder('gpay')">Pay with Google Pay →</button>
+                <div class="app-note">Click to pay - Order will be placed automatically after payment</div>
             </div>
         </div>
         
-        <!-- PhonePe Section -->
         <div id="phonepeSection" class="payment-app-section" style="display:none;">
             <div class="app-payment-box">
                 <div class="app-icon">💜</div>
                 <div class="app-name">PhonePe</div>
                 <div class="app-amount" id="phonepeAmount">₹0</div>
-                <button class="app-pay-btn phonepe-btn" onclick="openPaymentApp('phonepe')">Pay with PhonePe →</button>
-                <div class="app-note">After payment, please confirm below</div>
+                <button class="app-pay-btn phonepe-btn" onclick="openPaymentAppAndPlaceOrder('phonepe')">Pay with PhonePe →</button>
+                <div class="app-note">Click to pay - Order will be placed automatically after payment</div>
             </div>
         </div>
         
-        <!-- Paytm Section -->
         <div id="paytmSection" class="payment-app-section" style="display:none;">
             <div class="app-payment-box">
                 <div class="app-icon">🎯</div>
                 <div class="app-name">Paytm</div>
                 <div class="app-amount" id="paytmAmount">₹0</div>
-                <button class="app-pay-btn paytm-btn" onclick="openPaymentApp('paytm')">Pay with Paytm →</button>
-                <div class="app-note">After payment, please confirm below</div>
+                <button class="app-pay-btn paytm-btn" onclick="openPaymentAppAndPlaceOrder('paytm')">Pay with Paytm →</button>
+                <div class="app-note">Click to pay - Order will be placed automatically after payment</div>
             </div>
         </div>
         
-        <!-- UPI QR Section -->
         <div id="upiSection" class="payment-app-section" style="display:none;">
-            <div class="qr-container">
+            <div class="qr-container" style="background:#f9efe2; border-radius:20px; padding:20px; text-align:center;">
                 <div class="qr-code" id="qrCodeContainer"></div>
                 <div class="upi-id-box">
                     <span class="upi-id">azhagumani20-3@okicici</span>
                     <button class="copy-btn" onclick="copyUPIId()">Copy ID</button>
                 </div>
                 <div class="app-note">Scan QR code with any UPI app</div>
+                <button class="app-pay-btn" style="background:var(--green); margin-top:15px;" onclick="confirmManualPayment()">✅ I have completed the payment</button>
             </div>
-        </div>
-        
-        <!-- Payment Confirmation Section -->
-        <div class="payment-confirm">
-            <div class="confirm-check">
-                <input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()">
-                <label>✅ I have completed the payment</label>
-            </div>
-            <input type="text" id="transactionId" class="transaction-input" placeholder="Enter Transaction ID / UTR (optional)">
-            <div class="warning-text">⚠️ Please complete payment in your banking app before confirming. Order will be placed only after your confirmation.</div>
         </div>
         
         <div class="modal-buttons">
-            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="confirmOrderAndPlace()">Confirm & Place Order</button>
             <button class="btn-cancel" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
@@ -561,60 +437,34 @@
         document.getElementById('orderTypeModal').classList.remove('open');
         currentTotalAmount = getCartTotal();
         document.getElementById('paymentTotalAmount').innerHTML = `₹${currentTotalAmount}`;
-        
-        // Update amounts for each payment method
         document.getElementById('gpayAmount').innerHTML = `₹${currentTotalAmount}`;
         document.getElementById('phonepeAmount').innerHTML = `₹${currentTotalAmount}`;
         document.getElementById('paytmAmount').innerHTML = `₹${currentTotalAmount}`;
-        
         generateQR(currentTotalAmount);
         document.getElementById('paymentModal').classList.add('open');
     }
     
     function closePaymentModal() { 
         document.getElementById('paymentModal').classList.remove('open');
-        document.getElementById('paymentConfirmCheckbox').checked = false;
-        document.getElementById('confirmPaymentBtn').disabled = true;
-        document.getElementById('transactionId').value = '';
     }
     
-    // ========== NEW PAYMENT METHODS ==========
     function selectPaymentMethod(method) {
         selectedPaymentMethod = method;
         document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
         document.querySelector(`.pay-method[data-method="${method}"]`).classList.add('selected');
         
-        // Hide all sections
         document.getElementById('gpaySection').style.display = 'none';
         document.getElementById('phonepeSection').style.display = 'none';
         document.getElementById('paytmSection').style.display = 'none';
         document.getElementById('upiSection').style.display = 'none';
         
-        // Show selected section
-        if (method === 'gpay') {
-            document.getElementById('gpaySection').style.display = 'block';
-        } else if (method === 'phonepe') {
-            document.getElementById('phonepeSection').style.display = 'block';
-        } else if (method === 'paytm') {
-            document.getElementById('paytmSection').style.display = 'block';
-        } else if (method === 'upi') {
+        if (method === 'gpay') document.getElementById('gpaySection').style.display = 'block';
+        else if (method === 'phonepe') document.getElementById('phonepeSection').style.display = 'block';
+        else if (method === 'paytm') document.getElementById('paytmSection').style.display = 'block';
+        else if (method === 'upi') {
             document.getElementById('upiSection').style.display = 'block';
             generateQR(currentTotalAmount);
         }
-    }
-    
-    function openPaymentApp(appName) {
-        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR&tn=Azhagu%20Order`;
-        window.location.href = intent;
-        showToast(`Opening ${appName}... Complete payment then confirm here`, false);
-        
-        // Reminder after 15 seconds
-        setTimeout(() => {
-            const chk = document.getElementById('paymentConfirmCheckbox');
-            if (chk && !chk.checked) {
-                showToast('⚠️ Did you complete payment? Please confirm below.', true);
-            }
-        }, 15000);
     }
     
     function generateQR(amount) {
@@ -633,62 +483,25 @@
         showToast('✅ UPI ID copied!'); 
     }
     
-    function toggleConfirmButton() {
-        const btn = document.getElementById('confirmPaymentBtn');
-        const chk = document.getElementById('paymentConfirmCheckbox');
-        if (btn && chk) btn.disabled = !chk.checked;
-    }
-    
-    function generateBillHTML(order) {
-    const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
-    const payMethodMap = { 'gpay': 'Google Pay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
-    return `<!DOCTYPE html>
-    <html><head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
-    <style>
-        body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}
-        .header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:15px;}
-        .hotel-name{font-size:22px;font-weight:bold;color:#b7410e;}
-        .info-row{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}
-        .items-table{width:100%;margin:15px 0;border-collapse:collapse;}
-        .items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}
-        .grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}
-        .footer{text-align:center;margin-top:25px;font-size:10px;}
-        .security-stamp{color:green;margin-top:10px;}
-        @media print{body{padding:10px;}}
-    </style>
-    </head><body>
-        <div class="header">
-            <div class="hotel-name">🍛 ${HOTEL_NAME}</div>
-            <div>${HOTEL_ADDRESS}</div>
-            <div class="bill-title">TAX INVOICE</div>
-        </div>
-        <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
-        <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
-        <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
-        <div class="info-row"><span><strong>Trans ID:</strong> ${order.transactionId || 'N/A'}</span><span><strong>Status:</strong> Paid ✓</span></div>
-        <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
-        ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')}</table>
-        <div class="grand-total">Total: ₹${order.total}</div>
-        <div class="footer">
-            <div>✨ Thank you! Visit Again ✨</div>
-            <div>UPI: ${UPI_ID}</div>
-            <div class="security-stamp">🔒 This is a system generated bill</div>
-        </div>
-    </body></html>`;
-}
-    
-    async function confirmOrderAndPlace() {
-        const chk = document.getElementById('paymentConfirmCheckbox');
-        if (!chk.checked) {
-            showToast('⚠️ Please confirm that you have completed the payment', true);
-            return;
-        }
+    // AUTO PLACE ORDER AFTER PAYMENT
+    async function openPaymentAppAndPlaceOrder(appName) {
+        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR&tn=Azhagu%20Order`;
+        window.location.href = intent;
+        showToast(`Opening ${appName}... Complete payment`, false);
         
-        const transactionId = document.getElementById('transactionId').value;
-        await placeOrder(transactionId);
+        // After returning from UPI app, automatically place order
+        setTimeout(async () => {
+            showToast('✅ Payment completed! Placing your order...', false);
+            await placeOrderAutomatically();
+        }, 3000);
     }
     
-    async function placeOrder(transactionId) {
+    async function confirmManualPayment() {
+        showToast('✅ Payment confirmed! Placing your order...', false);
+        await placeOrderAutomatically();
+    }
+    
+    async function placeOrderAutomatically() {
         let total = 0, itemsList = [];
         for (const [id, qty] of Object.entries(cart)) {
             const item = menuItems.find(i => i.id == id);
@@ -709,7 +522,7 @@
             status: 'booked',
             orderType: selectedOrderType,
             payMethod: selectedPaymentMethod,
-            transactionId: transactionId || 'N/A',
+            transactionId: 'AUTO-' + Date.now(),
             time: now.toLocaleTimeString(),
             date: now.toLocaleDateString('en-IN'),
             timestamp: now.toISOString(),
@@ -719,7 +532,7 @@
         
         try {
             await db.collection('orders').add(order);
-            showToast(`✅ Order ${orderId} placed successfully! Payment confirmed.`);
+            showToast(`✅ Order ${orderId} placed successfully!`);
             currentBillOrder = order;
             cart = {};
             renderMenu();
@@ -731,18 +544,46 @@
         }
     }
     
+    function generateBillHTML(order) {
+        const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
+        const payMethodMap = { 'gpay': 'Google Pay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
+        return `<!DOCTYPE html>
+        <html><head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
+        <style>
+            body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}
+            .header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:15px;}
+            .hotel-name{font-size:22px;font-weight:bold;color:#b7410e;}
+            .info-row{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}
+            .items-table{width:100%;margin:15px 0;border-collapse:collapse;}
+            .items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}
+            .grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}
+            .footer{text-align:center;margin-top:25px;font-size:10px;}
+            .security-stamp{color:green;margin-top:10px;}
+            @media print{body{padding:10px;}}
+        </style>
+        </head><body>
+            <div class="header"><div class="hotel-name">🍛 ${HOTEL_NAME}</div><div>${HOTEL_ADDRESS}</div><div class="bill-title">TAX INVOICE</div></div>
+            <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
+            <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
+            <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
+            <div class="info-row"><span><strong>Status:</strong> Paid ✓</span></div>
+            <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
+            ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')}</table>
+            <div class="grand-total">Total: ₹${order.total}</div>
+            <div class="footer"><div>✨ Thank you! Visit Again ✨</div><div>UPI: ${UPI_ID}</div><div class="security-stamp">🔒 System generated bill</div></div>
+        </body></html>`;
+    }
+    
     function showBill(order) {
-    const billHtml = generateBillHTML(order);
-    document.getElementById('billContent').innerHTML = billHtml + `
-        <button class="print-btn" onclick="printBill()">🖨️ Print Bill</button>
-        <button class="close-bill-btn" onclick="closeBillModal()">← Back to Menu</button>
-    `;
-    document.getElementById('billModal').style.display = 'flex';
-}
-
-function closeBillModal() {
-    document.getElementById('billModal').style.display = 'none';
-}
+        const billHtml = generateBillHTML(order);
+        document.getElementById('billContent').innerHTML = billHtml + `
+            <button class="print-btn" onclick="printBill()">🖨️ Print Bill</button>
+            <button class="close-bill-btn" onclick="closeBillModal()">← Back to Menu</button>
+        `;
+        document.getElementById('billModal').style.display = 'flex';
+    }
+    
+    function closeBillModal() { document.getElementById('billModal').style.display = 'none'; }
     
     function printBill() {
         const html = generateBillHTML(currentBillOrder);
@@ -768,7 +609,7 @@ function closeBillModal() {
         if (userOrders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders</div>'; return; }
         container.innerHTML = userOrders.map(order => {
             const status = getStatusBadge(order.status);
-            const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI', 'cash': 'Cash' };
+            const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
             return `<div class="history-item" onclick="showBillFromHistory('${order.id}')">
                 <div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div>
                 <div><span class="status-badge ${status.class}">${status.text}</span><span class="order-type-badge">${getOrderTypeText(order.orderType)}</span></div>
@@ -790,28 +631,22 @@ function closeBillModal() {
         const resultDiv = document.getElementById('trackResult');
         if (!order) { resultDiv.innerHTML = '<div style="background:#ffebee; padding:15px; border-radius:16px;">❌ Order not found</div>'; return; }
         const status = getStatusBadge(order.status);
-        const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI', 'cash': 'Cash' };
         resultDiv.innerHTML = `<div style="background:#e8f5e9; padding:15px; border-radius:16px;">
             <div><strong>Order ID:</strong> ${order.id}</div>
             <div><strong>Customer:</strong> ${order.customerName}</div>
             <div><strong>Status:</strong> ${status.text}</div>
             <div><strong>Type:</strong> ${getOrderTypeText(order.orderType)}</div>
-            <div><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</div>
             <div><strong>Total:</strong> ₹${order.total}</div>
             <button class="track-btn" style="margin-top:10px;" onclick="showBillFromHistory('${order.id}')">View Bill</button>
         </div>`;
     }
     
-    // REAL-TIME ORDER LISTENER
     function startListeningToOrders() {
         if (unsubscribeOrders) unsubscribeOrders();
         unsubscribeOrders = db.collection('orders').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
             orders = [];
             snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-            if (document.getElementById('view-orders').classList.contains('active')) {
-                loadOrderHistory();
-            }
-            console.log("Orders updated:", orders.length);
+            if (document.getElementById('view-orders').classList.contains('active')) loadOrderHistory();
         });
     }
     
@@ -845,7 +680,6 @@ function closeBillModal() {
     window.printBill = printBill;
     window.showBillFromHistory = showBillFromHistory;
     window.trackOrder = trackOrder;
-    window.confirmOrderAndPlace = confirmOrderAndPlace;
     window.closeBillModal = closeBillModal;
 </script>
 </body>
