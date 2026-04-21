@@ -196,25 +196,86 @@
 <!-- PAYMENT MODAL -->
 <div id="paymentModal" class="modal-overlay">
     <div class="modal-card">
-        <h3>💳 Payment</h3>
+        <h3>💳 Select Payment Method</h3>
         <div class="payment-amount"><div class="amount" id="paymentTotalAmount">₹0</div></div>
+        
+        <!-- Payment Methods -->
         <div class="payment-methods">
-            <div class="pay-method selected" data-method="upi" onclick="selectPaymentMethod('upi')"><div>📱 UPI</div></div>
-            <div class="pay-method" data-method="cash" onclick="selectPaymentMethod('cash')"><div>💵 Cash</div></div>
-        </div>
-        <div id="upiSection">
-            <div class="upi-section">
-                <div class="qr-code" id="qrCodeContainer"></div>
-                <div class="upi-id-box"><span class="upi-id">azhagumani20-3@okicici</span><button class="copy-btn" onclick="copyUPIId()">Copy</button></div>
+            <div class="pay-method selected" data-method="gpay" onclick="selectPaymentMethod('gpay')">
+                <div class="icon">🅖</div>
+                <div>Google Pay</div>
+            </div>
+            <div class="pay-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')">
+                <div class="icon">💜</div>
+                <div>PhonePe</div>
+            </div>
+            <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')">
+                <div class="icon">🎯</div>
+                <div>Paytm</div>
+            </div>
+            <div class="pay-method" data-method="upi" onclick="selectPaymentMethod('upi')">
+                <div class="icon">📱</div>
+                <div>UPI QR</div>
             </div>
         </div>
-        <div id="cashSection" style="display:none;"><div style="background:#e8f0ff; border-radius:16px; padding:15px; text-align:center;">Pay at Counter</div></div>
-        <div class="payment-confirm">
-            <div class="confirm-check"><input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()"><label>✅ I have completed the payment</label></div>
-            <div class="warning-text">⚠️ Confirm only after payment</div>
+        
+        <!-- Google Pay Section -->
+        <div id="gpaySection" class="payment-app-section">
+            <div class="app-payment-box">
+                <div class="app-icon">🅖</div>
+                <div class="app-name">Google Pay</div>
+                <div class="app-amount" id="gpayAmount">₹0</div>
+                <button class="app-pay-btn gpay-btn" onclick="openPaymentApp('gpay')">Pay with Google Pay →</button>
+                <div class="app-note">After payment, please confirm below</div>
+            </div>
         </div>
+        
+        <!-- PhonePe Section -->
+        <div id="phonepeSection" class="payment-app-section" style="display:none;">
+            <div class="app-payment-box">
+                <div class="app-icon">💜</div>
+                <div class="app-name">PhonePe</div>
+                <div class="app-amount" id="phonepeAmount">₹0</div>
+                <button class="app-pay-btn phonepe-btn" onclick="openPaymentApp('phonepe')">Pay with PhonePe →</button>
+                <div class="app-note">After payment, please confirm below</div>
+            </div>
+        </div>
+        
+        <!-- Paytm Section -->
+        <div id="paytmSection" class="payment-app-section" style="display:none;">
+            <div class="app-payment-box">
+                <div class="app-icon">🎯</div>
+                <div class="app-name">Paytm</div>
+                <div class="app-amount" id="paytmAmount">₹0</div>
+                <button class="app-pay-btn paytm-btn" onclick="openPaymentApp('paytm')">Pay with Paytm →</button>
+                <div class="app-note">After payment, please confirm below</div>
+            </div>
+        </div>
+        
+        <!-- UPI QR Section -->
+        <div id="upiSection" class="payment-app-section" style="display:none;">
+            <div class="qr-container">
+                <div class="qr-code" id="qrCodeContainer"></div>
+                <div class="upi-id-box">
+                    <span class="upi-id">azhagumani20-3@okicici</span>
+                    <button class="copy-btn" onclick="copyUPIId()">Copy ID</button>
+                </div>
+                <div class="app-note">Scan QR code with any UPI app</div>
+            </div>
+        </div>
+        
+        <!-- Payment Confirmation Section -->
+        <div class="payment-confirm">
+            <div class="confirm-check">
+                <input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()">
+                <label>✅ I have completed the payment</label>
+            </div>
+            <input type="text" id="transactionId" class="transaction-input" placeholder="Enter Transaction ID / UTR (optional)">
+            <div class="warning-text">⚠️ Please complete payment in your banking app before confirming. Order will be placed only after your confirmation.</div>
+        </div>
+        
         <div class="modal-buttons">
-            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="placeOrder()">Confirm Order</button>
+            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="confirmOrderAndPlace()">Confirm & Place Order</button>
             <button class="btn-cancel" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
