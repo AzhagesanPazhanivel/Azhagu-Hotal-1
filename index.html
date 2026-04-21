@@ -31,7 +31,7 @@
         .logo-text h1 { font-family: 'Playfair Display', serif; font-size: 22px; }
         .logo-text p { font-size: 11px; opacity: 0.8; }
         .welcome-name { margin-left: auto; background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 40px; font-size: 12px; cursor: pointer; }
-        .live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; width: fit-content; margin-top: 10px; }
+        .live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; width: fit-content; }
         .ld { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
         .offer-banner { background: #e74c3c; color: white; padding: 8px 16px; text-align: center; font-size: 12px; font-weight: 600; display: none; }
@@ -39,7 +39,7 @@
         .search-input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 50px; font-size: 14px; }
         .fbar { display: flex; gap: 10px; padding: 12px 16px; overflow-x: auto; background: white; border-bottom: 1px solid var(--border); }
         .fpill { padding: 6px 18px; border-radius: 40px; border: 1.5px solid var(--border); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; background: white; color: #9b7b5c; }
-        .fpill.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .fpill.active { background: var(--primary); color: white; }
         .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 16px; }
         @media (max-width: 480px) { .mgrid { grid-template-columns: repeat(2, 1fr); } }
         .mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); position: relative; cursor: pointer; transition: transform 0.2s; }
@@ -61,7 +61,6 @@
         .pbtn { background: var(--gold); color: var(--dark); border: none; border-radius: 40px; padding: 10px 24px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .pbtn:disabled { background: #9b7b5c; opacity: 0.5; cursor: not-allowed; }
         
-        /* Modal Styles */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(44,26,15,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
@@ -106,7 +105,6 @@
         .btn-confirm:disabled { background: #ccc; cursor: not-allowed; }
         .btn-cancel { background: #ccc; color: #333; }
         
-        /* Order History Styles */
         .order-history-list { padding: 16px; }
         .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); transition: all 0.2s; cursor: pointer; }
         .history-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
@@ -254,22 +252,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="firebase-config.js"></script>
 
 <script>
-    // Firebase Configuration - REPLACE WITH YOUR CONFIG
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
-    
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    
     const UPI_ID = 'azhagumani20-3@okicici';
     const UPI_NAME = 'Azhagu Unavagam';
     const HOTEL_NAME = 'Azhagu Unavagam';
@@ -287,20 +272,26 @@
     let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
     let currentBillOrder = null;
+    let unsubscribeOrders = null;
     
-    // Load orders from Firebase
-    async function loadOrdersFromFirebase() {
-        try {
-            const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
-            orders = [];
-            snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-            localStorage.setItem('azhagu_orders', JSON.stringify(orders));
-            if (document.getElementById('view-orders').classList.contains('active')) {
-                loadOrderHistory();
-            }
-        } catch(e) { 
-            console.error("Error loading orders:", e); 
-        }
+    // ========== REAL-TIME ORDER LISTENER ==========
+    function startListeningToOrders() {
+        if (unsubscribeOrders) unsubscribeOrders();
+        unsubscribeOrders = db.collection('orders')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot((snapshot) => {
+                orders = [];
+                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+                localStorage.setItem('azhagu_orders', JSON.stringify(orders));
+                
+                // Update UI if on orders page
+                if (document.getElementById('view-orders').classList.contains('active')) {
+                    loadOrderHistory();
+                }
+                console.log("Orders updated in real-time:", orders.length);
+            }, (error) => {
+                console.error("Order listener error:", error);
+            });
     }
     
     function showToast(msg, isError = false) {
@@ -344,11 +335,6 @@
                     menuItems.push({ id: doc.id, ...data });
                 });
                 renderMenu();
-            } else {
-                // Add sample menu if empty
-                await addSampleMenu();
-                await loadMenuAndOffers();
-                return;
             }
             const offersSnapshot = await db.collection('offers').get();
             activeOffers = [];
@@ -357,26 +343,7 @@
                 document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
                 document.getElementById('offerBanner').style.display = 'block';
             }
-            await loadOrdersFromFirebase();
         } catch(e) { console.error(e); showToast('Loading menu...'); }
-    }
-    
-    async function addSampleMenu() {
-        const sampleItems = [
-            { name: "Masala Dosa", price: 60, category: "tiffin", emoji: "🥞", available: true, approved: true },
-            { name: "Idly (2 pcs)", price: 30, category: "tiffin", emoji: "🍚", available: true, approved: true },
-            { name: "Vada", price: 25, category: "tiffin", emoji: "🍩", available: true, approved: true },
-            { name: "Pongal", price: 50, category: "tiffin", emoji: "🍚", available: true, approved: true },
-            { name: "Veg Biriyani", price: 120, category: "rice", emoji: "🍛", available: true, approved: true },
-            { name: "Lemon Rice", price: 70, category: "rice", emoji: "🍚", available: true, approved: true },
-            { name: "Curd Rice", price: 60, category: "rice", emoji: "🍚", available: true, approved: true },
-            { name: "Sweet Lassi", price: 40, category: "drinks", emoji: "🥤", available: true, approved: true },
-            { name: "Buttermilk", price: 25, category: "drinks", emoji: "🥛", available: true, approved: true }
-        ];
-        for (const item of sampleItems) {
-            await db.collection('menu').add(item);
-        }
-        showToast("Sample menu added!");
     }
     
     function renderMenu() {
@@ -427,8 +394,10 @@
     }
     
     function openNameModal() { 
-        document.getElementById('customerNameInput').value = customerName;
-        document.getElementById('nameModal').classList.add('open');
+        if (!customerName) {
+            document.getElementById('customerNameInput').value = '';
+            document.getElementById('nameModal').classList.add('open');
+        }
     }
     
     function saveCustomerName() {
@@ -485,7 +454,6 @@
     
     function generateQR(amount) {
         const container = document.getElementById('qrCodeContainer');
-        if (!container) return;
         container.innerHTML = '';
         const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=Azhagu%20Order`;
         try { new QRCode(container, { text: url, width: 150, height: 150, colorDark: "#b7410e", colorLight: "#ffffff" }); }
@@ -580,15 +548,14 @@
             status: 'booked', orderType: selectedOrderType, payMethod: selectedPaymentMethod === 'cash' ? 'Cash' : 'UPI',
             utr: document.getElementById('utrNumber').value || 'N/A',
             time: now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
-            date: now.toLocaleDateString('en-IN'), timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            date: now.toLocaleDateString('en-IN'), timestamp: now.toISOString()
         };
         
         try {
             await db.collection('orders').add(order);
-            await loadOrdersFromFirebase();
+            showToast(`✅ Order ${orderId} placed successfully!`);
             currentBillOrder = order;
             cart = {}; renderMenu(); updateCartBar(); closePaymentModal();
-            showToast(`✅ Order ${orderId} placed successfully!`);
             showBill(order);
         } catch(e) { showToast('Order failed: ' + e.message, true); }
     }
@@ -672,7 +639,6 @@
         </div>`;
     }
     
-    // Event Listeners
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMenu(); });
     document.querySelectorAll('.fpill').forEach(p => {
         p.addEventListener('click', () => {
@@ -693,30 +659,17 @@
         });
     });
     
-    // Initialize
     if (customerName) document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName.substring(0, 15)}`;
     else setTimeout(() => openNameModal(), 500);
     
     loadMenuAndOffers();
     updateCartBar();
+    startListeningToOrders();
     
-    // Expose functions globally
     window.closeBillModal = closeBillModal;
     window.printBill = printBill;
     window.showBillFromHistory = showBillFromHistory;
     window.trackOrder = trackOrder;
-    window.updateCart = updateCart;
-    window.proceedToCheckout = proceedToCheckout;
-    window.selectOrderType = selectOrderType;
-    window.openPaymentModal = openPaymentModal;
-    window.closePaymentModal = closePaymentModal;
-    window.selectPaymentMethod = selectPaymentMethod;
-    window.copyUPIId = copyUPIId;
-    window.openUpiApp = openUpiApp;
-    window.toggleConfirmButton = toggleConfirmButton;
-    window.placeOrder = placeOrder;
-    window.openNameModal = openNameModal;
-    window.saveCustomerName = saveCustomerName;
 </script>
 </body>
 </html>
