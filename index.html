@@ -417,29 +417,45 @@
     
     // Load orders for this customer
     function loadCustomerOrders() {
-        if (!customerName) return;
-        
-        if (unsubscribeListener) unsubscribeListener();
-        
-        unsubscribeListener = db.collection('orders')
-            .where('customerName', '==', customerName)
-            .orderBy('timestamp', 'desc')
-            .onSnapshot((snapshot) => {
-                customerOrders = [];
-                snapshot.forEach(doc => {
-                    customerOrders.push({ id: doc.id, ...doc.data() });
-                });
-                console.log("Loaded orders for", customerName, ":", customerOrders.length);
-                
-                // Refresh display if on orders page
-                if (document.getElementById('view-orders').classList.contains('active')) {
-                    displayMyOrders();
-                }
-            }, (error) => {
-                console.error("Error loading orders:", error);
-                showToast("Error loading orders: " + error.message, true);
-            });
+    if (!customerName) {
+        console.log("No customer name set");
+        return;
     }
+    
+    if (unsubscribeListener) unsubscribeListener();
+    
+    console.log("Loading orders for customer:", customerName);
+    
+    // Try to get orders - this will work if rules are open
+    unsubscribeListener = db.collection('orders')
+        .orderBy('timestamp', 'desc')
+        .onSnapshot((snapshot) => {
+            customerOrders = [];
+            snapshot.forEach(doc => {
+                let order = { id: doc.id, ...doc.data() };
+                // Manual filter in JavaScript instead of Firebase query
+                if (order.customerName === customerName) {
+                    customerOrders.push(order);
+                }
+            });
+            console.log("Found orders:", customerOrders.length);
+            displayMyOrders();
+        }, (error) => {
+            console.error("Permission error details:", error);
+            
+            // Show user-friendly message
+            document.getElementById('orderHistoryList').innerHTML = `
+                <div style="text-align:center; padding:50px;">
+                    <div style="font-size:48px; margin-bottom:10px;">🔒</div>
+                    <div>Unable to load orders due to security settings.</div>
+                    <div style="font-size:12px; margin-top:10px;">Please contact the restaurant administrator.</div>
+                </div>
+            `;
+            
+            // Also show a toast
+            showToast("⚠️ Unable to load orders. Please contact admin.", true);
+        });
+}
     
     function displayMyOrders() {
         const container = document.getElementById('orderHistoryList');
