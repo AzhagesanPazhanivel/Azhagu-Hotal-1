@@ -394,15 +394,31 @@
 }
     
     async function rejectPayment(orderId) {
-        if(confirm('Reject this payment? Order will be cancelled.')) {
-            await db.collection('orders').doc(orderId).update({ 
+    if(confirm('Reject this payment? Order will be cancelled.')) {
+        console.log("Rejecting order ID:", orderId);
+        
+        try {
+            const docRef = db.collection('orders').doc(orderId);
+            const docSnap = await docRef.get();
+            
+            if (!docSnap.exists) {
+                showToast('❌ Order not found!', true);
+                return;
+            }
+            
+            await docRef.update({ 
                 paymentStatus: 'REJECTED', 
                 orderStatus: 'cancelled',
                 status: 'cancelled'
             });
+            
             showToast(`❌ Payment rejected. Order cancelled.`);
+        } catch(e) {
+            console.error("Rejection error:", e);
+            showToast('Rejection failed: ' + e.message, true);
         }
     }
+}
     
     function startListening() {
         if (unsubscribeOrders) unsubscribeOrders();
