@@ -257,7 +257,7 @@
                 <input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()">
                 <label>✅ I have completed the payment</label>
             </div>
-            <input type="text" id="utrNumber" class="utr-input" placeholder="Enter UTR Number (Required for verification)">
+            <input type="text" id="utrNumber" class="utr-input" placeholder="Enter UTR Number (Required for verification)" onkeyup="toggleConfirmButton()">
             <div class="warning-text">⚠️ UTR number is mandatory for payment verification. Order will be confirmed only after admin verifies your payment.</div>
         </div>
         
