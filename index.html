@@ -69,9 +69,6 @@
         .history-id { font-weight: 800; color: var(--primary); font-size: 13px; }
         .history-date { font-size: 11px; color: #9b7b5c; }
         .history-total { font-weight: 800; font-size: 14px; color: var(--green); }
-        
-        /* Debug panel - remove after testing */
-        .debug-panel { position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #0f0; font-size: 10px; padding: 5px 10px; border-radius: 5px; z-index: 1000; font-family: monospace; display: none; }
     </style>
 </head>
 <body>
@@ -98,7 +95,7 @@
         <div class="fpill" data-cat="drinks">🥤 Drinks</div>
         <div class="fpill" data-cat="rice">🍚 Rice</div>
     </div>
-    <div class="mgrid" id="menuGrid"></div>
+    <div class="mgrid" id="menuGrid"><div style="text-align:center; padding:40px;">Loading menu...</div></div>
     <div class="cbar">
         <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
         <button class="pbtn" id="placeBtn" disabled onclick="placeOrder()">Order →</button>
@@ -168,24 +165,33 @@
             // Load menu from Firebase
             const menuSnapshot = await db.collection('menu').get();
             
+            console.log("=== FIREBASE DEBUG ===");
+            console.log("Total documents in menu collection:", menuSnapshot.size);
+            
             if (!menuSnapshot.empty) {
                 menuItems = [];
                 menuSnapshot.forEach(doc => {
                     let data = doc.data();
+                    console.log("Dish found:", doc.id, data.name, "approved:", data.approved, "available:", data.available);
+                    
                     // Ensure dishes have default values if missing
                     if (data.approved === undefined) data.approved = true;
                     if (data.available === undefined) data.available = true;
                     menuItems.push({ id: doc.id, ...data });
                 });
                 
-                console.log("Total dishes in Firebase:", menuItems.length);
-                console.log("Dishes:", menuItems);
+                console.log("Total dishes loaded:", menuItems.length);
                 
                 // Show approved dishes count
                 let approvedCount = menuItems.filter(i => i.approved === true && i.available === true).length;
-                showToast(`📊 ${menuItems.length} total dishes, ${approvedCount} available`);
+                console.log("Approved + Available dishes:", approvedCount);
+                showToast(`📊 ${approvedCount} dishes available`);
+                
+                // Force render
+                renderMenu();
                 
             } else {
+                console.log("No dishes found in Firebase!");
                 // Default menu if empty
                 const defaultMenu = [
                     { name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞', approved: true, available: true },
@@ -204,26 +210,29 @@
             activeOffers = [];
             offersSnapshot.forEach(doc => { const data = doc.data(); if (data.active) activeOffers.push(data); });
             
-            renderMenu();
-            
             if (activeOffers.length > 0) {
                 document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
                 document.getElementById('offerBanner').style.display = 'block';
             }
         } catch(e) { 
-            console.error(e); 
+            console.error("Error loading menu:", e); 
             showToast('Error loading menu: ' + e.message, true);
         }
     }
     
-    // ========== IMPORTANT: FILTER ONLY APPROVED & AVAILABLE DISHES ==========
+    // ========== RENDER MENU - SHOWS ONLY APPROVED & AVAILABLE DISHES ==========
     function renderMenu() {
         const grid = document.getElementById('menuGrid');
         
-        // 🔥 CRITICAL FILTER: Show ONLY dishes with approved: true AND available: true
+        // 🔥 CRITICAL: Show ONLY dishes with approved: true AND available: true
         let filtered = menuItems.filter(item => item.approved === true && item.available === true);
         
-        console.log("Filtered dishes (approved+available):", filtered.length);
+        console.log("Filtered dishes count (approved+available):", filtered.length);
+        
+        if (filtered.length === 0) { 
+            grid.innerHTML = '<div style="text-align:center; padding:40px;">No items available</div>'; 
+            return; 
+        }
         
         // Apply category filter
         if (currentFilter !== 'all') {
@@ -236,7 +245,7 @@
         }
         
         if (filtered.length === 0) { 
-            grid.innerHTML = '<div style="text-align:center; padding:40px;">No items available</div>'; 
+            grid.innerHTML = '<div style="text-align:center; padding:40px;">No items match your search</div>'; 
             return; 
         }
         
