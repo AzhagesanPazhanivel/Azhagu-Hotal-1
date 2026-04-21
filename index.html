@@ -16,9 +16,6 @@
             --green: #2a7f49;
             --dark: #2c1a0f;
             --border: #f0e2cf;
-            --pending: #ff9800;
-            --verified: #4caf50;
-            --rejected: #f44336;
         }
         body { font-family: 'DM Sans', sans-serif; background: var(--cream); }
         .app-nav { display: flex; background: var(--dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; }
@@ -292,13 +289,12 @@
     let customerName = localStorage.getItem('customerName') || '';
     let currentFilter = 'all';
     let searchQuery = '';
-    let orders = [];
+    let customerOrders = [];
     let selectedPaymentMethod = 'gpay';
     let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
     let currentBillOrder = null;
-    let unsubscribeOrders = null;
-    let unsubscribeMyOrders = null;
+    let unsubscribeCustomerOrders = null;
     
     function showToast(msg, isError = false) {
         const t = document.getElementById('toast');
@@ -414,30 +410,79 @@
         document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
         document.getElementById('nameModal').classList.remove('open');
         showToast(`Welcome ${customerName}!`);
-        // Reload orders for this customer
-        loadCustomerOrders();
+        
+        // Start listening to this customer's orders
+        startListeningToCustomerOrders();
     }
     
-    // Function to load ONLY this customer's orders
-    function loadCustomerOrders() {
+    // Start listening to orders for this customer only
+    function startListeningToCustomerOrders() {
         if (!customerName) return;
         
-        if (unsubscribeMyOrders) unsubscribeMyOrders();
+        if (unsubscribeCustomerOrders) unsubscribeCustomerOrders();
         
-        unsubscribeMyOrders = db.collection('orders')
+        unsubscribeCustomerOrders = db.collection('orders')
             .where('customerName', '==', customerName)
             .orderBy('timestamp', 'desc')
             .onSnapshot((snapshot) => {
-                orders = [];
+                customerOrders = [];
                 snapshot.forEach(doc => {
-                    orders.push({ id: doc.id, ...doc.data() });
+                    customerOrders.push({ id: doc.id, ...doc.data() });
                 });
-                console.log("Customer orders loaded:", orders.length);
-                // Update UI if on orders page
+                console.log("Customer orders loaded:", customerOrders.length);
+                
+                // Update My Orders page if active
                 if (document.getElementById('view-orders').classList.contains('active')) {
-                    displayOrderHistory();
+                    displayMyOrders();
                 }
+            }, (error) => {
+                console.error("Error loading orders:", error);
             });
+    }
+    
+    function displayMyOrders() {
+        const container = document.getElementById('orderHistoryList');
+        if (customerOrders.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>';
+            return;
+        }
+        
+        const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
+        
+        container.innerHTML = customerOrders.map(order => {
+            let statusText = '';
+            let statusClass = '';
+            if (order.paymentStatus === 'PENDING_VERIFICATION') {
+                statusText = '⏳ Pending Verification';
+                statusClass = 'status-pending';
+            } else if (order.paymentStatus === 'VERIFIED') {
+                statusText = '✅ Payment Verified';
+                statusClass = 'status-verified';
+            } else if (order.paymentStatus === 'REJECTED') {
+                statusText = '❌ Payment Rejected';
+                statusClass = 'status-rejected';
+            } else {
+                statusText = '📖 Order Received';
+                statusClass = 'status-pending';
+            }
+            
+            return `<div class="history-item" onclick="showBillFromHistory('${order.id}')">
+                <div class="history-header">
+                    <span class="history-id">${order.id}</span>
+                    <span class="history-date">${order.date} ${order.time}</span>
+                </div>
+                <div><span class="payment-status ${statusClass}">${statusText}</span>
+                <span class="order-type-badge">${getOrderTypeText(order.orderType)}</span></div>
+                <div style="margin: 8px 0; font-size:13px;">${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
+                <div class="history-total">₹${order.total} | ${payMethodMap[order.payMethod] || order.payMethod}</div>
+                ${order.utrNumber ? `<div style="font-size:10px; color:#666;">UTR: ${order.utrNumber}</div>` : ''}
+            </div>`;
+        }).join('');
+    }
+    
+    function getOrderTypeText(type) {
+        const map = { 'dinein': '🏠 Dine In', 'pickup': '🚗 Pickup', 'parcel': '📦 Parcel' };
+        return map[type] || type;
     }
     
     function proceedToCheckout() {
@@ -571,8 +616,6 @@
             updateCartBar();
             closePaymentModal();
             showBill(order);
-            // Refresh customer orders
-            loadCustomerOrders();
         } catch(e) { 
             showToast('Order failed: ' + e.message, true); 
         }
@@ -604,8 +647,8 @@
             <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
             <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
             <div class="info-row"><span><strong>UTR:</strong> ${order.utrNumber}</span><span><strong>Status:</strong> <span class="payment-status">${paymentStatusText}</span></span></div>
-            <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
-            ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')}</table>
+            <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th><tr>
+            ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')} </table>
             <div class="grand-total">Total: ₹${order.total}</div>
             <div class="footer"><div>✨ Thank you! ✨</div><div>UPI: ${UPI_ID}</div><div>Order will be confirmed after payment verification</div></div>
         </body></html>`;
@@ -618,6 +661,7 @@
             <button class="close-bill-btn" onclick="closeBillModal()">← Back to Menu</button>
         `;
         document.getElementById('billModal').style.display = 'flex';
+        currentBillOrder = order;
     }
     
     function closeBillModal() { document.getElementById('billModal').style.display = 'none'; }
@@ -630,45 +674,9 @@
         win.print();
     }
     
-    function getPaymentStatusBadge(status) {
-        if (status === 'PENDING_VERIFICATION') return { class: 'status-pending', text: '⏳ Pending Verification' };
-        if (status === 'VERIFIED') return { class: 'status-verified', text: '✅ Payment Verified' };
-        if (status === 'REJECTED') return { class: 'status-rejected', text: '❌ Payment Rejected' };
-        return { class: 'status-pending', text: '⏳ Pending' };
-    }
-    
-    function getOrderTypeText(type) {
-        const map = { 'dinein': '🏠 Dine In', 'pickup': '🚗 Pickup', 'parcel': '📦 Parcel' };
-        return map[type] || type;
-    }
-    
-    function displayOrderHistory() {
-        const container = document.getElementById('orderHistoryList');
-        if (orders.length === 0) { 
-            container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>'; 
-            return; 
-        }
-        
-        container.innerHTML = orders.map(order => {
-            const paymentStatus = getPaymentStatusBadge(order.paymentStatus);
-            const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
-            return `<div class="history-item" onclick="showBillFromHistory('${order.id}')">
-                <div class="history-header">
-                    <span class="history-id">${order.id}</span>
-                    <span class="history-date">${order.date} ${order.time}</span>
-                </div>
-                <div><span class="payment-status ${paymentStatus.class}">${paymentStatus.text}</span>
-                <span class="order-type-badge">${getOrderTypeText(order.orderType)}</span></div>
-                <div style="margin: 8px 0; font-size:13px;">${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
-                <div class="history-total">₹${order.total} | ${payMethodMap[order.payMethod] || order.payMethod}</div>
-                ${order.utrNumber ? `<div style="font-size:10px; color:#666;">UTR: ${order.utrNumber}</div>` : ''}
-            </div>`;
-        }).join('');
-    }
-    
     async function showBillFromHistory(orderId) {
-        const order = orders.find(o => o.id === orderId);
-        if (order) { currentBillOrder = order; showBill(order); }
+        const order = customerOrders.find(o => o.id === orderId);
+        if (order) { showBill(order); }
     }
     
     async function trackOrder() {
@@ -678,12 +686,10 @@
             return; 
         }
         
-        console.log("Searching for order ID:", trackId);
+        // First try to find in customer orders
+        let order = customerOrders.find(o => o.id === trackId);
         
-        // Search in customer's orders first
-        let order = orders.find(o => o.id === trackId);
-        
-        // If not found, search in global database
+        // If not found, try direct Firebase lookup
         if (!order) {
             try {
                 const docRef = db.collection('orders').doc(trackId);
@@ -692,7 +698,7 @@
                     order = { id: docSnap.id, ...docSnap.data() };
                 }
             } catch(e) {
-                console.error("Error fetching order:", e);
+                console.error("Error:", e);
             }
         }
         
@@ -703,19 +709,32 @@
             return; 
         }
         
-        const paymentStatus = getPaymentStatusBadge(order.paymentStatus);
+        let statusText = '';
+        let statusClass = '';
+        if (order.paymentStatus === 'PENDING_VERIFICATION') {
+            statusText = '⏳ Pending Verification';
+            statusClass = 'status-pending';
+        } else if (order.paymentStatus === 'VERIFIED') {
+            statusText = '✅ Payment Verified';
+            statusClass = 'status-verified';
+        } else if (order.paymentStatus === 'REJECTED') {
+            statusText = '❌ Payment Rejected';
+            statusClass = 'status-rejected';
+        } else {
+            statusText = '📖 Order Received';
+            statusClass = 'status-pending';
+        }
+        
         const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
         
         resultDiv.innerHTML = `<div style="background:#e8f5e9; padding:20px; border-radius:20px;">
-            <div style="text-align:center; margin-bottom:15px;">
-                <span style="font-size:48px;">📋</span>
-            </div>
+            <div style="text-align:center; margin-bottom:15px;"><span style="font-size:48px;">📋</span></div>
             <div><strong>Order ID:</strong> ${order.id}</div>
             <div><strong>Customer:</strong> ${order.customerName}</div>
             <div><strong>Date & Time:</strong> ${order.date} | ${order.time}</div>
             <div><strong>Order Type:</strong> ${getOrderTypeText(order.orderType)}</div>
             <div><strong>Payment Method:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</div>
-            <div><strong>Payment Status:</strong> <span class="payment-status ${paymentStatus.class}">${paymentStatus.text}</span></div>
+            <div><strong>Payment Status:</strong> <span class="payment-status ${statusClass}">${statusText}</span></div>
             <div><strong>UTR Number:</strong> ${order.utrNumber || 'N/A'}</div>
             <div><strong>Total Amount:</strong> <span style="font-size:20px; font-weight:800; color:#b7410e;">₹${(order.total || 0).toFixed(2)}</span></div>
             <div style="background:#f5f5f5; padding:12px; border-radius:12px; margin:15px 0;">
@@ -743,7 +762,7 @@
             tab.classList.add('active');
             document.getElementById(`view-${tab.dataset.view}`).classList.add('active');
             if (tab.dataset.view === 'orders') {
-                displayOrderHistory();
+                displayMyOrders();
             }
             if (tab.dataset.view === 'track') {
                 document.getElementById('trackResult').innerHTML = '';
@@ -753,7 +772,7 @@
     
     if (customerName) {
         document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
-        loadCustomerOrders();
+        startListeningToCustomerOrders();
     } else {
         setTimeout(() => openNameModal(), 500);
     }
