@@ -360,18 +360,38 @@
     }
     
     async function verifyPayment(orderId, utrNumber) {
-        try {
-            await db.collection('orders').doc(orderId).update({ 
-                paymentStatus: 'VERIFIED', 
-                orderStatus: 'confirmed',
-                status: 'booked',
-                verifiedAt: new Date().toISOString(),
-                verifiedBy: 'Admin'
-            });
-            showToast(`✅ Payment verified! Order confirmed.`);
-            playSound();
-        } catch(e) { showToast('Verification failed: ' + e.message); }
+    console.log("Verifying order ID:", orderId);
+    console.log("UTR Number:", utrNumber);
+    
+    try {
+        // First check if document exists
+        const docRef = db.collection('orders').doc(orderId);
+        const docSnap = await docRef.get();
+        
+        if (!docSnap.exists) {
+            console.error("Document does not exist:", orderId);
+            showToast('❌ Order not found! ID: ' + orderId, true);
+            return;
+        }
+        
+        console.log("Document found, updating...");
+        
+        await docRef.update({ 
+            paymentStatus: 'VERIFIED', 
+            orderStatus: 'confirmed',
+            status: 'booked',
+            verifiedAt: new Date().toISOString(),
+            verifiedBy: 'Admin'
+        });
+        
+        showToast(`✅ Payment verified! Order confirmed.`);
+        playSound();
+        
+    } catch(e) { 
+        console.error("Verification error:", e);
+        showToast('Verification failed: ' + e.message, true); 
     }
+}
     
     async function rejectPayment(orderId) {
         if(confirm('Reject this payment? Order will be cancelled.')) {
