@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Azhagu Hotel - Order Food</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -15,11 +14,10 @@
             --azh-cream: #fff9ef;
             --azh-green: #2a7f49;
             --azh-dark: #2c1a0f;
-            --azh-card: #ffffff;
             --azh-border: #f0e2cf;
         }
-        body { font-family: 'DM Sans', sans-serif; background: var(--azh-cream); color: var(--azh-dark); }
-        .app-nav { display: flex; background: var(--azh-dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--azh-cream); }
+        .app-nav { display: flex; background: var(--azh-dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; }
         .nt { padding: 14px 18px; font-size: 13px; font-weight: 600; color: rgba(255,248,235,0.7); cursor: pointer; border-bottom: 3px solid transparent; }
         .nt.active { color: var(--azh-gold); border-bottom-color: var(--azh-gold); }
         .view { display: none; min-height: 100vh; flex-direction: column; }
@@ -32,23 +30,20 @@
         .live-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border-radius: 40px; padding: 5px 12px; font-size: 11px; width: fit-content; }
         .ld { width: 7px; height: 7px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        .offer-banner { background: var(--azh-gold); color: var(--azh-dark); padding: 8px 16px; text-align: center; font-size: 12px; font-weight: 600; }
         .search-bar { padding: 12px 16px; background: white; border-bottom: 1px solid var(--azh-border); }
         .search-input { width: 100%; padding: 12px 16px; border: 2px solid var(--azh-border); border-radius: 50px; font-size: 14px; }
         .fbar { display: flex; gap: 10px; padding: 12px 16px; overflow-x: auto; background: white; border-bottom: 1px solid var(--azh-border); }
         .fpill { padding: 6px 18px; border-radius: 40px; border: 1.5px solid var(--azh-border); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; background: white; color: #9b7b5c; }
         .fpill.active { background: var(--azh-primary); color: white; }
         .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 16px; }
-        @media (max-width: 480px) { .mgrid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; } }
-        .mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--azh-border); position: relative; }
-        .offer-tag { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; z-index: 10; }
+        @media (max-width: 480px) { .mgrid { grid-template-columns: repeat(2, 1fr); } }
+        .mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--azh-border); }
         .mi { position: relative; width: 100%; padding-top: 75%; background: #faeedb; overflow: hidden; }
         .mi .me { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
         .mb { padding: 10px 12px 14px; }
         .mn { font-size: 15px; font-weight: 700; }
         .mrow { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .mprice { font-size: 16px; font-weight: 800; color: var(--azh-primary); }
-        .original-price { font-size: 12px; text-decoration: line-through; color: #999; margin-right: 5px; }
         .qw { display: flex; align-items: center; gap: 6px; background: #fef6ed; padding: 2px 6px; border-radius: 40px; }
         .qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; }
         .qb.plus { background: var(--azh-primary); color: white; }
@@ -88,11 +83,18 @@
         </div>
         <div class="live-pill"><div class="ld"></div> UPI: azhagumani20-3@okicici</div>
     </div>
-    <div id="offerBanner" class="offer-banner" style="display:none;"></div>
     <div class="search-bar"><input type="text" class="search-input" id="searchInput" placeholder="🔍 Search dishes..."></div>
-    <div class="fbar" id="filterBar"><div class="fpill active" data-cat="all">🍽️ All</div><div class="fpill" data-cat="tiffin">🥞 Tiffin</div><div class="fpill" data-cat="drinks">🥤 Drinks</div><div class="fpill" data-cat="rice">🍚 Rice</div></div>
-    <div class="mgrid" id="menuGrid"><div style="text-align:center; padding:40px;">Loading menu...</div></div>
-    <div class="cbar"><div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div><button class="pbtn" id="placeBtn" disabled onclick="placeOrder()">Order →</button></div>
+    <div class="fbar" id="filterBar">
+        <div class="fpill active" data-cat="all">🍽️ All</div>
+        <div class="fpill" data-cat="tiffin">🥞 Tiffin</div>
+        <div class="fpill" data-cat="drinks">🥤 Drinks</div>
+        <div class="fpill" data-cat="rice">🍚 Rice</div>
+    </div>
+    <div class="mgrid" id="menuGrid"></div>
+    <div class="cbar">
+        <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
+        <button class="pbtn" id="placeBtn" disabled onclick="placeOrder()">Order →</button>
+    </div>
 </div>
 
 <div class="view" id="view-orders">
@@ -103,30 +105,48 @@
 </div>
 
 <div id="nameModal" class="modal-overlay"><div class="modal-card"><h3>👤 Welcome!</h3><p>Please enter your name</p><input type="text" id="customerNameInput" class="modal-input" placeholder="Your name"><button class="pbtn" onclick="saveCustomerName()" style="width:100%;">Continue →</button></div></div>
-<div id="paymentModal" class="modal-overlay"><div class="modal-card"><h3>💵 Confirm Order</h3><p id="paymentAmount" style="font-size:24px; margin:20px;">Total: ₹0</p><button class="pbtn" onclick="confirmOrderDirect()" style="background:#2a7f49; color:white; width:100%;">Confirm Order</button><button onclick="closePaymentModal()" style="margin-top:10px; background:none; border:none; color:#999;">Cancel</button></div></div>
+<div id="paymentModal" class="modal-overlay"><div class="modal-card"><h3>💵 Confirm Order</h3><p id="paymentAmount" style="font-size:24px; margin:20px;">Total: ₹0</p><button class="pbtn" onclick="confirmOrder()" style="background:#2a7f49; color:white; width:100%;">Confirm Order</button><button onclick="closePaymentModal()" style="margin-top:10px; background:none; border:none; color:#999;">Cancel</button></div></div>
 
 <div id="toast" class="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="firebase-config.js"></script>
 
 <script>
-    const UPI_ID = 'azhagumani20-3@okicici';
-    const UPI_NAME = 'Azhagu Hotel';
-    const GSTIN = '33AAACA1234E1ZQ';
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBLrk_nmC2V0NvRKfhHdFzBi647xiuF1y0",
+        authDomain: "azhagu-hotel.firebaseapp.com",
+        projectId: "azhagu-hotel",
+        storageBucket: "azhagu-hotel.firebasestorage.app",
+        messagingSenderId: "357401937469",
+        appId: "1:357401937469:web:a7a55fc0e59a5059660c54"
+    };
     
-    let menuItems = [];
-    let activeOffers = [];
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Menu Data (Fixed - No Admin Approval Needed)
+    const menuData = [
+        { id: 1, name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞' },
+        { id: 2, name: 'Mini Idly', price: 30, category: 'tiffin', emoji: '🍚' },
+        { id: 3, name: 'Masala Dosa', price: 70, category: 'tiffin', emoji: '🥞' },
+        { id: 4, name: 'Vada', price: 15, category: 'tiffin', emoji: '🍩' },
+        { id: 5, name: 'Pongal', price: 55, category: 'tiffin', emoji: '🍲' },
+        { id: 6, name: 'Filter Coffee', price: 22, category: 'drinks', emoji: '☕' },
+        { id: 7, name: 'Badam Milk', price: 35, category: 'drinks', emoji: '🥛' },
+        { id: 8, name: 'Elaneer Juice', price: 45, category: 'drinks', emoji: '🥥' },
+        { id: 9, name: 'Lemon Rice', price: 50, category: 'rice', emoji: '🍚' },
+        { id: 10, name: 'Curd Rice', price: 45, category: 'rice', emoji: '🍚' },
+        { id: 11, name: 'Sambar Rice', price: 55, category: 'rice', emoji: '🍲' }
+    ];
+    
     let cart = {};
     let customerName = localStorage.getItem('customerName') || '';
     let currentFilter = 'all';
     let searchQuery = '';
     let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
-    let customerOrders = JSON.parse(localStorage.getItem('azhagu_customer_orders') || '[]');
-    let orderCounter = Math.max(orders.length, customerOrders.length, 1);
-    let gstRate = 5;
-    let gstEnabled = true;
+    let orderCounter = orders.length + 1;
     
     function showToast(msg, isError = false) {
         const t = document.getElementById('toast');
@@ -136,69 +156,35 @@
         setTimeout(() => t.classList.remove('show'), 3000);
     }
     
-    function calculateGST(subtotal) {
-        if (!gstEnabled) return { gstAmount: 0, total: subtotal, cgst: 0, sgst: 0 };
-        const gstAmount = (subtotal * gstRate) / 100;
-        return { gstAmount, total: subtotal + gstAmount, cgst: gstAmount/2, sgst: gstAmount/2 };
-    }
-    
-    function getDiscountedPrice(originalPrice, itemId) {
-        let finalPrice = originalPrice;
-        for (const offer of activeOffers) {
-            if (offer.active && offer.type === 'percentage' && (offer.itemId === itemId || offer.itemId === 'all')) {
-                finalPrice = originalPrice * (1 - offer.value / 100);
-            }
-        }
-        return Math.round(finalPrice);
-    }
-    
-    function getCartTotal() {
-        let subtotal = 0;
-        for (const [id, qty] of Object.entries(cart)) {
-            const item = menuItems.find(i => i.id == id);
-            if (item && item.available && item.approved) {
-                const price = getDiscountedPrice(item.price, item.id);
-                subtotal += price * qty;
-            }
-        }
-        return { subtotal, ...calculateGST(subtotal) };
-    }
-    
     function renderMenu() {
         const grid = document.getElementById('menuGrid');
-        let filtered = menuItems.filter(i => i.approved && i.available);
-        
+        let filtered = menuData;
         if (currentFilter !== 'all') filtered = filtered.filter(i => i.category === currentFilter);
         if (searchQuery) filtered = filtered.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
         
-        if (filtered.length === 0) { grid.innerHTML = '<div style="text-align:center; padding:40px;">No items available</div>'; return; }
+        if (filtered.length === 0) { grid.innerHTML = '<div style="text-align:center; padding:40px;">No items found</div>'; return; }
         
         grid.innerHTML = filtered.map(item => {
             const qty = cart[item.id] || 0;
-            const originalPrice = item.price;
-            const discountedPrice = getDiscountedPrice(originalPrice, item.id);
-            const hasOffer = discountedPrice < originalPrice;
-            
-            return `<div class="mc">
-                ${hasOffer ? `<div class="offer-tag">${Math.round((1 - discountedPrice/originalPrice)*100)}% OFF</div>` : ''}
-                <div class="mi"><div class="me">${item.emoji || '🍽️'}</div></div>
-                <div class="mb">
-                    <div class="mn">${item.name}</div>
-                    <div class="mrow">
-                        <div class="mprice">${hasOffer ? `<span class="original-price">₹${originalPrice}</span> ₹${discountedPrice}` : `₹${originalPrice}`}</div>
-                        <div class="qw">
-                            ${qty > 0 ? `<button class="qb minus" onclick="updateCart('${item.id}', -1)">−</button><span class="qn">${qty}</span>` : ''}
-                            <button class="qb plus" onclick="updateCart('${item.id}', 1)">+</button>
+            return `
+                <div class="mc">
+                    <div class="mi"><div class="me">${item.emoji}</div></div>
+                    <div class="mb">
+                        <div class="mn">${item.name}</div>
+                        <div class="mrow">
+                            <div class="mprice">₹${item.price}</div>
+                            <div class="qw">
+                                ${qty > 0 ? `<button class="qb minus" onclick="updateCart(${item.id}, -1)">−</button><span class="qn">${qty}</span>` : ''}
+                                <button class="qb plus" onclick="updateCart(${item.id}, 1)">+</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>`;
+            `;
         }).join('');
     }
     
     function updateCart(id, delta) {
-        const item = menuItems.find(i => i.id == id);
-        if (!item || !item.available || !item.approved) return;
         const newQty = Math.max(0, (cart[id] || 0) + delta);
         if (newQty === 0) delete cart[id];
         else cart[id] = newQty;
@@ -207,10 +193,14 @@
     }
     
     function updateCartBar() {
-        const { total } = getCartTotal();
-        let count = Object.values(cart).reduce((a,b) => a+b, 0);
-        document.getElementById('cartTotal').innerHTML = '₹' + total.toFixed(2);
-        document.getElementById('cartLbl').innerText = count + (count === 1 ? ' item' : ' items');
+        let total = 0, count = 0;
+        for (const [id, qty] of Object.entries(cart)) {
+            const item = menuData.find(i => i.id == id);
+            total += item.price * qty;
+            count += qty;
+        }
+        document.getElementById('cartTotal').innerHTML = '₹' + total;
+        document.getElementById('cartLbl').innerText = count + ' items';
         document.getElementById('placeBtn').disabled = count === 0;
     }
     
@@ -229,103 +219,61 @@
     function placeOrder() {
         if (Object.keys(cart).length === 0) return;
         if (!customerName) { openNameModal(); return; }
-        const { total } = getCartTotal();
-        document.getElementById('paymentAmount').innerHTML = `Total: ₹${total.toFixed(2)}`;
+        let total = 0;
+        for (const [id, qty] of Object.entries(cart)) {
+            const item = menuData.find(i => i.id == id);
+            total += item.price * qty;
+        }
+        document.getElementById('paymentAmount').innerHTML = `Total: ₹${total}`;
         document.getElementById('paymentModal').classList.add('open');
     }
     
     function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
     
-    async function confirmOrderDirect() {
-        let subtotal = 0, itemsList = [];
+    async function confirmOrder() {
+        let total = 0, itemsList = [];
         for (const [id, qty] of Object.entries(cart)) {
-            const item = menuItems.find(i => i.id == id);
-            if (item && item.available && item.approved) {
-                const price = getDiscountedPrice(item.price, item.id);
-                itemsList.push({ name: item.name, qty, price: price, total: price * qty });
-                subtotal += price * qty;
-            }
+            const item = menuData.find(i => i.id == id);
+            itemsList.push({ name: item.name, qty, price: item.price, total: item.price * qty });
+            total += item.price * qty;
         }
         
-        const { gstAmount, total, cgst, sgst } = calculateGST(subtotal);
         const orderId = `ORD-${String(orderCounter++).padStart(3,'0')}`;
         const now = new Date();
         
         const order = {
-            id: orderId, customerName: customerName, items: itemsList,
-            subtotal: subtotal, gstRate: gstRate, gstAmount: gstAmount,
-            cgst: cgst, sgst: sgst, total: total, status: 'pending',
-            paidStatus: 'Paid', payMethod: 'UPI',
+            id: orderId,
+            customerName: customerName,
+            items: itemsList,
+            total: total,
+            status: 'pending',
             time: now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
-            date: now.toLocaleDateString('en-IN'), timestamp: now.toISOString(),
-            gstin: GSTIN, hotelName: 'Azhagu Hotel', upiId: UPI_ID
+            date: now.toLocaleDateString('en-IN'),
+            timestamp: now.toISOString()
         };
         
         try {
             await db.collection('orders').add(order);
-            orders.unshift(order); customerOrders.unshift(order);
+            orders.unshift(order);
             localStorage.setItem('azhagu_orders', JSON.stringify(orders));
-            localStorage.setItem('azhagu_customer_orders', JSON.stringify(customerOrders));
-            cart = {}; renderMenu(); updateCartBar();
+            cart = {};
+            renderMenu();
+            updateCartBar();
             closePaymentModal();
             showToast(`✅ Order ${order.id} placed!`);
         } catch(e) { showToast('Order failed: ' + e.message, true); }
     }
     
     function loadOrderHistory() {
-        const userOrders = customerOrders.filter(o => o.customerName === customerName);
         const container = document.getElementById('orderHistoryList');
-        if (userOrders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>'; return; }
-        container.innerHTML = userOrders.map(order => `<div class="history-item"><div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div><div>${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div><div class="history-total">₹${order.total}</div></div>`).join('');
-    }
-    
-    // Initialize Firebase Data
-    async function initializeFirebaseData() {
-        try {
-            // Check if menu exists
-            const menuSnapshot = await db.collection('menu').get();
-            if (menuSnapshot.empty) {
-                const defaultMenu = [
-                    { name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                    { name: 'Mini Idly', price: 30, category: 'tiffin', emoji: '🍚', approved: true, available: true },
-                    { name: 'Masala Dosa', price: 70, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                    { name: 'Vada', price: 15, category: 'tiffin', emoji: '🍩', approved: true, available: true },
-                    { name: 'Pongal', price: 55, category: 'tiffin', emoji: '🍲', approved: true, available: true },
-                    { name: 'Filter Coffee', price: 22, category: 'drinks', emoji: '☕', approved: true, available: true },
-                    { name: 'Badam Milk', price: 35, category: 'drinks', emoji: '🥛', approved: true, available: true },
-                    { name: 'Elaneer Juice', price: 45, category: 'drinks', emoji: '🥥', approved: true, available: true },
-                    { name: 'Lemon Rice', price: 50, category: 'rice', emoji: '🍚', approved: true, available: true },
-                    { name: 'Curd Rice', price: 45, category: 'rice', emoji: '🍚', approved: true, available: true }
-                ];
-                for (const item of defaultMenu) await db.collection('menu').add(item);
-                showToast('Default menu loaded!');
-            }
-            
-            // Load menu
-            const allMenu = await db.collection('menu').get();
-            menuItems = [];
-            allMenu.forEach(doc => menuItems.push({ id: doc.id, ...doc.data() }));
-            
-            // Load offers
-            const offersSnapshot = await db.collection('offers').get();
-            activeOffers = [];
-            offersSnapshot.forEach(doc => { const data = doc.data(); if (data.active) activeOffers.push(data); });
-            
-            // Load GST settings
-            const settingsDoc = await db.collection('settings').doc('gst').get();
-            if (settingsDoc.exists) {
-                gstRate = settingsDoc.data().rate || 5;
-                gstEnabled = settingsDoc.data().enabled !== false;
-            } else {
-                await db.collection('settings').doc('gst').set({ enabled: true, rate: 5 });
-            }
-            
-            renderMenu();
-            if (activeOffers.length > 0) {
-                document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
-                document.getElementById('offerBanner').style.display = 'block';
-            }
-        } catch(e) { console.error('Init error:', e); showToast('Loading menu...', false); }
+        if (orders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>'; return; }
+        container.innerHTML = orders.map(order => `
+            <div class="history-item">
+                <div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div>
+                <div>${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
+                <div class="history-total">₹${order.total}</div>
+            </div>
+        `).join('');
     }
     
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMenu(); });
@@ -350,7 +298,7 @@
     if (customerName) document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName.substring(0, 15)}`;
     else setTimeout(() => openNameModal(), 500);
     
-    initializeFirebaseData();
+    renderMenu();
     updateCartBar();
 </script>
 </body>
