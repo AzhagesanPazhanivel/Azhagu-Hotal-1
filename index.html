@@ -294,7 +294,7 @@
     let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
     let currentBillOrder = null;
-    let unsubscribeCustomerOrders = null;
+    let unsubscribeListener = null;
     
     function showToast(msg, isError = false) {
         const t = document.getElementById('toast');
@@ -411,17 +411,17 @@
         document.getElementById('nameModal').classList.remove('open');
         showToast(`Welcome ${customerName}!`);
         
-        // Start listening to this customer's orders
-        startListeningToCustomerOrders();
+        // Start listening to orders
+        loadCustomerOrders();
     }
     
-    // Start listening to orders for this customer only
-    function startListeningToCustomerOrders() {
+    // Load orders for this customer
+    function loadCustomerOrders() {
         if (!customerName) return;
         
-        if (unsubscribeCustomerOrders) unsubscribeCustomerOrders();
+        if (unsubscribeListener) unsubscribeListener();
         
-        unsubscribeCustomerOrders = db.collection('orders')
+        unsubscribeListener = db.collection('orders')
             .where('customerName', '==', customerName)
             .orderBy('timestamp', 'desc')
             .onSnapshot((snapshot) => {
@@ -429,20 +429,22 @@
                 snapshot.forEach(doc => {
                     customerOrders.push({ id: doc.id, ...doc.data() });
                 });
-                console.log("Customer orders loaded:", customerOrders.length);
+                console.log("Loaded orders for", customerName, ":", customerOrders.length);
                 
-                // Update My Orders page if active
+                // Refresh display if on orders page
                 if (document.getElementById('view-orders').classList.contains('active')) {
                     displayMyOrders();
                 }
             }, (error) => {
                 console.error("Error loading orders:", error);
+                showToast("Error loading orders: " + error.message, true);
             });
     }
     
     function displayMyOrders() {
         const container = document.getElementById('orderHistoryList');
-        if (customerOrders.length === 0) {
+        
+        if (!customerOrders || customerOrders.length === 0) {
             container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>';
             return;
         }
@@ -452,6 +454,7 @@
         container.innerHTML = customerOrders.map(order => {
             let statusText = '';
             let statusClass = '';
+            
             if (order.paymentStatus === 'PENDING_VERIFICATION') {
                 statusText = '⏳ Pending Verification';
                 statusClass = 'status-pending';
@@ -466,23 +469,22 @@
                 statusClass = 'status-pending';
             }
             
-            return `<div class="history-item" onclick="showBillFromHistory('${order.id}')">
+            const orderTypeText = order.orderType === 'dinein' ? '🏠 Dine In' : (order.orderType === 'pickup' ? '🚗 Pickup' : '📦 Parcel');
+            
+            return `<div class="history-item" onclick="viewBill('${order.id}')">
                 <div class="history-header">
                     <span class="history-id">${order.id}</span>
                     <span class="history-date">${order.date} ${order.time}</span>
                 </div>
-                <div><span class="payment-status ${statusClass}">${statusText}</span>
-                <span class="order-type-badge">${getOrderTypeText(order.orderType)}</span></div>
+                <div>
+                    <span class="payment-status ${statusClass}">${statusText}</span>
+                    <span class="order-type-badge">${orderTypeText}</span>
+                </div>
                 <div style="margin: 8px 0; font-size:13px;">${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
                 <div class="history-total">₹${order.total} | ${payMethodMap[order.payMethod] || order.payMethod}</div>
-                ${order.utrNumber ? `<div style="font-size:10px; color:#666;">UTR: ${order.utrNumber}</div>` : ''}
+                ${order.utrNumber ? `<div style="font-size:10px; color:#666; margin-top:5px;">UTR: ${order.utrNumber}</div>` : ''}
             </div>`;
         }).join('');
-    }
-    
-    function getOrderTypeText(type) {
-        const map = { 'dinein': '🏠 Dine In', 'pickup': '🚗 Pickup', 'parcel': '📦 Parcel' };
-        return map[type] || type;
     }
     
     function proceedToCheckout() {
@@ -597,8 +599,6 @@
             customerName: customerName,
             items: itemsList,
             total: total,
-            status: 'payment_pending',
-            orderStatus: 'awaiting_verification',
             orderType: selectedOrderType,
             payMethod: selectedPaymentMethod,
             utrNumber: utr,
@@ -615,7 +615,13 @@
             renderMenu();
             updateCartBar();
             closePaymentModal();
+            
+            // Show bill
+            currentBillOrder = order;
             showBill(order);
+            
+            // Reload orders
+            loadCustomerOrders();
         } catch(e) { 
             showToast('Order failed: ' + e.message, true); 
         }
@@ -625,7 +631,6 @@
         const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
         const payMethodMap = { 'gpay': 'Google Pay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
         const paymentStatusText = order.paymentStatus === 'PENDING_VERIFICATION' ? '⏳ Pending Verification' : '✅ Payment Verified';
-        const paymentStatusColor = order.paymentStatus === 'PENDING_VERIFICATION' ? '#ff9800' : '#4caf50';
         
         return `<!DOCTYPE html>
         <html><head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
@@ -638,7 +643,6 @@
             .items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}
             .grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}
             .footer{text-align:center;margin-top:25px;font-size:10px;}
-            .payment-status{color:${paymentStatusColor};font-weight:bold;}
             @media print{body{padding:10px;}}
         </style>
         </head><body>
@@ -646,11 +650,11 @@
             <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
             <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
             <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
-            <div class="info-row"><span><strong>UTR:</strong> ${order.utrNumber}</span><span><strong>Status:</strong> <span class="payment-status">${paymentStatusText}</span></span></div>
-            <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th><tr>
-            ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')} </table>
+            <div class="info-row"><span><strong>UTR:</strong> ${order.utrNumber}</span><span><strong>Status:</strong> ${paymentStatusText}</span></div>
+            <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
+            ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total}</td></tr>`).join('')}追赶
             <div class="grand-total">Total: ₹${order.total}</div>
-            <div class="footer"><div>✨ Thank you! ✨</div><div>UPI: ${UPI_ID}</div><div>Order will be confirmed after payment verification</div></div>
+            <div class="footer"><div>✨ Thank you! ✨</div><div>UPI: ${UPI_ID}</div></div>
         </body></html>`;
     }
     
@@ -674,9 +678,12 @@
         win.print();
     }
     
-    async function showBillFromHistory(orderId) {
+    async function viewBill(orderId) {
         const order = customerOrders.find(o => o.id === orderId);
-        if (order) { showBill(order); }
+        if (order) {
+            currentBillOrder = order;
+            showBill(order);
+        }
     }
     
     async function trackOrder() {
@@ -686,7 +693,7 @@
             return; 
         }
         
-        // First try to find in customer orders
+        // First try customer orders
         let order = customerOrders.find(o => o.id === trackId);
         
         // If not found, try direct Firebase lookup
@@ -725,6 +732,7 @@
             statusClass = 'status-pending';
         }
         
+        const orderTypeText = order.orderType === 'dinein' ? '🏠 Dine In' : (order.orderType === 'pickup' ? '🚗 Pickup' : '📦 Parcel');
         const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
         
         resultDiv.innerHTML = `<div style="background:#e8f5e9; padding:20px; border-radius:20px;">
@@ -732,7 +740,7 @@
             <div><strong>Order ID:</strong> ${order.id}</div>
             <div><strong>Customer:</strong> ${order.customerName}</div>
             <div><strong>Date & Time:</strong> ${order.date} | ${order.time}</div>
-            <div><strong>Order Type:</strong> ${getOrderTypeText(order.orderType)}</div>
+            <div><strong>Order Type:</strong> ${orderTypeText}</div>
             <div><strong>Payment Method:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</div>
             <div><strong>Payment Status:</strong> <span class="payment-status ${statusClass}">${statusText}</span></div>
             <div><strong>UTR Number:</strong> ${order.utrNumber || 'N/A'}</div>
@@ -741,7 +749,7 @@
                 <strong>Items Ordered:</strong><br>
                 ${order.items ? order.items.map(l => `• ${l.name} × ${l.qty} — ₹${l.total || (l.price * l.qty)}`).join('<br>') : 'No items'}
             </div>
-            <button class="track-btn" style="margin-top:15px;" onclick="showBillFromHistory('${order.id}')">📄 View Full Bill</button>
+            <button class="track-btn" style="margin-top:15px;" onclick="viewBill('${order.id}')">📄 View Full Bill</button>
         </div>`;
     }
     
@@ -770,9 +778,10 @@
         });
     });
     
+    // Initialize
     if (customerName) {
         document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
-        startListeningToCustomerOrders();
+        loadCustomerOrders();
     } else {
         setTimeout(() => openNameModal(), 500);
     }
@@ -781,7 +790,7 @@
     updateCartBar();
     
     window.printBill = printBill;
-    window.showBillFromHistory = showBillFromHistory;
+    window.viewBill = viewBill;
     window.trackOrder = trackOrder;
     window.closeBillModal = closeBillModal;
 </script>
