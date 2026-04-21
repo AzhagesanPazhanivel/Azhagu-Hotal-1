@@ -166,7 +166,7 @@
         <div class="hero-row"><div class="logo-box">🔍</div><div class="logo-text"><h1>Track Order</h1><p>Enter your Order ID</p></div></div>
     </div>
     <div style="padding: 20px;">
-        <input type="text" id="trackOrderId" class="track-order-input" placeholder="Enter Order ID (e.g., ORD-1712345678900)">
+        <input type="text" id="trackOrderId" class="track-order-input" placeholder="Enter Order ID">
         <button class="track-btn" onclick="trackOrder()">Track Order →</button>
         <div id="trackResult" style="margin-top: 20px;"></div>
     </div>
@@ -410,52 +410,47 @@
         document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
         document.getElementById('nameModal').classList.remove('open');
         showToast(`Welcome ${customerName}!`);
-        
-        // Start listening to orders
         loadCustomerOrders();
     }
     
-    // Load orders for this customer
+    // SIMPLIFIED - Get all orders and filter in JavaScript
     function loadCustomerOrders() {
-    if (!customerName) {
-        console.log("No customer name set");
-        return;
-    }
-    
-    if (unsubscribeListener) unsubscribeListener();
-    
-    console.log("Loading orders for customer:", customerName);
-    
-    // Try to get orders - this will work if rules are open
-    unsubscribeListener = db.collection('orders')
-        .orderBy('timestamp', 'desc')
-        .onSnapshot((snapshot) => {
-            customerOrders = [];
-            snapshot.forEach(doc => {
-                let order = { id: doc.id, ...doc.data() };
-                // Manual filter in JavaScript instead of Firebase query
-                if (order.customerName === customerName) {
-                    customerOrders.push(order);
+        if (!customerName) return;
+        
+        if (unsubscribeListener) unsubscribeListener();
+        
+        showToast("Loading your orders...");
+        
+        db.collection('orders')
+            .orderBy('timestamp', 'desc')
+            .get()
+            .then((querySnapshot) => {
+                customerOrders = [];
+                querySnapshot.forEach(doc => {
+                    let order = { id: doc.id, ...doc.data() };
+                    if (order.customerName === customerName) {
+                        customerOrders.push(order);
+                    }
+                });
+                console.log("Found orders:", customerOrders.length);
+                displayMyOrders();
+                if (customerOrders.length === 0) {
+                    showToast("No orders found for " + customerName);
+                } else {
+                    showToast(`Found ${customerOrders.length} order(s)`);
                 }
+            })
+            .catch((error) => {
+                console.error("Error loading orders:", error);
+                document.getElementById('orderHistoryList').innerHTML = `
+                    <div style="text-align:center; padding:50px;">
+                        <div style="font-size:48px; margin-bottom:10px;">⚠️</div>
+                        <div>Error loading orders: ${error.message}</div>
+                        <div style="font-size:12px; margin-top:10px;">Please check your internet connection.</div>
+                    </div>
+                `;
             });
-            console.log("Found orders:", customerOrders.length);
-            displayMyOrders();
-        }, (error) => {
-            console.error("Permission error details:", error);
-            
-            // Show user-friendly message
-            document.getElementById('orderHistoryList').innerHTML = `
-                <div style="text-align:center; padding:50px;">
-                    <div style="font-size:48px; margin-bottom:10px;">🔒</div>
-                    <div>Unable to load orders due to security settings.</div>
-                    <div style="font-size:12px; margin-top:10px;">Please contact the restaurant administrator.</div>
-                </div>
-            `;
-            
-            // Also show a toast
-            showToast("⚠️ Unable to load orders. Please contact admin.", true);
-        });
-}
+    }
     
     function displayMyOrders() {
         const container = document.getElementById('orderHistoryList');
@@ -631,12 +626,8 @@
             renderMenu();
             updateCartBar();
             closePaymentModal();
-            
-            // Show bill
             currentBillOrder = order;
             showBill(order);
-            
-            // Reload orders
             loadCustomerOrders();
         } catch(e) { 
             showToast('Order failed: ' + e.message, true); 
@@ -709,10 +700,8 @@
             return; 
         }
         
-        // First try customer orders
         let order = customerOrders.find(o => o.id === trackId);
         
-        // If not found, try direct Firebase lookup
         if (!order) {
             try {
                 const docRef = db.collection('orders').doc(trackId);
