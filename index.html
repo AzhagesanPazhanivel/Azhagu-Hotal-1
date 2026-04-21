@@ -16,6 +16,8 @@
             --green: #2a7f49;
             --dark: #2c1a0f;
             --border: #f0e2cf;
+            --blue: #2196f3;
+            --orange: #ff9800;
         }
         body { font-family: 'DM Sans', sans-serif; background: var(--cream); }
         .app-nav { display: flex; background: var(--dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; }
@@ -53,73 +55,73 @@
         .qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; }
         .qb.plus { background: var(--primary); color: white; }
         .qb.minus { border: 1px solid #e2cfb5; }
-        .cbar { background: var(--dark); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; }
+        .cbar { background: var(--dark); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; z-index: 150; }
         .ct { font-size: 22px; font-weight: 800; }
         .pbtn { background: var(--gold); color: var(--dark); border: none; border-radius: 40px; padding: 10px 24px; font-weight: 700; cursor: pointer; }
         .pbtn:disabled { background: #9b7b5c; opacity: 0.5; cursor: not-allowed; }
         
-        /* Payment Modal Styles */
-        .payment-modal-overlay {
+        /* Modal Styles */
+        .modal-overlay {
             position: fixed; inset: 0; background: rgba(44,26,15,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
-        .payment-modal-overlay.open { opacity: 1; pointer-events: all; }
-        .payment-modal-card {
+        .modal-overlay.open { opacity: 1; pointer-events: all; }
+        .modal-card {
             background: white; border-radius: 32px; padding: 28px; width: 90%; max-width: 450px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease;
         }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .payment-modal-card h3 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--primary); margin-bottom: 5px; }
-        .payment-modal-card .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
+        .modal-card h3 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--primary); margin-bottom: 5px; }
+        .modal-card .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
+        
+        /* Order Type Selection */
+        .order-type-grid { display: flex; gap: 12px; margin-bottom: 20px; }
+        .order-type-btn { flex: 1; padding: 15px; border: 2px solid var(--border); border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
+        .order-type-btn.selected { border-color: var(--green); background: #e8f5e9; }
+        .order-type-btn .icon { font-size: 28px; }
+        .order-type-btn .name { font-size: 14px; font-weight: 600; margin-top: 5px; }
+        
+        /* Payment Section */
         .payment-amount { background: #fef6ed; padding: 15px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
-        .payment-amount .label { font-size: 12px; color: #666; }
         .payment-amount .amount { font-size: 32px; font-weight: 800; color: var(--primary); }
-        
-        .payment-methods { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .pay-method { flex: 1; padding: 15px 10px; border: 2px solid var(--border); border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
+        .payment-methods { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .pay-method { flex: 1; padding: 12px 5px; border: 2px solid var(--border); border-radius: 16px; text-align: center; cursor: pointer; }
         .pay-method.selected { border-color: var(--green); background: #e8f5e9; }
-        .pay-method .icon { font-size: 28px; }
-        .pay-method .name { font-size: 12px; font-weight: 600; margin-top: 5px; }
-        
         .upi-section { background: #f9efe2; border-radius: 20px; padding: 15px; margin-bottom: 20px; }
         .qr-code { text-align: center; margin-bottom: 15px; }
-        .qr-code canvas, .qr-code img { width: 180px; height: 180px; margin: 0 auto; }
-        .upi-id-box { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px 15px; border-radius: 50px; margin-bottom: 15px; }
-        .upi-id { font-family: monospace; font-weight: 600; font-size: 12px; word-break: break-all; }
-        .copy-btn { background: var(--primary); color: white; border: none; padding: 5px 15px; border-radius: 30px; cursor: pointer; font-size: 12px; }
-        .app-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
-        .app-btn { flex: 1; padding: 10px; border-radius: 50px; font-weight: 600; font-size: 12px; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .qr-code canvas, .qr-code img { width: 160px; height: 160px; margin: 0 auto; }
+        .upi-id-box { display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px 12px; border-radius: 50px; margin-bottom: 12px; }
+        .upi-id { font-family: monospace; font-size: 11px; word-break: break-all; }
+        .copy-btn { background: var(--primary); color: white; border: none; padding: 5px 12px; border-radius: 30px; cursor: pointer; font-size: 11px; }
+        .app-buttons { display: flex; gap: 8px; margin-bottom: 12px; }
+        .app-btn { flex: 1; padding: 8px; border-radius: 50px; font-weight: 600; font-size: 11px; cursor: pointer; border: none; }
         .app-btn.gpay { background: #1a73e8; color: white; }
         .app-btn.phonepe { background: #5f259f; color: white; }
         .app-btn.paytm { background: #00baf2; color: white; }
-        
-        .payment-confirm { background: #fff8e8; border-radius: 16px; padding: 15px; margin: 15px 0; border: 1px solid #ffe0a3; }
-        .confirm-check { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .payment-confirm { background: #fff8e8; border-radius: 16px; padding: 12px; margin: 15px 0; }
+        .confirm-check { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .confirm-check input { width: 18px; height: 18px; cursor: pointer; }
-        .warning-text { font-size: 11px; color: #e67e22; margin-top: 8px; }
-        
-        .cash-note { background: #e8f0ff; border-radius: 16px; padding: 15px; text-align: center; margin: 15px 0; }
-        
+        .warning-text { font-size: 10px; color: #e67e22; }
         .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
         .modal-buttons button { flex: 1; padding: 12px; border-radius: 50px; font-weight: 700; cursor: pointer; border: none; }
         .btn-confirm { background: var(--green); color: white; }
         .btn-cancel { background: #ccc; color: #333; }
         
+        /* Order History */
+        .order-history-list { padding: 16px; }
+        .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .history-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
+        .history-id { font-weight: 800; color: var(--primary); font-size: 13px; }
+        .history-date { font-size: 11px; color: #9b7b5c; }
+        .status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+        .status-booked { background: #fff3e0; color: #ff9800; }
+        .status-prepared { background: #e3f2fd; color: #2196f3; }
+        .status-ready { background: #e8f5e9; color: #4caf50; }
+        .status-delivered { background: #e0e0e0; color: #666; }
+        .order-type-badge { background: #e8e8e8; padding: 3px 8px; border-radius: 20px; font-size: 10px; margin-left: 8px; }
+        .history-total { font-weight: 800; font-size: 14px; color: var(--green); margin-top: 8px; }
+        
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; opacity: 0; transition: opacity 0.2s; z-index: 999; pointer-events: none; white-space: nowrap; }
         .toast.show { opacity: 1; }
         @media (max-width: 480px) { .toast { white-space: normal; max-width: 85%; } }
-        
-        .order-history-list { padding: 16px; }
-        .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); cursor: pointer; }
-        .history-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .history-id { font-weight: 800; color: var(--primary); font-size: 13px; }
-        .history-date { font-size: 11px; color: #9b7b5c; }
-        .history-total { font-weight: 800; font-size: 14px; color: var(--green); }
-        .name-modal-overlay {
-            position: fixed; inset: 0; background: rgba(44,26,15,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        .name-modal-overlay.open { opacity: 1; pointer-events: all; }
-        .name-modal-card { background: white; border-radius: 32px; padding: 32px; width: 90%; max-width: 380px; text-align: center; }
-        .name-modal-card h3 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--primary); margin-bottom: 8px; }
-        .name-input { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 60px; font-size: 16px; margin: 20px 0; text-align: center; }
     </style>
 </head>
 <body>
@@ -149,69 +151,67 @@
     <div class="mgrid" id="menuGrid"></div>
     <div class="cbar">
         <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
-        <button class="pbtn" id="placeBtn" disabled onclick="openPaymentModal()">Order →</button>
+        <button class="pbtn" id="placeBtn" disabled onclick="openOrderTypeModal()">Order →</button>
     </div>
 </div>
 
 <div class="view" id="view-orders">
     <div class="hero" style="background: linear-gradient(135deg, #2c1a0f, #3f2618);">
-        <div class="hero-row"><div class="logo-box">📜</div><div class="logo-text"><h1>My Orders</h1><p>View bills & history</p></div></div>
+        <div class="hero-row"><div class="logo-box">📜</div><div class="logo-text"><h1>My Orders</h1><p>Track your order status</p></div></div>
     </div>
     <div id="orderHistoryList" class="order-history-list"></div>
 </div>
 
 <!-- NAME MODAL -->
-<div id="nameModal" class="name-modal-overlay">
-    <div class="name-modal-card">
+<div id="nameModal" class="modal-overlay">
+    <div class="modal-card">
         <h3>👤 Welcome!</h3>
         <p>Please enter your name to continue</p>
-        <input type="text" id="customerNameInput" class="name-input" placeholder="Your name">
+        <input type="text" id="customerNameInput" style="width:100%; padding:14px; border:2px solid var(--border); border-radius:60px; font-size:16px; margin:20px 0; text-align:center;">
         <button class="pbtn" onclick="saveCustomerName()" style="width:100%;">Continue →</button>
     </div>
 </div>
 
-<!-- PAYMENT MODAL -->
-<div id="paymentModal" class="payment-modal-overlay">
-    <div class="payment-modal-card">
-        <h3>💳 Complete Payment</h3>
-        <div class="subtitle">Secure payment to confirm your order</div>
-        
-        <div class="payment-amount">
-            <div class="label">Total Amount to Pay</div>
-            <div class="amount" id="paymentTotalAmount">₹0</div>
+<!-- ORDER TYPE MODAL -->
+<div id="orderTypeModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>🍽️ Select Order Type</h3>
+        <div class="order-type-grid">
+            <div class="order-type-btn selected" data-type="dinein" onclick="selectOrderType('dinein')">
+                <div class="icon">🏠</div>
+                <div class="name">Dine In</div>
+            </div>
+            <div class="order-type-btn" data-type="pickup" onclick="selectOrderType('pickup')">
+                <div class="icon">🚗</div>
+                <div class="name">Pickup</div>
+            </div>
+            <div class="order-type-btn" data-type="parcel" onclick="selectOrderType('parcel')">
+                <div class="icon">📦</div>
+                <div class="name">Parcel</div>
+            </div>
         </div>
+        <button class="pbtn" onclick="openPaymentModal()" style="width:100%;">Continue to Payment →</button>
+    </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="paymentModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>💳 Complete Payment</h3>
+        <div class="payment-amount"><div class="amount" id="paymentTotalAmount">₹0</div></div>
         
         <div class="payment-methods">
-            <div class="pay-method selected" data-method="upi" onclick="selectPaymentMethod('upi')">
-                <div class="icon">📱</div>
-                <div class="name">UPI / QR</div>
-            </div>
-            <div class="pay-method" data-method="gpay" onclick="selectPaymentMethod('gpay')">
-                <div class="icon">🅖</div>
-                <div class="name">Google Pay</div>
-            </div>
-            <div class="pay-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')">
-                <div class="icon">💜</div>
-                <div class="name">PhonePe</div>
-            </div>
-            <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')">
-                <div class="icon">🎯</div>
-                <div class="name">Paytm</div>
-            </div>
-            <div class="pay-method" data-method="cash" onclick="selectPaymentMethod('cash')">
-                <div class="icon">💵</div>
-                <div class="name">Cash</div>
-            </div>
+            <div class="pay-method selected" data-method="upi" onclick="selectPaymentMethod('upi')"><div class="icon">📱</div><div>UPI</div></div>
+            <div class="pay-method" data-method="gpay" onclick="selectPaymentMethod('gpay')"><div class="icon">🅖</div><div>GPay</div></div>
+            <div class="pay-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')"><div class="icon">💜</div><div>PhonePe</div></div>
+            <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')"><div class="icon">🎯</div><div>Paytm</div></div>
+            <div class="pay-method" data-method="cash" onclick="selectPaymentMethod('cash')"><div class="icon">💵</div><div>Cash</div></div>
         </div>
         
-        <!-- UPI Section (shown for UPI, GPay, PhonePe, Paytm) -->
         <div id="upiSection">
             <div class="upi-section">
                 <div class="qr-code" id="qrCodeContainer"></div>
-                <div class="upi-id-box">
-                    <span class="upi-id">azhagumani20-3@okicici</span>
-                    <button class="copy-btn" onclick="copyUPIId()">Copy ID</button>
-                </div>
+                <div class="upi-id-box"><span class="upi-id">azhagumani20-3@okicici</span><button class="copy-btn" onclick="copyUPIId()">Copy</button></div>
                 <div class="app-buttons">
                     <button class="app-btn gpay" onclick="openUpiApp('gpay')">🅖 GPay</button>
                     <button class="app-btn phonepe" onclick="openUpiApp('phonepe')">💜 PhonePe</button>
@@ -220,26 +220,16 @@
             </div>
         </div>
         
-        <!-- Cash Section (hidden by default) -->
-        <div id="cashSection" style="display:none;">
-            <div class="cash-note">
-                <div style="font-size: 32px; margin-bottom: 10px;">💵</div>
-                <div><strong>Pay at Counter</strong></div>
-                <div style="font-size: 13px; margin-top: 8px;">Please pay the exact amount at the front desk.<br>Your order will be prepared after payment.</div>
-            </div>
-        </div>
+        <div id="cashSection" style="display:none;"><div class="cash-note" style="background:#e8f0ff; border-radius:16px; padding:15px; text-align:center;"><div style="font-size:32px;">💵</div><div>Pay at Counter</div></div></div>
         
         <div class="payment-confirm">
-            <div class="confirm-check">
-                <input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()">
-                <label>✅ I have completed the payment</label>
-            </div>
-            <input type="text" id="utrNumber" class="name-input" style="margin-top: 10px; padding: 10px;" placeholder="Enter UTR / Reference number (optional)">
-            <div class="warning-text">⚠️ Please complete payment in your UPI app before confirming. Orders cannot be cancelled after confirmation.</div>
+            <div class="confirm-check"><input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()"><label>✅ I have completed the payment</label></div>
+            <input type="text" id="utrNumber" style="width:100%; padding:10px; border:2px solid var(--border); border-radius:60px; margin-top:10px;" placeholder="UTR Number (optional)">
+            <div class="warning-text">⚠️ Confirm only after payment</div>
         </div>
         
         <div class="modal-buttons">
-            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="confirmOrderWithPayment()">Confirm & Place Order</button>
+            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="placeOrder()">Confirm Order</button>
             <button class="btn-cancel" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
@@ -265,6 +255,7 @@
     let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
     let orderCounter = orders.length + 1;
     let selectedPaymentMethod = 'upi';
+    let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
     
     function showToast(msg, isError = false) {
@@ -290,8 +281,7 @@
         for (const [id, qty] of Object.entries(cart)) {
             const item = menuItems.find(i => i.id == id);
             if (item && item.available === true && item.approved === true) {
-                const price = getDiscountedPrice(item.price, item.id);
-                total += price * qty;
+                total += getDiscountedPrice(item.price, item.id) * qty;
             }
         }
         return total;
@@ -309,61 +299,43 @@
                     menuItems.push({ id: doc.id, ...data });
                 });
                 renderMenu();
-            } else {
-                const defaultMenu = [
-                    { name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                    { name: 'Mini Idly', price: 30, category: 'tiffin', emoji: '🍚', approved: true, available: true },
-                    { name: 'Masala Dosa', price: 70, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                    { name: 'Filter Coffee', price: 22, category: 'drinks', emoji: '☕', approved: true, available: true },
-                    { name: 'Badam Milk', price: 35, category: 'drinks', emoji: '🥛', approved: true, available: true }
-                ];
-                for (const item of defaultMenu) await db.collection('menu').add(item);
-                loadMenuAndOffers();
-                return;
             }
-            
             const offersSnapshot = await db.collection('offers').get();
             activeOffers = [];
             offersSnapshot.forEach(doc => { const data = doc.data(); if (data.active) activeOffers.push(data); });
-            
             if (activeOffers.length > 0) {
                 document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
                 document.getElementById('offerBanner').style.display = 'block';
             }
-        } catch(e) { console.error(e); showToast('Error loading menu', true); }
+        } catch(e) { console.error(e); }
     }
     
     function renderMenu() {
         const grid = document.getElementById('menuGrid');
         let filtered = menuItems.filter(item => item.approved === true && item.available === true);
-        
         if (currentFilter !== 'all') filtered = filtered.filter(i => i.category === currentFilter);
         if (searchQuery) filtered = filtered.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
-        
-        if (filtered.length === 0) { grid.innerHTML = '<div style="text-align:center; padding:40px;">No items available</div>'; return; }
+        if (filtered.length === 0) { grid.innerHTML = '<div style="text-align:center; padding:40px;">No items</div>'; return; }
         
         grid.innerHTML = filtered.map(item => {
             const qty = cart[item.id] || 0;
             const originalPrice = item.price;
             const discountedPrice = getDiscountedPrice(originalPrice, item.id);
             const hasOffer = discountedPrice < originalPrice;
-            
-            return `
-                <div class="mc">
-                    ${hasOffer ? `<div class="offer-tag">${Math.round((1 - discountedPrice/originalPrice)*100)}% OFF</div>` : ''}
-                    <div class="mi"><div class="me">${item.emoji || '🍽️'}</div></div>
-                    <div class="mb">
-                        <div class="mn">${item.name}</div>
-                        <div class="mrow">
-                            <div class="mprice">${hasOffer ? `<span class="original-price">₹${originalPrice}</span> ₹${discountedPrice}` : `₹${originalPrice}`}</div>
-                            <div class="qw">
-                                ${qty > 0 ? `<button class="qb minus" onclick="updateCart('${item.id}', -1)">−</button><span class="qn">${qty}</span>` : ''}
-                                <button class="qb plus" onclick="updateCart('${item.id}', 1)">+</button>
-                            </div>
+            return `<div class="mc">
+                ${hasOffer ? `<div class="offer-tag">${Math.round((1 - discountedPrice/originalPrice)*100)}% OFF</div>` : ''}
+                <div class="mi"><div class="me">${item.emoji || '🍽️'}</div></div>
+                <div class="mb">
+                    <div class="mn">${item.name}</div>
+                    <div class="mrow">
+                        <div class="mprice">${hasOffer ? `<span class="original-price">₹${originalPrice}</span> ₹${discountedPrice}` : `₹${originalPrice}`}</div>
+                        <div class="qw">
+                            ${qty > 0 ? `<button class="qb minus" onclick="updateCart('${item.id}', -1)">−</button><span class="qn">${qty}</span>` : ''}
+                            <button class="qb plus" onclick="updateCart('${item.id}', 1)">+</button>
                         </div>
                     </div>
                 </div>
-            `;
+            </div>`;
         }).join('');
     }
     
@@ -397,23 +369,22 @@
         showToast(`Welcome ${customerName}!`);
     }
     
-    // ========== PAYMENT FUNCTIONS ==========
-    function openPaymentModal() {
+    function openOrderTypeModal() {
         if (Object.keys(cart).length === 0) return;
         if (!customerName) { openNameModal(); return; }
-        
+        document.getElementById('orderTypeModal').classList.add('open');
+    }
+    
+    function selectOrderType(type) {
+        selectedOrderType = type;
+        document.querySelectorAll('.order-type-btn').forEach(btn => btn.classList.remove('selected'));
+        document.querySelector(`.order-type-btn[data-type="${type}"]`).classList.add('selected');
+    }
+    
+    function openPaymentModal() {
+        document.getElementById('orderTypeModal').classList.remove('open');
         currentTotalAmount = getCartTotal();
         document.getElementById('paymentTotalAmount').innerHTML = `₹${currentTotalAmount}`;
-        selectedPaymentMethod = 'upi';
-        document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
-        document.querySelector('.pay-method[data-method="upi"]').classList.add('selected');
-        
-        document.getElementById('upiSection').style.display = 'block';
-        document.getElementById('cashSection').style.display = 'none';
-        document.getElementById('paymentConfirmCheckbox').checked = false;
-        document.getElementById('confirmPaymentBtn').disabled = true;
-        document.getElementById('utrNumber').value = '';
-        
         generateQR(currentTotalAmount);
         document.getElementById('paymentModal').classList.add('open');
     }
@@ -424,7 +395,6 @@
         selectedPaymentMethod = method;
         document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
         document.querySelector(`.pay-method[data-method="${method}"]`).classList.add('selected');
-        
         if (method === 'cash') {
             document.getElementById('upiSection').style.display = 'none';
             document.getElementById('cashSection').style.display = 'block';
@@ -438,27 +408,18 @@
     function generateQR(amount) {
         const container = document.getElementById('qrCodeContainer');
         container.innerHTML = '';
-        const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=Azhagu%20Order`;
-        try {
-            new QRCode(container, { text: url, width: 170, height: 170, colorDark: "#b7410e", colorLight: "#ffffff" });
-        } catch(e) {
-            container.innerHTML = `<div style="width:170px;height:170px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;">Scan QR<br>${UPI_ID}</div>`;
-        }
+        const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR`;
+        try { new QRCode(container, { text: url, width: 150, height: 150, colorDark: "#b7410e", colorLight: "#ffffff" }); }
+        catch(e) { container.innerHTML = `<div style="width:150px;height:150px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;">Scan QR</div>`; }
     }
     
-    function copyUPIId() {
-        navigator.clipboard.writeText(UPI_ID);
-        showToast('✅ UPI ID copied!');
-    }
+    function copyUPIId() { navigator.clipboard.writeText(UPI_ID); showToast('✅ UPI ID copied!'); }
     
     function openUpiApp(appName) {
-        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR&tn=Azhagu%20Order`;
+        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR`;
         window.location.href = intent;
-        showToast(`Opening ${appName}... Complete payment then confirm here`, false);
-        setTimeout(() => {
-            const chk = document.getElementById('paymentConfirmCheckbox');
-            if (chk && !chk.checked) showToast('⚠️ Did you complete payment? Please confirm below.', true);
-        }, 15000);
+        showToast(`Opening ${appName}...`, false);
+        setTimeout(() => { const chk = document.getElementById('paymentConfirmCheckbox'); if (chk && !chk.checked) showToast('⚠️ Please confirm payment', true); }, 15000);
     }
     
     function toggleConfirmButton() {
@@ -467,28 +428,26 @@
         if (btn && chk) btn.disabled = !chk.checked;
     }
     
-    async function confirmOrderWithPayment() {
+    async function placeOrder() {
         const chk = document.getElementById('paymentConfirmCheckbox');
-        if (!chk.checked) { showToast('⚠️ Please confirm payment before proceeding', true); return; }
+        if (!chk.checked && selectedPaymentMethod !== 'cash') { showToast('⚠️ Please confirm payment', true); return; }
         
         let total = 0, itemsList = [];
         for (const [id, qty] of Object.entries(cart)) {
             const item = menuItems.find(i => i.id == id);
-            if (item && item.available === true && item.approved === true) {
+            if (item) {
                 const price = getDiscountedPrice(item.price, item.id);
-                itemsList.push({ name: item.name, qty, price: price, total: price * qty });
+                itemsList.push({ name: item.name, qty, price, total: price * qty });
                 total += price * qty;
             }
         }
         
         const orderId = `ORD-${String(orderCounter++).padStart(3,'0')}`;
         const now = new Date();
-        const utr = document.getElementById('utrNumber').value;
-        const payMethod = selectedPaymentMethod === 'cash' ? 'Cash' : 'UPI';
-        
         const order = {
             id: orderId, customerName: customerName, items: itemsList, total: total,
-            status: 'pending', payMethod: payMethod, utr: utr || 'N/A',
+            status: 'booked', orderType: selectedOrderType, payMethod: selectedPaymentMethod === 'cash' ? 'Cash' : 'UPI',
+            utr: document.getElementById('utrNumber').value || 'N/A',
             time: now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }),
             date: now.toLocaleDateString('en-IN'), timestamp: now.toISOString()
         };
@@ -498,24 +457,44 @@
             orders.unshift(order);
             localStorage.setItem('azhagu_orders', JSON.stringify(orders));
             cart = {}; renderMenu(); updateCartBar(); closePaymentModal();
-            showToast(`✅ Order ${orderId} placed successfully! Payment: ${payMethod}`);
-            
-            // Reset payment confirm checkbox for next order
+            showToast(`✅ Order ${orderId} placed! Status: Booked`);
             document.getElementById('paymentConfirmCheckbox').checked = false;
             document.getElementById('confirmPaymentBtn').disabled = true;
         } catch(e) { showToast('Order failed: ' + e.message, true); }
     }
     
+    function getStatusBadge(status) {
+        const statusMap = {
+            'booked': { class: 'status-booked', text: '📖 Booked' },
+            'prepared': { class: 'status-prepared', text: '👨‍🍳 Prepared' },
+            'ready': { class: 'status-ready', text: '✅ Ready' },
+            'delivered': { class: 'status-delivered', text: '🚚 Delivered' }
+        };
+        return statusMap[status] || { class: 'status-booked', text: status };
+    }
+    
+    function getOrderTypeText(type) {
+        const typeMap = { 'dinein': '🏠 Dine In', 'pickup': '🚗 Pickup', 'parcel': '📦 Parcel' };
+        return typeMap[type] || type;
+    }
+    
     function loadOrderHistory() {
+        const userOrders = orders.filter(o => o.customerName === customerName);
         const container = document.getElementById('orderHistoryList');
-        if (orders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>'; return; }
-        container.innerHTML = orders.map(order => `
-            <div class="history-item">
-                <div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date} ${order.time}</span></div>
-                <div>${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
-                <div><span class="history-total">₹${order.total}</span> | ${order.payMethod || 'UPI'}</div>
-            </div>
-        `).join('');
+        if (userOrders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>'; return; }
+        container.innerHTML = userOrders.map(order => {
+            const status = getStatusBadge(order.status || 'booked');
+            return `<div class="history-item">
+                <div class="history-header">
+                    <span class="history-id">${order.id}</span>
+                    <span class="history-date">${order.date} ${order.time}</span>
+                </div>
+                <div><span class="status-badge ${status.class}">${status.text}</span>
+                <span class="order-type-badge">${getOrderTypeText(order.orderType || 'dinein')}</span></div>
+                <div style="margin: 8px 0; font-size:13px;">${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
+                <div class="history-total">₹${order.total} | ${order.payMethod || 'UPI'}</div>
+            </div>`;
+        }).join('');
     }
     
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMenu(); });
