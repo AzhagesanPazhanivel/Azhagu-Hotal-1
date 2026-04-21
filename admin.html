@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azhagu Unavagam - Secure Admin Panel</title>
+    <title>Azhagu Unavagam - Admin Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,6 +15,8 @@
             --green: #2a7f49;
             --dark: #2c1a0f;
             --border: #f0e2cf;
+            --blue: #2196f3;
+            --orange: #ff9800;
         }
         
         .login-overlay {
@@ -25,13 +27,11 @@
             background: white; border-radius: 48px; padding: 48px 40px; width: 90%; max-width: 420px; text-align: center;
         }
         .login-card h2 { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--primary); margin-bottom: 8px; }
-        .login-card p { color: #666; margin-bottom: 25px; font-size: 14px; }
         .login-input-group { margin-bottom: 20px; text-align: left; }
         .login-input-group label { display: block; font-size: 12px; font-weight: 600; color: #9b7b5c; margin-bottom: 5px; text-transform: uppercase; }
         .login-input { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 60px; font-size: 15px; }
-        .login-input:focus { outline: none; border-color: var(--primary); }
         .login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--deep)); color: white; border: none; border-radius: 60px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .error-msg { color: #e74c3c; font-size: 13px; margin-top: 12px; padding: 10px; background: #ffe; border-radius: 12px; }
+        .error-msg { color: #e74c3c; font-size: 13px; margin-top: 12px; }
         
         .admin-content { display: none; }
         .admin-header {
@@ -48,64 +48,48 @@
         .header-btn { background: rgba(255,255,255,0.15); border: none; padding: 8px 20px; border-radius: 40px; color: white; cursor: pointer; font-size: 13px; }
         .header-btn.logout { background: #c0392b; }
         
-        .admin-tabs { display: flex; gap: 5px; padding: 20px 32px 0 32px; background: white; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
-        .tab-btn { padding: 12px 24px; background: none; border: none; font-size: 14px; font-weight: 600; color: #9b7b5c; cursor: pointer; border-radius: 30px 30px 0 0; }
-        .tab-btn.active { background: var(--primary); color: white; }
-        .tab-pane { display: none; padding: 24px 32px; background: white; }
-        .tab-pane.active { display: block; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: #faf6f0; border-radius: 28px; padding: 20px; text-align: center; border: 1px solid var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; padding: 24px 32px; }
+        .stat-card { background: white; border-radius: 28px; padding: 20px; text-align: center; border: 1px solid var(--border); }
         .stat-number { font-size: 32px; font-weight: 800; color: var(--primary); }
         
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
-        .data-table th { background: #faf6f0; font-weight: 600; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
-        .status-approved { background: #e8f5e9; color: #2a7f49; }
-        .status-available { background: #e8f5e9; color: #2a7f49; }
-        .status-unavailable { background: #ffebee; color: #c0392b; }
-        
-        .action-btn-sm { padding: 5px 12px; border-radius: 20px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; margin: 2px; }
-        .btn-edit { background: #2196f3; color: white; }
-        .btn-delete { background: #e74c3c; color: white; }
-        .btn-toggle { background: #ff9800; color: white; }
-        .btn-approve { background: #4caf50; color: white; }
-        .add-btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; margin-bottom: 15px; }
-        
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1100; display: flex; align-items: center; justify-content: center; display: none; }
-        .modal-card { background: white; border-radius: 32px; padding: 32px; width: 90%; max-width: 450px; }
-        .modal-card h3 { font-size: 24px; margin-bottom: 20px; color: var(--primary); }
-        .modal-card input, .modal-card select { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 60px; margin-bottom: 15px; }
-        .modal-card button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 60px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-        .modal-card .cancel-btn { background: #ccc; color: #333; }
-        
-        .order-card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; border-left: 6px solid var(--primary); }
-        .order-card.ready { border-left-color: #f39c12; }
-        .order-card.done { border-left-color: #95a5a6; opacity: 0.8; }
+        .orders-container { padding: 0 32px 32px; display: flex; flex-direction: column; gap: 16px; max-height: 60vh; overflow-y: auto; }
+        .order-card { background: white; border-radius: 24px; padding: 20px; border-left: 6px solid var(--orange); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .order-card.status-booked { border-left-color: var(--orange); }
+        .order-card.status-prepared { border-left-color: var(--blue); }
+        .order-card.status-ready { border-left-color: var(--green); }
+        .order-card.status-delivered { border-left-color: #95a5a6; opacity: 0.8; }
         .order-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 12px; }
-        .order-items { background: #faf6f0; padding: 12px; border-radius: 16px; margin: 10px 0; font-size: 13px; }
+        .order-id { font-weight: 800; font-size: 16px; }
+        .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .badge-status { background: #fff3e0; color: var(--orange); }
+        .badge-type { background: #e8e8e8; color: #666; }
+        .order-items { background: #faf6f0; padding: 12px; border-radius: 16px; margin: 12px 0; font-size: 13px; }
         .order-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 12px; }
-        
+        .order-total { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .status-buttons { display: flex; gap: 8px; }
+        .status-btn { padding: 6px 14px; border-radius: 30px; border: none; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .btn-booked { background: var(--orange); color: white; }
+        .btn-prepared { background: var(--blue); color: white; }
+        .btn-ready { background: var(--green); color: white; }
+        .btn-delivered { background: #95a5a6; color: white; }
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--dark); color: #ffecb3; padding: 12px 28px; border-radius: 60px; font-size: 13px; z-index: 1200; display: none; }
         
         @media (max-width: 700px) {
-            .admin-tabs { padding: 15px 16px 0; }
-            .tab-pane { padding: 16px; }
+            .stats-grid { padding: 16px; gap: 12px; }
+            .orders-container { padding: 0 16px 20px; }
             .admin-header { padding: 16px 20px; flex-direction: column; text-align: center; }
-            .data-table th, .data-table td { padding: 8px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
 
-<!-- LOGIN MODAL -->
 <div id="loginModal" class="login-overlay">
     <div class="login-card">
         <h2>🔐 Admin Login</h2>
-        <p>Enter your credentials to access dashboard</p>
-        <div class="login-input-group"><label>📧 Email Address</label><input type="email" id="loginEmail" class="login-input" placeholder="admin@example.com" value="azhagumani20@gmail.com"></div>
-        <div class="login-input-group"><label>🔒 Password</label><input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()"></div>
+        <div class="hotel-name">🍛 Azhagu Unavagam</div>
+        <div class="login-input-group"><label>📧 Email</label><input type="email" id="loginEmail" class="login-input" value="azhagumani20@gmail.com"></div>
+        <div class="login-input-group"><label>🔒 Password</label><input type="password" id="loginPassword" class="login-input" placeholder="Password" onkeypress="if(event.key==='Enter') checkLogin()"></div>
         <button class="login-btn" onclick="checkLogin()">Login →</button>
         <div id="loginError" class="error-msg"></div>
     </div>
@@ -113,7 +97,7 @@
 
 <div id="adminContent" class="admin-content">
     <div class="admin-header">
-        <div><h1>🍛 Azhagu <span>Unavagam</span></h1><p style="font-size:12px;">Secure Admin Panel</p></div>
+        <div><h1>🍛 Azhagu <span>Unavagam</span></h1><p style="font-size:12px;">Order Management</p></div>
         <div class="header-right">
             <div class="datetime" id="datetimeDisplay"></div>
             <div class="live-badge"><div class="pulse-dot"></div><span>Live</span></div>
@@ -121,60 +105,19 @@
         </div>
     </div>
     
-    <div class="admin-tabs">
-        <button class="tab-btn active" data-tab="orders">📋 Orders</button>
-        <button class="tab-btn" data-tab="menu">🍽️ Menu</button>
-        <button class="tab-btn" data-tab="offers">🏷️ Offers</button>
+    <div class="stats-grid">
+        <div class="stat-card"><div>📊 Total Orders</div><div class="stat-number" id="totalOrders">0</div></div>
+        <div class="stat-card"><div>📖 Booked</div><div class="stat-number" id="bookedOrders">0</div></div>
+        <div class="stat-card"><div>👨‍🍳 Prepared</div><div class="stat-number" id="preparedOrders">0</div></div>
+        <div class="stat-card"><div>✅ Ready</div><div class="stat-number" id="readyOrders">0</div></div>
+        <div class="stat-card"><div>🚚 Delivered</div><div class="stat-number" id="deliveredOrders">0</div></div>
+        <div class="stat-card"><div>💰 Revenue</div><div class="stat-number" id="totalRevenue">₹0</div></div>
     </div>
     
-    <div id="tab-orders" class="tab-pane active">
-        <div class="stats-grid">
-            <div class="stat-card"><div>📊 Total Orders</div><div class="stat-number" id="totalOrders">0</div></div>
-            <div class="stat-card"><div>⏳ Pending</div><div class="stat-number" id="pendingOrders">0</div></div>
-            <div class="stat-card"><div>🔥 Ready</div><div class="stat-number" id="readyOrders">0</div></div>
-            <div class="stat-card"><div>✅ Completed</div><div class="stat-number" id="completedOrders">0</div></div>
-            <div class="stat-card"><div>💰 Revenue</div><div class="stat-number" id="totalRevenue">₹0</div></div>
-        </div>
-        <div id="ordersContainer" style="max-height: 55vh; overflow-y: auto;"></div>
-    </div>
-    
-    <div id="tab-menu" class="tab-pane">
-        <button class="add-btn" onclick="openAddDishModal()">+ Add New Dish</button>
-        <table class="data-table"><thead><tr><th>Dish</th><th>Price</th><th>Category</th><th>Status</th><th>Customer View</th><th>Actions</th></tr></thead><tbody id="menuTableBody"></tbody></table>
-    </div>
-    
-    <div id="tab-offers" class="tab-pane">
-        <button class="add-btn" onclick="openAddOfferModal()">+ Add New Offer</button>
-        <table class="data-table"><thead><tr><th>Title</th><th>Discount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="offersTableBody"></tbody></table>
-    </div>
+    <div id="ordersContainer" class="orders-container"></div>
 </div>
 
 <div id="toast" class="toast"></div>
-
-<!-- MODALS -->
-<div id="dishModal" class="modal-overlay">
-    <div class="modal-card">
-        <h3 id="dishModalTitle">Add New Dish</h3>
-        <input type="text" id="dishName" placeholder="Dish Name">
-        <input type="number" id="dishPrice" placeholder="Price (₹)">
-        <select id="dishCategory"><option value="tiffin">Tiffin</option><option value="drinks">Drinks</option><option value="rice">Rice</option></select>
-        <input type="text" id="dishEmoji" placeholder="Emoji (e.g., 🥞)">
-        <input type="hidden" id="dishId">
-        <button onclick="saveDish()">Save Dish</button>
-        <button class="cancel-btn" onclick="closeDishModal()">Cancel</button>
-    </div>
-</div>
-
-<div id="offerModal" class="modal-overlay">
-    <div class="modal-card">
-        <h3>Add Offer</h3>
-        <input type="text" id="offerTitle" placeholder="Offer Title">
-        <input type="number" id="offerValue" placeholder="Discount %">
-        <select id="offerItem"><option value="all">All Items</option></select>
-        <button onclick="saveOffer()">Save Offer</button>
-        <button class="cancel-btn" onclick="closeOfferModal()">Cancel</button>
-    </div>
-</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -183,13 +126,10 @@
 
 <script>
     let unsubscribeOrders = null;
-    let menuItems = [];
-    let offers = [];
     
-    function showToast(msg, isError = false) {
+    function showToast(msg) {
         const toast = document.getElementById('toast');
         toast.textContent = msg;
-        toast.style.background = isError ? '#c0392b' : 'var(--dark)';
         toast.style.display = 'block';
         setTimeout(() => toast.style.display = 'none', 3000);
     }
@@ -201,268 +141,100 @@
     function updateDateTime() { document.getElementById('datetimeDisplay').innerHTML = new Date().toLocaleString('en-IN'); }
     setInterval(updateDateTime, 1000); updateDateTime();
     
-    // ========== AUTHENTICATION ==========
     async function checkLogin() {
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
-        
-        if (!email || !password) {
-            document.getElementById('loginError').innerHTML = '❌ Please enter email and password!';
-            return;
-        }
-        
-        document.getElementById('loginError').innerHTML = '⏳ Logging in...';
-        
         try {
             await auth.signInWithEmailAndPassword(email, password);
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            startListeningOrders();
-            loadMenu();
-            loadOffers();
-            showToast(`✅ Welcome ${email}!`);
-        } catch(error) {
-            document.getElementById('loginError').innerHTML = '❌ ' + error.message;
-        }
+            startListening();
+            showToast(`Welcome ${email}`);
+        } catch(error) { document.getElementById('loginError').innerHTML = '❌ ' + error.message; }
     }
     
     async function logout() {
-        try {
-            await auth.signOut();
-            if (unsubscribeOrders) unsubscribeOrders();
-            document.getElementById('adminContent').style.display = 'none';
-            document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('loginEmail').value = 'azhagumani20@gmail.com';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').innerHTML = '';
-            showToast('🔒 Logged out securely');
-        } catch(error) {
-            showToast('Error logging out', true);
-        }
+        if (unsubscribeOrders) unsubscribeOrders();
+        await auth.signOut();
+        document.getElementById('adminContent').style.display = 'none';
+        document.getElementById('loginModal').style.display = 'flex';
+        showToast('Logged out');
     }
     
     auth.onAuthStateChanged((user) => {
         if (user) {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('adminContent').style.display = 'block';
-            startListeningOrders();
-            loadMenu();
-            loadOffers();
+            startListening();
         }
     });
     
-    // ========== LOAD MENU & OFFERS ==========
-    async function loadMenu() {
-        const snapshot = await db.collection('menu').get();
-        menuItems = [];
-        snapshot.forEach(doc => menuItems.push({ id: doc.id, ...doc.data() }));
-        renderMenuTable();
-        updateOfferItems();
+    function getStatusText(status) {
+        const map = { 'booked': '📖 Booked', 'prepared': '👨‍🍳 Prepared', 'ready': '✅ Ready', 'delivered': '🚚 Delivered' };
+        return map[status] || status;
     }
     
-    function renderMenuTable() {
-        const tbody = document.getElementById('menuTableBody');
-        if (menuItems.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No items. Click "Add New Dish" to create.</td></tr>'; 
-            return; 
-        }
-        tbody.innerHTML = menuItems.map(item => `
-            <tr>
-                <td>${item.emoji || '🍽️'} ${item.name}</td>
-                <td>₹${item.price}</td> <td>${item.category === 'tiffin' ? 'Tiffin' : item.category === 'drinks' ? 'Drinks' : 'Rice'}</td>
-                <td><span class="status-badge ${item.available ? 'status-available' : 'status-unavailable'}">${item.available ? 'Available' : 'Unavailable'}</span></td>
-                <td><span class="status-badge ${item.approved ? 'status-approved' : 'status-unavailable'}">${item.approved ? '✅ Shows' : '❌ Hidden'}</span></td>
-                <td>
-                    <button class="action-btn-sm btn-edit" onclick="editDish('${item.id}')">Edit</button>
-                    <button class="action-btn-sm btn-toggle" onclick="toggleAvailability('${item.id}', ${!item.available})">${item.available ? 'Disable' : 'Enable'}</button>
-                    <button class="action-btn-sm btn-delete" onclick="deleteDish('${item.id}')">Delete</button>
-                 </tr>
-        `).join('');
+    function getOrderTypeText(type) {
+        const map = { 'dinein': '🏠 Dine In', 'pickup': '🚗 Pickup', 'parcel': '📦 Parcel' };
+        return map[type] || type;
     }
     
-    async function loadOffers() {
-        const snapshot = await db.collection('offers').get();
-        offers = [];
-        snapshot.forEach(doc => offers.push({ id: doc.id, ...doc.data() }));
-        renderOffersTable();
-    }
-    
-    function renderOffersTable() {
-        const tbody = document.getElementById('offersTableBody');
-        if (offers.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No offers. Click "Add New Offer" to create.</td></tr>'; 
-            return; 
-        }
-        tbody.innerHTML = offers.map(offer => `
-            <tr>
-                <td>${offer.title || 'Offer'} </td> <td>${offer.value}% OFF</td>
-                <td><span class="status-badge ${offer.active ? 'status-available' : 'status-unavailable'}">${offer.active ? 'Active' : 'Inactive'}</span></td>
-                <td>
-                    <button class="action-btn-sm btn-toggle" onclick="toggleOffer('${offer.id}', ${!offer.active})">${offer.active ? 'Deactivate' : 'Activate'}</button>
-                    <button class="action-btn-sm btn-delete" onclick="deleteOffer('${offer.id}')">Delete</button>
-                 </tr>
-        `).join('');
-    }
-    
-    function updateOfferItems() {
-        const select = document.getElementById('offerItem');
-        if (select) select.innerHTML = '<option value="all">All Items</option>' + menuItems.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
-    }
-    
-    // ========== ORDER MANAGEMENT ==========
-    function startListeningOrders() {
+    function startListening() {
         if (unsubscribeOrders) unsubscribeOrders();
         unsubscribeOrders = db.collection('orders').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
             const orders = [];
             snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
             renderOrders(orders);
-            updateOrderStats(orders);
-            if (window.lastOrderCount && orders.length > window.lastOrderCount) { playSound(); showToast(`🔔 New order received!`); }
+            updateStats(orders);
+            if (window.lastOrderCount && orders.length > window.lastOrderCount) { playSound(); showToast(`🔔 New order!`); }
             window.lastOrderCount = orders.length;
-        }, (error) => {
-            console.error("Order listener error:", error);
         });
     }
     
     function renderOrders(orders) {
         const container = document.getElementById('ordersContainer');
-        if (orders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:40px;">No orders yet</div>'; return; }
+        if (orders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:40px;">No orders</div>'; return; }
         container.innerHTML = orders.map(order => `
-            <div class="order-card ${order.status || 'pending'}">
-                <div class="order-header"><div class="order-id">${order.id}</div><div>👤 ${order.customerName || 'Guest'}</div></div>
-                <div class="order-items">${order.items ? order.items.map(i => `${i.name} × ${i.qty} — ₹${i.total}`).join('<br>') : ''}</div>
+            <div class="order-card status-${order.status || 'booked'}">
+                <div class="order-header">
+                    <div class="order-id">${order.id}</div>
+                    <div class="badges">
+                        <span class="badge badge-status">${getStatusText(order.status || 'booked')}</span>
+                        <span class="badge badge-type">${getOrderTypeText(order.orderType || 'dinein')}</span>
+                        <span class="badge">💰 ${order.payMethod || 'UPI'}</span>
+                    </div>
+                </div>
+                <div><strong>👤 ${order.customerName || 'Guest'}</strong> | 🕐 ${order.time || 'Just now'}</div>
+                <div class="order-items">${order.items ? order.items.map(i => `${i.name} × ${i.qty} — ₹${i.price}`).join('<br>') : ''}</div>
                 <div class="order-footer">
-                    <div style="font-size:20px; font-weight:800;">₹${(order.total || 0).toFixed(2)}</div>
-                    <div>🕐 ${order.time || 'Just now'}</div>
-                    ${order.status !== 'done' ? `<button class="action-btn-sm btn-approve" onclick="updateOrderStatus('${order.id}', '${order.status === 'pending' ? 'ready' : 'done'}')">${order.status === 'pending' ? '✓ Mark Ready' : '✅ Complete'}</button>` : '<span style="color:#888;">✅ Completed</span>'}
+                    <div class="order-total">₹${(order.total || 0).toFixed(2)}</div>
+                    <div class="status-buttons">
+                        ${order.status !== 'delivered' ? `
+                            <button class="status-btn btn-booked" onclick="updateStatus('${order.id}', 'booked')" ${order.status === 'booked' ? 'disabled style="opacity:0.5;"' : ''}>📖 Booked</button>
+                            <button class="status-btn btn-prepared" onclick="updateStatus('${order.id}', 'prepared')" ${order.status === 'prepared' ? 'disabled style="opacity:0.5;"' : ''}>👨‍🍳 Prepared</button>
+                            <button class="status-btn btn-ready" onclick="updateStatus('${order.id}', 'ready')" ${order.status === 'ready' ? 'disabled style="opacity:0.5;"' : ''}>✅ Ready</button>
+                            <button class="status-btn btn-delivered" onclick="updateStatus('${order.id}', 'delivered')">🚚 Delivered</button>
+                        ` : '<span style="color:#888;">✅ Completed</span>'}
+                    </div>
                 </div>
             </div>
         `).join('');
     }
     
-    async function updateOrderStatus(orderId, newStatus) { 
-        await db.collection('orders').doc(orderId).update({ status: newStatus }); 
-        showToast(`Order ${newStatus === 'ready' ? 'Ready' : 'Completed'}`);
-        if (newStatus === 'ready') playSound();
+    async function updateStatus(orderId, newStatus) {
+        await db.collection('orders').doc(orderId).update({ status: newStatus });
+        showToast(`Order ${newStatus}`);
+        if (newStatus === 'ready' || newStatus === 'prepared') playSound();
     }
     
-    function updateOrderStats(orders) {
+    function updateStats(orders) {
         document.getElementById('totalOrders').innerText = orders.length;
-        document.getElementById('pendingOrders').innerText = orders.filter(o => o.status === 'pending').length;
+        document.getElementById('bookedOrders').innerText = orders.filter(o => o.status === 'booked').length;
+        document.getElementById('preparedOrders').innerText = orders.filter(o => o.status === 'prepared').length;
         document.getElementById('readyOrders').innerText = orders.filter(o => o.status === 'ready').length;
-        document.getElementById('completedOrders').innerText = orders.filter(o => o.status === 'done').length;
-        document.getElementById('totalRevenue').innerHTML = '₹' + orders.filter(o => o.status === 'done').reduce((s, o) => s + (o.total || 0), 0).toFixed(2);
+        document.getElementById('deliveredOrders').innerText = orders.filter(o => o.status === 'delivered').length;
+        document.getElementById('totalRevenue').innerHTML = '₹' + orders.filter(o => o.status === 'delivered').reduce((s, o) => s + (o.total || 0), 0).toFixed(2);
     }
-    
-    // ========== DISH MANAGEMENT ==========
-    function openAddDishModal() { 
-        document.getElementById('dishModalTitle').innerText = 'Add New Dish'; 
-        document.getElementById('dishId').value = ''; 
-        document.getElementById('dishName').value = ''; 
-        document.getElementById('dishPrice').value = ''; 
-        document.getElementById('dishCategory').value = 'tiffin'; 
-        document.getElementById('dishEmoji').value = '🍽️'; 
-        document.getElementById('dishModal').style.display = 'flex'; 
-    }
-    
-    function editDish(id) { 
-        const item = menuItems.find(i => i.id === id); 
-        if(item){ 
-            document.getElementById('dishModalTitle').innerText = 'Edit Dish'; 
-            document.getElementById('dishId').value = id; 
-            document.getElementById('dishName').value = item.name; 
-            document.getElementById('dishPrice').value = item.price; 
-            document.getElementById('dishCategory').value = item.category; 
-            document.getElementById('dishEmoji').value = item.emoji || '🍽️'; 
-            document.getElementById('dishModal').style.display = 'flex'; 
-        } 
-    }
-    
-    async function saveDish() { 
-        const id = document.getElementById('dishId').value; 
-        const data = { 
-            name: document.getElementById('dishName').value, 
-            price: parseFloat(document.getElementById('dishPrice').value), 
-            category: document.getElementById('dishCategory').value, 
-            emoji: document.getElementById('dishEmoji').value, 
-            approved: true,   // ✅ IMPORTANT: Automatically approved
-            available: true   // ✅ IMPORTANT: Automatically available
-        }; 
-        
-        if (id) {
-            await db.collection('menu').doc(id).update(data); 
-            showToast('Dish updated!');
-        } else { 
-            await db.collection('menu').add(data); 
-            showToast('New dish added! It will appear in customer menu immediately.');
-        }
-        closeDishModal(); 
-        loadMenu(); 
-    }
-    
-    async function toggleAvailability(id, status) { 
-        await db.collection('menu').doc(id).update({ available: status }); 
-        loadMenu(); 
-        showToast(status ? 'Dish available to customers' : 'Dish hidden from customers'); 
-    }
-    
-    async function deleteDish(id) { 
-        if(confirm('Delete this dish?')){ 
-            await db.collection('menu').doc(id).delete(); 
-            loadMenu(); 
-            showToast('Dish deleted'); 
-        } 
-    }
-    
-    function closeDishModal() { document.getElementById('dishModal').style.display = 'none'; }
-    
-    // ========== OFFER MANAGEMENT ==========
-    function openAddOfferModal() { 
-        document.getElementById('offerTitle').value = ''; 
-        document.getElementById('offerValue').value = ''; 
-        updateOfferItems(); 
-        document.getElementById('offerModal').style.display = 'flex'; 
-    }
-    
-    async function saveOffer() { 
-        const data = { 
-            title: document.getElementById('offerTitle').value || 'Special Offer', 
-            type: 'percentage', 
-            value: parseFloat(document.getElementById('offerValue').value), 
-            itemId: document.getElementById('offerItem').value, 
-            active: true 
-        }; 
-        await db.collection('offers').add(data); 
-        closeOfferModal(); 
-        loadOffers(); 
-        showToast('Offer added!'); 
-    }
-    
-    async function toggleOffer(id, status) { 
-        await db.collection('offers').doc(id).update({ active: status }); 
-        loadOffers(); 
-        showToast(status ? 'Offer activated' : 'Offer deactivated'); 
-    }
-    
-    async function deleteOffer(id) { 
-        if(confirm('Delete this offer?')){ 
-            await db.collection('offers').doc(id).delete(); 
-            loadOffers(); 
-            showToast('Offer deleted'); 
-        } 
-    }
-    
-    function closeOfferModal() { document.getElementById('offerModal').style.display = 'none'; }
-    
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn => { 
-        btn.addEventListener('click', () => { 
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active')); 
-            btn.classList.add('active'); 
-            document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active'); 
-        }); 
-    });
 </script>
 </body>
 </html>
