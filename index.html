@@ -306,7 +306,7 @@
     let currentFilter = 'all';
     let searchQuery = '';
     let orders = [];
-    let selectedPaymentMethod = 'upi';
+    let selectedPaymentMethod = 'gpay';
     let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
     let currentBillOrder = null;
@@ -444,6 +444,12 @@
         document.getElementById('orderTypeModal').classList.remove('open');
         currentTotalAmount = getCartTotal();
         document.getElementById('paymentTotalAmount').innerHTML = `₹${currentTotalAmount}`;
+        
+        // Update amounts for each payment method
+        document.getElementById('gpayAmount').innerHTML = `₹${currentTotalAmount}`;
+        document.getElementById('phonepeAmount').innerHTML = `₹${currentTotalAmount}`;
+        document.getElementById('paytmAmount').innerHTML = `₹${currentTotalAmount}`;
+        
         generateQR(currentTotalAmount);
         document.getElementById('paymentModal').classList.add('open');
     }
@@ -452,31 +458,63 @@
         document.getElementById('paymentModal').classList.remove('open');
         document.getElementById('paymentConfirmCheckbox').checked = false;
         document.getElementById('confirmPaymentBtn').disabled = true;
+        document.getElementById('transactionId').value = '';
     }
     
+    // ========== NEW PAYMENT METHODS ==========
     function selectPaymentMethod(method) {
         selectedPaymentMethod = method;
         document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
         document.querySelector(`.pay-method[data-method="${method}"]`).classList.add('selected');
-        if (method === 'cash') {
-            document.getElementById('upiSection').style.display = 'none';
-            document.getElementById('cashSection').style.display = 'block';
-        } else {
+        
+        // Hide all sections
+        document.getElementById('gpaySection').style.display = 'none';
+        document.getElementById('phonepeSection').style.display = 'none';
+        document.getElementById('paytmSection').style.display = 'none';
+        document.getElementById('upiSection').style.display = 'none';
+        
+        // Show selected section
+        if (method === 'gpay') {
+            document.getElementById('gpaySection').style.display = 'block';
+        } else if (method === 'phonepe') {
+            document.getElementById('phonepeSection').style.display = 'block';
+        } else if (method === 'paytm') {
+            document.getElementById('paytmSection').style.display = 'block';
+        } else if (method === 'upi') {
             document.getElementById('upiSection').style.display = 'block';
-            document.getElementById('cashSection').style.display = 'none';
             generateQR(currentTotalAmount);
         }
+    }
+    
+    function openPaymentApp(appName) {
+        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR&tn=Azhagu%20Order`;
+        window.location.href = intent;
+        showToast(`Opening ${appName}... Complete payment then confirm here`, false);
+        
+        // Reminder after 15 seconds
+        setTimeout(() => {
+            const chk = document.getElementById('paymentConfirmCheckbox');
+            if (chk && !chk.checked) {
+                showToast('⚠️ Did you complete payment? Please confirm below.', true);
+            }
+        }, 15000);
     }
     
     function generateQR(amount) {
         const container = document.getElementById('qrCodeContainer');
         container.innerHTML = '';
         const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR`;
-        try { new QRCode(container, { text: url, width: 150, height: 150, colorDark: "#b7410e", colorLight: "#ffffff" }); }
-        catch(e) { container.innerHTML = `<div>Scan QR</div>`; }
+        try { 
+            new QRCode(container, { text: url, width: 150, height: 150, colorDark: "#b7410e", colorLight: "#ffffff" }); 
+        } catch(e) { 
+            container.innerHTML = `<div style="width:150px;height:150px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;">Scan QR</div>`; 
+        }
     }
     
-    function copyUPIId() { navigator.clipboard.writeText(UPI_ID); showToast('✅ UPI ID copied!'); }
+    function copyUPIId() { 
+        navigator.clipboard.writeText(UPI_ID); 
+        showToast('✅ UPI ID copied!'); 
+    }
     
     function toggleConfirmButton() {
         const btn = document.getElementById('confirmPaymentBtn');
@@ -486,28 +524,54 @@
     
     function generateBillHTML(order) {
         const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
+        const payMethodMap = { 'gpay': 'Google Pay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI' };
         return `<!DOCTYPE html>
-        <html><head><meta charset="UTF-8"><title>Bill</title>
-        <style>body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}.header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:15px;}.hotel-name{font-size:22px;font-weight:bold;color:#b7410e;}.info-row{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}.items-table{width:100%;margin:15px 0;border-collapse:collapse;}.items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}.grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}.footer{text-align:center;margin-top:25px;font-size:10px;}</style>
+        <html><head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
+        <style>
+            body{font-family:monospace;padding:20px;max-width:400px;margin:0 auto;}
+            .header{text-align:center;border-bottom:1px dashed #000;padding-bottom:10px;margin-bottom:15px;}
+            .hotel-name{font-size:22px;font-weight:bold;color:#b7410e;}
+            .info-row{display:flex;justify-content:space-between;margin:5px 0;font-size:12px;}
+            .items-table{width:100%;margin:15px 0;border-collapse:collapse;}
+            .items-table th,.items-table td{border-bottom:1px dotted #ccc;padding:6px 0;text-align:left;}
+            .grand-total{font-size:18px;font-weight:bold;color:#b7410e;border-top:1px solid #000;padding-top:10px;margin-top:10px;}
+            .footer{text-align:center;margin-top:25px;font-size:10px;}
+            .security-stamp{color:green;margin-top:10px;}
+            @media print{body{padding:10px;}}
+        </style>
         </head><body>
-            <div class="header"><div class="hotel-name">🍛 ${HOTEL_NAME}</div><div>${HOTEL_ADDRESS}</div><div class="bill-title">TAX INVOICE</div></div>
+            <div class="header">
+                <div class="hotel-name">🍛 ${HOTEL_NAME}</div>
+                <div>${HOTEL_ADDRESS}</div>
+                <div class="bill-title">TAX INVOICE</div>
+            </div>
             <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
             <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Type:</strong> ${typeMap[order.orderType]}</span></div>
-            <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${order.payMethod}</span></div>
+            <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</span></div>
+            <div class="info-row"><span><strong>Trans ID:</strong> ${order.transactionId || 'N/A'}</span><span><strong>Status:</strong> Paid ✓</span></div>
             <table class="items-table"><tr><th>Item</th><th>Qty</th><th>Amount</th></tr>
             ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td>₹${l.total}</td></tr>`).join('')}</table>
             <div class="grand-total">Total: ₹${order.total}</div>
-            <div class="footer">✨ Thank you! ✨<br>UPI: ${UPI_ID}</div>
+            <div class="footer">
+                <div>✨ Thank you! Visit Again ✨</div>
+                <div>UPI: ${UPI_ID}</div>
+                <div class="security-stamp">🔒 This is a system generated bill</div>
+            </div>
         </body></html>`;
     }
     
-    async function placeOrder() {
+    async function confirmOrderAndPlace() {
         const chk = document.getElementById('paymentConfirmCheckbox');
-        if (!chk.checked && selectedPaymentMethod !== 'cash') { 
-            showToast('⚠️ Please confirm payment', true); 
-            return; 
+        if (!chk.checked) {
+            showToast('⚠️ Please confirm that you have completed the payment', true);
+            return;
         }
         
+        const transactionId = document.getElementById('transactionId').value;
+        await placeOrder(transactionId);
+    }
+    
+    async function placeOrder(transactionId) {
         let total = 0, itemsList = [];
         for (const [id, qty] of Object.entries(cart)) {
             const item = menuItems.find(i => i.id == id);
@@ -527,15 +591,18 @@
             total: total,
             status: 'booked',
             orderType: selectedOrderType,
-            payMethod: selectedPaymentMethod === 'cash' ? 'Cash' : 'UPI',
+            payMethod: selectedPaymentMethod,
+            transactionId: transactionId || 'N/A',
             time: now.toLocaleTimeString(),
             date: now.toLocaleDateString('en-IN'),
-            timestamp: now.toISOString()
+            timestamp: now.toISOString(),
+            paymentStatus: 'Paid',
+            paymentVerified: true
         };
         
         try {
             await db.collection('orders').add(order);
-            showToast(`✅ Order ${orderId} placed!`);
+            showToast(`✅ Order ${orderId} placed successfully! Payment confirmed.`);
             currentBillOrder = order;
             cart = {};
             renderMenu();
@@ -549,7 +616,7 @@
     
     function showBill(order) {
         const billHtml = generateBillHTML(order);
-        document.getElementById('billContent').innerHTML = billHtml + `<button class="print-btn" onclick="printBill()">Print Bill</button>`;
+        document.getElementById('billContent').innerHTML = billHtml + `<button class="print-btn" onclick="printBill()">🖨️ Print Bill</button>`;
         document.getElementById('billModal').style.display = 'flex';
     }
     
@@ -577,11 +644,12 @@
         if (userOrders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders</div>'; return; }
         container.innerHTML = userOrders.map(order => {
             const status = getStatusBadge(order.status);
+            const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI', 'cash': 'Cash' };
             return `<div class="history-item" onclick="showBillFromHistory('${order.id}')">
                 <div class="history-header"><span class="history-id">${order.id}</span><span class="history-date">${order.date}</span></div>
                 <div><span class="status-badge ${status.class}">${status.text}</span><span class="order-type-badge">${getOrderTypeText(order.orderType)}</span></div>
                 <div>${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
-                <div class="history-total">₹${order.total} | ${order.payMethod}</div>
+                <div class="history-total">₹${order.total} | ${payMethodMap[order.payMethod] || order.payMethod}</div>
             </div>`;
         }).join('');
     }
@@ -598,11 +666,13 @@
         const resultDiv = document.getElementById('trackResult');
         if (!order) { resultDiv.innerHTML = '<div style="background:#ffebee; padding:15px; border-radius:16px;">❌ Order not found</div>'; return; }
         const status = getStatusBadge(order.status);
+        const payMethodMap = { 'gpay': 'GPay', 'phonepe': 'PhonePe', 'paytm': 'Paytm', 'upi': 'UPI', 'cash': 'Cash' };
         resultDiv.innerHTML = `<div style="background:#e8f5e9; padding:15px; border-radius:16px;">
             <div><strong>Order ID:</strong> ${order.id}</div>
             <div><strong>Customer:</strong> ${order.customerName}</div>
             <div><strong>Status:</strong> ${status.text}</div>
             <div><strong>Type:</strong> ${getOrderTypeText(order.orderType)}</div>
+            <div><strong>Payment:</strong> ${payMethodMap[order.payMethod] || order.payMethod}</div>
             <div><strong>Total:</strong> ₹${order.total}</div>
             <button class="track-btn" style="margin-top:10px;" onclick="showBillFromHistory('${order.id}')">View Bill</button>
         </div>`;
@@ -649,9 +719,9 @@
     startListeningToOrders();
     
     window.printBill = printBill;
-    window.Cancel = cancel;
     window.showBillFromHistory = showBillFromHistory;
     window.trackOrder = trackOrder;
+    window.confirmOrderAndPlace = confirmOrderAndPlace;
 </script>
 </body>
 </html>
