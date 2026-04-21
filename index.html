@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Azhagu Unavagam - Premium Digital Menu</title>
+    <title>Azhagu Unavagam - Order Food</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -108,7 +108,7 @@
         
         /* Order History Styles */
         .order-history-list { padding: 16px; }
-        .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); transition: all 0.2s; }
+        .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); transition: all 0.2s; cursor: pointer; }
         .history-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
         .history-id { font-weight: 800; color: var(--primary); font-size: 13px; font-family: monospace; }
         .history-date { font-size: 11px; color: #9b7b5c; }
@@ -120,7 +120,7 @@
         .order-type-badge { background: #e8e8e8; padding: 3px 8px; border-radius: 20px; font-size: 10px; margin-left: 8px; }
         .history-total { font-weight: 800; font-size: 14px; color: var(--green); margin-top: 8px; }
         .track-order-input { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 60px; margin: 10px 0; font-size: 14px; }
-        .track-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 40px; cursor: pointer; font-weight: 600; }
+        .track-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 40px; cursor: pointer; font-weight: 600; width: 100%; }
         
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; opacity: 0; transition: opacity 0.2s; z-index: 999; pointer-events: none; white-space: nowrap; }
         .toast.show { opacity: 1; }
@@ -163,7 +163,7 @@
     <div class="mgrid" id="menuGrid"></div>
     <div class="cbar">
         <div><div class="cl" id="cartLbl">0 items</div><div class="ct" id="cartTotal">₹0</div></div>
-        <button class="pbtn" id="placeBtn" disabled onclick="openOrderTypeModal()">Order →</button>
+        <button class="pbtn" id="placeBtn" disabled onclick="proceedToCheckout()">Proceed to Checkout →</button>
     </div>
 </div>
 
@@ -180,7 +180,7 @@
     </div>
     <div style="padding: 20px;">
         <input type="text" id="trackOrderId" class="track-order-input" placeholder="Enter Order ID (e.g., ORD-1234567890-123)">
-        <button class="track-btn" onclick="trackOrder()" style="width:100%;">Track Order →</button>
+        <button class="track-btn" onclick="trackOrder()">Track Order →</button>
         <div id="trackResult" style="margin-top: 20px;"></div>
     </div>
 </div>
@@ -214,8 +214,8 @@
         <h3>💳 Secure Payment</h3>
         <div class="payment-amount"><div class="amount" id="paymentTotalAmount">₹0</div></div>
         <div class="payment-methods">
-            <div class="pay-method selected" data-method="upi" onclick="selectPaymentMethod('upi')"><div class="icon">📱</div><div>UPI</div></div>
-            <div class="pay-method" data-method="gpay" onclick="selectPaymentMethod('gpay')"><div class="icon">🅖</div><div>GPay</div></div>
+            <div class="pay-method selected" data-method="upi" onclick="selectPaymentMethod('upi')"><div class="icon">📱</div><div>UPI QR</div></div>
+            <div class="pay-method" data-method="gpay" onclick="selectPaymentMethod('gpay')"><div class="icon">🅖</div><div>Google Pay</div></div>
             <div class="pay-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')"><div class="icon">💜</div><div>PhonePe</div></div>
             <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')"><div class="icon">🎯</div><div>Paytm</div></div>
             <div class="pay-method" data-method="cash" onclick="selectPaymentMethod('cash')"><div class="icon">💵</div><div>Cash</div></div>
@@ -223,18 +223,18 @@
         <div id="upiSection">
             <div class="upi-section">
                 <div class="qr-code" id="qrCodeContainer"></div>
-                <div class="upi-id-box"><span class="upi-id">azhagumani20-3@okicici</span><button class="copy-btn" onclick="copyUPIId()">Copy</button></div>
+                <div class="upi-id-box"><span class="upi-id">azhagumani20-3@okicici</span><button class="copy-btn" onclick="copyUPIId()">Copy ID</button></div>
                 <div class="app-buttons">
-                    <button class="app-btn gpay" onclick="openUpiApp('gpay')">🅖 GPay</button>
-                    <button class="app-btn phonepe" onclick="openUpiApp('phonepe')">💜 PhonePe</button>
-                    <button class="app-btn paytm" onclick="openUpiApp('paytm')">🎯 Paytm</button>
+                    <button class="app-btn gpay" onclick="openUpiApp('gpay')">🅖 Open GPay</button>
+                    <button class="app-btn phonepe" onclick="openUpiApp('phonepe')">💜 Open PhonePe</button>
+                    <button class="app-btn paytm" onclick="openUpiApp('paytm')">🎯 Open Paytm</button>
                 </div>
             </div>
         </div>
         <div id="cashSection" style="display:none;"><div style="background:#e8f0ff; border-radius:16px; padding:15px; text-align:center;"><div style="font-size:32px;">💵</div><div>Pay at Counter</div><div style="font-size:12px; margin-top:5px;">Please pay exact amount at the front desk</div></div></div>
         <div class="payment-confirm">
             <div class="confirm-check"><input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()"><label>✅ I have completed the payment</label></div>
-            <input type="text" id="utrNumber" style="width:100%; padding:10px; border:2px solid var(--border); border-radius:60px; margin-top:10px;" placeholder="UTR Number (for payment reference)">
+            <input type="text" id="utrNumber" style="width:100%; padding:10px; border:2px solid var(--border); border-radius:60px; margin-top:10px;" placeholder="UTR Number (optional)">
             <div class="warning-text">⚠️ Please complete payment in your UPI app before confirming. Orders cannot be cancelled after confirmation.</div>
         </div>
         <div class="modal-buttons">
@@ -404,7 +404,7 @@
         loadOrderHistory();
     }
     
-    function openOrderTypeModal() {
+    function proceedToCheckout() {
         if (Object.keys(cart).length === 0) return;
         if (!customerName) { openNameModal(); return; }
         document.getElementById('orderTypeModal').classList.add('open');
@@ -453,7 +453,7 @@
         catch(e) { container.innerHTML = `<div style="width:150px;height:150px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;">Scan QR</div>`; }
     }
     
-    function copyUPIId() { navigator.clipboard.writeText(UPI_ID); showToast('✅ UPI ID copied!'); }
+    function copyUPIId() { navigator.clipboard.writeText(UPI_ID); showToast('✅ UPI ID copied! Pay to: ' + UPI_ID); }
     
     function openUpiApp(appName) {
         const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR&tn=Azhagu%20Order`;
@@ -491,7 +491,7 @@
             .grand-total { font-size: 18px; font-weight: bold; color: #b7410e; }
             .footer { text-align: center; margin-top: 25px; font-size: 10px; border-top: 1px dashed #000; padding-top: 10px; }
             .security-stamp { color: green; font-weight: bold; margin-top: 10px; }
-            @media print { body { margin: 0; padding: 10px; } button { display: none; } }
+            @media print { body { margin: 0; padding: 10px; } }
         </style>
         </head>
         <body>
