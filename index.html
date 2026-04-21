@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Azhagu Unavagam - Order Food</title>
+    <title>Azhagu Unavagam - Premium Digital Menu</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -20,7 +20,7 @@
             --orange: #ff9800;
         }
         body { font-family: 'DM Sans', sans-serif; background: var(--cream); }
-        .app-nav { display: flex; background: var(--dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; }
+        .app-nav { display: flex; background: var(--dark); padding: 0 16px; gap: 4px; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; }
         .nt { padding: 14px 18px; font-size: 13px; font-weight: 600; color: rgba(255,248,235,0.7); cursor: pointer; border-bottom: 3px solid transparent; }
         .nt.active { color: var(--gold); border-bottom-color: var(--gold); }
         .view { display: none; min-height: 100vh; flex-direction: column; }
@@ -42,7 +42,8 @@
         .fpill.active { background: var(--primary); color: white; }
         .mgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 20px 16px; }
         @media (max-width: 480px) { .mgrid { grid-template-columns: repeat(2, 1fr); } }
-        .mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+        .mc { background: white; border-radius: 24px; overflow: hidden; border: 1px solid var(--border); position: relative; cursor: pointer; transition: transform 0.2s; }
+        .mc:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .offer-tag { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; z-index: 10; }
         .mi { position: relative; width: 100%; padding-top: 75%; background: #faeedb; overflow: hidden; }
         .mi .me { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; }
@@ -52,12 +53,12 @@
         .mprice { font-size: 16px; font-weight: 800; color: var(--primary); }
         .original-price { font-size: 12px; text-decoration: line-through; color: #999; margin-right: 5px; }
         .qw { display: flex; align-items: center; gap: 6px; background: #fef6ed; padding: 2px 6px; border-radius: 40px; }
-        .qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; }
+        .qb { width: 26px; height: 26px; border-radius: 50%; border: none; font-size: 16px; font-weight: 600; cursor: pointer; background: white; transition: all 0.15s; }
         .qb.plus { background: var(--primary); color: white; }
         .qb.minus { border: 1px solid #e2cfb5; }
         .cbar { background: var(--dark); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; z-index: 150; }
         .ct { font-size: 22px; font-weight: 800; }
-        .pbtn { background: var(--gold); color: var(--dark); border: none; border-radius: 40px; padding: 10px 24px; font-weight: 700; cursor: pointer; }
+        .pbtn { background: var(--gold); color: var(--dark); border: none; border-radius: 40px; padding: 10px 24px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .pbtn:disabled { background: #9b7b5c; opacity: 0.5; cursor: not-allowed; }
         
         /* Modal Styles */
@@ -66,25 +67,24 @@
         }
         .modal-overlay.open { opacity: 1; pointer-events: all; }
         .modal-card {
-            background: white; border-radius: 32px; padding: 28px; width: 90%; max-width: 450px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease;
+            background: white; border-radius: 32px; padding: 28px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease;
         }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .modal-card h3 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--primary); margin-bottom: 5px; }
         .modal-card .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
         
-        /* Order Type Selection */
         .order-type-grid { display: flex; gap: 12px; margin-bottom: 20px; }
-        .order-type-btn { flex: 1; padding: 15px; border: 2px solid var(--border); border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.2s; background: white; }
+        .order-type-btn { flex: 1; padding: 15px; border: 2px solid var(--border); border-radius: 20px; text-align: center; cursor: pointer; background: white; transition: all 0.2s; }
         .order-type-btn.selected { border-color: var(--green); background: #e8f5e9; }
         .order-type-btn .icon { font-size: 28px; }
         .order-type-btn .name { font-size: 14px; font-weight: 600; margin-top: 5px; }
         
-        /* Payment Section */
         .payment-amount { background: #fef6ed; padding: 15px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
         .payment-amount .amount { font-size: 32px; font-weight: 800; color: var(--primary); }
         .payment-methods { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .pay-method { flex: 1; padding: 12px 5px; border: 2px solid var(--border); border-radius: 16px; text-align: center; cursor: pointer; }
+        .pay-method { flex: 1; padding: 12px 5px; border: 2px solid var(--border); border-radius: 16px; text-align: center; cursor: pointer; background: white; transition: all 0.2s; }
         .pay-method.selected { border-color: var(--green); background: #e8f5e9; }
+        .pay-method .icon { font-size: 22px; }
         .upi-section { background: #f9efe2; border-radius: 20px; padding: 15px; margin-bottom: 20px; }
         .qr-code { text-align: center; margin-bottom: 15px; }
         .qr-code canvas, .qr-code img { width: 160px; height: 160px; margin: 0 auto; }
@@ -92,24 +92,25 @@
         .upi-id { font-family: monospace; font-size: 11px; word-break: break-all; }
         .copy-btn { background: var(--primary); color: white; border: none; padding: 5px 12px; border-radius: 30px; cursor: pointer; font-size: 11px; }
         .app-buttons { display: flex; gap: 8px; margin-bottom: 12px; }
-        .app-btn { flex: 1; padding: 8px; border-radius: 50px; font-weight: 600; font-size: 11px; cursor: pointer; border: none; }
+        .app-btn { flex: 1; padding: 8px; border-radius: 50px; font-weight: 600; font-size: 11px; cursor: pointer; border: none; transition: all 0.2s; }
         .app-btn.gpay { background: #1a73e8; color: white; }
         .app-btn.phonepe { background: #5f259f; color: white; }
         .app-btn.paytm { background: #00baf2; color: white; }
         .payment-confirm { background: #fff8e8; border-radius: 16px; padding: 12px; margin: 15px 0; }
         .confirm-check { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .confirm-check input { width: 18px; height: 18px; cursor: pointer; }
-        .warning-text { font-size: 10px; color: #e67e22; }
+        .warning-text { font-size: 10px; color: #e67e22; margin-top: 5px; }
         .modal-buttons { display: flex; gap: 12px; margin-top: 20px; }
-        .modal-buttons button { flex: 1; padding: 12px; border-radius: 50px; font-weight: 700; cursor: pointer; border: none; }
+        .modal-buttons button { flex: 1; padding: 12px; border-radius: 50px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
         .btn-confirm { background: var(--green); color: white; }
+        .btn-confirm:disabled { background: #ccc; cursor: not-allowed; }
         .btn-cancel { background: #ccc; color: #333; }
         
-        /* Order History */
+        /* Order History Styles */
         .order-history-list { padding: 16px; }
-        .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); }
+        .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); transition: all 0.2s; }
         .history-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
-        .history-id { font-weight: 800; color: var(--primary); font-size: 13px; }
+        .history-id { font-weight: 800; color: var(--primary); font-size: 13px; font-family: monospace; }
         .history-date { font-size: 11px; color: #9b7b5c; }
         .status-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; }
         .status-booked { background: #fff3e0; color: #ff9800; }
@@ -118,10 +119,20 @@
         .status-delivered { background: #e0e0e0; color: #666; }
         .order-type-badge { background: #e8e8e8; padding: 3px 8px; border-radius: 20px; font-size: 10px; margin-left: 8px; }
         .history-total { font-weight: 800; font-size: 14px; color: var(--green); margin-top: 8px; }
+        .track-order-input { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 60px; margin: 10px 0; font-size: 14px; }
+        .track-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 40px; cursor: pointer; font-weight: 600; }
         
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #2c1a0f; color: #ffecb3; padding: 10px 20px; border-radius: 40px; font-size: 12px; opacity: 0; transition: opacity 0.2s; z-index: 999; pointer-events: none; white-space: nowrap; }
         .toast.show { opacity: 1; }
-        @media (max-width: 480px) { .toast { white-space: normal; max-width: 85%; } }
+        @media (max-width: 480px) { .toast { white-space: normal; max-width: 85%; font-size: 11px; } }
+        
+        .bill-preview { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; display: none; }
+        .bill-card { background: white; border-radius: 24px; width: 90%; max-width: 400px; padding: 24px; max-height: 85vh; overflow-y: auto; }
+        .bill-header { text-align: center; border-bottom: 1px dashed #ccc; padding-bottom: 10px; margin-bottom: 15px; }
+        .bill-header h2 { color: var(--primary); }
+        .bill-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 13px; }
+        .bill-total { font-size: 18px; font-weight: 800; color: var(--primary); border-top: 1px solid #ccc; padding-top: 10px; margin-top: 10px; }
+        .print-btn { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 40px; cursor: pointer; width: 100%; margin-top: 15px; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -129,6 +140,7 @@
 <nav class="app-nav">
     <div class="nt active" data-view="customer">🍛 Menu</div>
     <div class="nt" data-view="orders">📜 My Orders</div>
+    <div class="nt" data-view="track">🔍 Track Order</div>
 </nav>
 
 <div class="view active" id="view-customer">
@@ -157,16 +169,27 @@
 
 <div class="view" id="view-orders">
     <div class="hero" style="background: linear-gradient(135deg, #2c1a0f, #3f2618);">
-        <div class="hero-row"><div class="logo-box">📜</div><div class="logo-text"><h1>My Orders</h1><p>Track your order status</p></div></div>
+        <div class="hero-row"><div class="logo-box">📜</div><div class="logo-text"><h1>My Orders</h1><p>Your order history</p></div></div>
     </div>
     <div id="orderHistoryList" class="order-history-list"></div>
+</div>
+
+<div class="view" id="view-track">
+    <div class="hero" style="background: linear-gradient(135deg, #2c1a0f, #3f2618);">
+        <div class="hero-row"><div class="logo-box">🔍</div><div class="logo-text"><h1>Track Order</h1><p>Enter your Order ID</p></div></div>
+    </div>
+    <div style="padding: 20px;">
+        <input type="text" id="trackOrderId" class="track-order-input" placeholder="Enter Order ID (e.g., ORD-1234567890-123)">
+        <button class="track-btn" onclick="trackOrder()" style="width:100%;">Track Order →</button>
+        <div id="trackResult" style="margin-top: 20px;"></div>
+    </div>
 </div>
 
 <!-- NAME MODAL -->
 <div id="nameModal" class="modal-overlay">
     <div class="modal-card">
-        <h3>👤 Welcome!</h3>
-        <p>Please enter your name to continue</p>
+        <h3>👤 Welcome to Azhagu Unavagam!</h3>
+        <p class="subtitle">Please enter your name to continue ordering</p>
         <input type="text" id="customerNameInput" style="width:100%; padding:14px; border:2px solid var(--border); border-radius:60px; font-size:16px; margin:20px 0; text-align:center;">
         <button class="pbtn" onclick="saveCustomerName()" style="width:100%;">Continue →</button>
     </div>
@@ -177,18 +200,9 @@
     <div class="modal-card">
         <h3>🍽️ Select Order Type</h3>
         <div class="order-type-grid">
-            <div class="order-type-btn selected" data-type="dinein" onclick="selectOrderType('dinein')">
-                <div class="icon">🏠</div>
-                <div class="name">Dine In</div>
-            </div>
-            <div class="order-type-btn" data-type="pickup" onclick="selectOrderType('pickup')">
-                <div class="icon">🚗</div>
-                <div class="name">Pickup</div>
-            </div>
-            <div class="order-type-btn" data-type="parcel" onclick="selectOrderType('parcel')">
-                <div class="icon">📦</div>
-                <div class="name">Parcel</div>
-            </div>
+            <div class="order-type-btn selected" data-type="dinein" onclick="selectOrderType('dinein')"><div class="icon">🏠</div><div class="name">Dine In</div></div>
+            <div class="order-type-btn" data-type="pickup" onclick="selectOrderType('pickup')"><div class="icon">🚗</div><div class="name">Pickup</div></div>
+            <div class="order-type-btn" data-type="parcel" onclick="selectOrderType('parcel')"><div class="icon">📦</div><div class="name">Parcel</div></div>
         </div>
         <button class="pbtn" onclick="openPaymentModal()" style="width:100%;">Continue to Payment →</button>
     </div>
@@ -197,9 +211,8 @@
 <!-- PAYMENT MODAL -->
 <div id="paymentModal" class="modal-overlay">
     <div class="modal-card">
-        <h3>💳 Complete Payment</h3>
+        <h3>💳 Secure Payment</h3>
         <div class="payment-amount"><div class="amount" id="paymentTotalAmount">₹0</div></div>
-        
         <div class="payment-methods">
             <div class="pay-method selected" data-method="upi" onclick="selectPaymentMethod('upi')"><div class="icon">📱</div><div>UPI</div></div>
             <div class="pay-method" data-method="gpay" onclick="selectPaymentMethod('gpay')"><div class="icon">🅖</div><div>GPay</div></div>
@@ -207,7 +220,6 @@
             <div class="pay-method" data-method="paytm" onclick="selectPaymentMethod('paytm')"><div class="icon">🎯</div><div>Paytm</div></div>
             <div class="pay-method" data-method="cash" onclick="selectPaymentMethod('cash')"><div class="icon">💵</div><div>Cash</div></div>
         </div>
-        
         <div id="upiSection">
             <div class="upi-section">
                 <div class="qr-code" id="qrCodeContainer"></div>
@@ -219,20 +231,22 @@
                 </div>
             </div>
         </div>
-        
-        <div id="cashSection" style="display:none;"><div class="cash-note" style="background:#e8f0ff; border-radius:16px; padding:15px; text-align:center;"><div style="font-size:32px;">💵</div><div>Pay at Counter</div></div></div>
-        
+        <div id="cashSection" style="display:none;"><div style="background:#e8f0ff; border-radius:16px; padding:15px; text-align:center;"><div style="font-size:32px;">💵</div><div>Pay at Counter</div><div style="font-size:12px; margin-top:5px;">Please pay exact amount at the front desk</div></div></div>
         <div class="payment-confirm">
             <div class="confirm-check"><input type="checkbox" id="paymentConfirmCheckbox" onchange="toggleConfirmButton()"><label>✅ I have completed the payment</label></div>
-            <input type="text" id="utrNumber" style="width:100%; padding:10px; border:2px solid var(--border); border-radius:60px; margin-top:10px;" placeholder="UTR Number (optional)">
-            <div class="warning-text">⚠️ Confirm only after payment</div>
+            <input type="text" id="utrNumber" style="width:100%; padding:10px; border:2px solid var(--border); border-radius:60px; margin-top:10px;" placeholder="UTR Number (for payment reference)">
+            <div class="warning-text">⚠️ Please complete payment in your UPI app before confirming. Orders cannot be cancelled after confirmation.</div>
         </div>
-        
         <div class="modal-buttons">
-            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="placeOrder()">Confirm Order</button>
+            <button class="btn-confirm" id="confirmPaymentBtn" disabled onclick="placeOrder()">Confirm & Place Order</button>
             <button class="btn-cancel" onclick="closePaymentModal()">Cancel</button>
         </div>
     </div>
+</div>
+
+<!-- BILL PREVIEW MODAL -->
+<div id="billModal" class="bill-preview">
+    <div class="bill-card" id="billContent"></div>
 </div>
 
 <div id="toast" class="toast"></div>
@@ -245,6 +259,9 @@
 <script>
     const UPI_ID = 'azhagumani20-3@okicici';
     const UPI_NAME = 'Azhagu Unavagam';
+    const HOTEL_NAME = 'Azhagu Unavagam';
+    const HOTEL_ADDRESS = '123, South Street, Madurai - 625001';
+    const GSTIN = '33AAACA1234E1ZQ';
     
     let menuItems = [];
     let activeOffers = [];
@@ -252,11 +269,22 @@
     let customerName = localStorage.getItem('customerName') || '';
     let currentFilter = 'all';
     let searchQuery = '';
-    let orders = JSON.parse(localStorage.getItem('azhagu_orders') || '[]');
-    let orderCounter = orders.length + 1;
+    let orders = [];
     let selectedPaymentMethod = 'upi';
     let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
+    let currentBillOrder = null;
+    
+    // Load orders from Firebase
+    async function loadOrdersFromFirebase() {
+        const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
+        orders = [];
+        snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+        localStorage.setItem('azhagu_orders', JSON.stringify(orders));
+        if (document.getElementById('view-orders').classList.contains('active')) {
+            loadOrderHistory();
+        }
+    }
     
     function showToast(msg, isError = false) {
         const t = document.getElementById('toast');
@@ -307,7 +335,8 @@
                 document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
                 document.getElementById('offerBanner').style.display = 'block';
             }
-        } catch(e) { console.error(e); }
+            await loadOrdersFromFirebase();
+        } catch(e) { console.error(e); showToast('Loading menu...'); }
     }
     
     function renderMenu() {
@@ -315,7 +344,7 @@
         let filtered = menuItems.filter(item => item.approved === true && item.available === true);
         if (currentFilter !== 'all') filtered = filtered.filter(i => i.category === currentFilter);
         if (searchQuery) filtered = filtered.filter(i => i.name.toLowerCase().includes(searchQuery.toLowerCase()));
-        if (filtered.length === 0) { grid.innerHTML = '<div style="text-align:center; padding:40px;">No items</div>'; return; }
+        if (filtered.length === 0) { grid.innerHTML = '<div style="text-align:center; padding:40px;">No items available</div>'; return; }
         
         grid.innerHTML = filtered.map(item => {
             const qty = cart[item.id] || 0;
@@ -357,7 +386,12 @@
         document.getElementById('placeBtn').disabled = count === 0;
     }
     
-    function openNameModal() { if (!customerName) document.getElementById('nameModal').classList.add('open'); }
+    function openNameModal() { 
+        if (!customerName) {
+            document.getElementById('customerNameInput').value = '';
+            document.getElementById('nameModal').classList.add('open');
+        }
+    }
     
     function saveCustomerName() {
         const name = document.getElementById('customerNameInput').value.trim();
@@ -366,7 +400,8 @@
         localStorage.setItem('customerName', customerName);
         document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName.substring(0, 15)}`;
         document.getElementById('nameModal').classList.remove('open');
-        showToast(`Welcome ${customerName}!`);
+        showToast(`Welcome ${customerName}! 🎉`);
+        loadOrderHistory();
     }
     
     function openOrderTypeModal() {
@@ -389,7 +424,12 @@
         document.getElementById('paymentModal').classList.add('open');
     }
     
-    function closePaymentModal() { document.getElementById('paymentModal').classList.remove('open'); }
+    function closePaymentModal() { 
+        document.getElementById('paymentModal').classList.remove('open');
+        document.getElementById('paymentConfirmCheckbox').checked = false;
+        document.getElementById('confirmPaymentBtn').disabled = true;
+        document.getElementById('utrNumber').value = '';
+    }
     
     function selectPaymentMethod(method) {
         selectedPaymentMethod = method;
@@ -408,7 +448,7 @@
     function generateQR(amount) {
         const container = document.getElementById('qrCodeContainer');
         container.innerHTML = '';
-        const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR`;
+        const url = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${amount}&cu=INR&tn=Azhagu%20Order`;
         try { new QRCode(container, { text: url, width: 150, height: 150, colorDark: "#b7410e", colorLight: "#ffffff" }); }
         catch(e) { container.innerHTML = `<div style="width:150px;height:150px;background:#f5e6d8;border-radius:16px;display:flex;align-items:center;justify-content:center;">Scan QR</div>`; }
     }
@@ -416,10 +456,13 @@
     function copyUPIId() { navigator.clipboard.writeText(UPI_ID); showToast('✅ UPI ID copied!'); }
     
     function openUpiApp(appName) {
-        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR`;
+        const intent = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${currentTotalAmount}&cu=INR&tn=Azhagu%20Order`;
         window.location.href = intent;
-        showToast(`Opening ${appName}...`, false);
-        setTimeout(() => { const chk = document.getElementById('paymentConfirmCheckbox'); if (chk && !chk.checked) showToast('⚠️ Please confirm payment', true); }, 15000);
+        showToast(`Opening ${appName}... Complete payment then confirm here`, false);
+        setTimeout(() => { 
+            const chk = document.getElementById('paymentConfirmCheckbox'); 
+            if (chk && !chk.checked) showToast('⚠️ Did you complete payment? Please confirm below.', true);
+        }, 15000);
     }
     
     function toggleConfirmButton() {
@@ -428,9 +471,58 @@
         if (btn && chk) btn.disabled = !chk.checked;
     }
     
+    function generateBillHTML(order) {
+        const statusMap = { 'booked': 'Booked', 'prepared': 'Prepared', 'ready': 'Ready', 'delivered': 'Delivered' };
+        const typeMap = { 'dinein': 'Dine In', 'pickup': 'Pickup', 'parcel': 'Parcel' };
+        return `<!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"><title>Bill - ${order.id}</title>
+        <style>
+            body { font-family: monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 20px; border-bottom: 1px dashed #000; padding-bottom: 10px; }
+            .hotel-name { font-size: 22px; font-weight: bold; color: #b7410e; }
+            .bill-title { font-size: 16px; font-weight: bold; margin: 10px 0; text-decoration: underline; }
+            .info-row { display: flex; justify-content: space-between; margin: 5px 0; font-size: 12px; }
+            .items-table { width: 100%; margin: 15px 0; border-collapse: collapse; }
+            .items-table th, .items-table td { border-bottom: 1px dotted #ccc; padding: 6px 0; text-align: left; font-size: 12px; }
+            .items-table th { border-bottom: 1px solid #000; }
+            .text-right { text-align: right; }
+            .total-line { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
+            .grand-total { font-size: 18px; font-weight: bold; color: #b7410e; }
+            .footer { text-align: center; margin-top: 25px; font-size: 10px; border-top: 1px dashed #000; padding-top: 10px; }
+            .security-stamp { color: green; font-weight: bold; margin-top: 10px; }
+            @media print { body { margin: 0; padding: 10px; } button { display: none; } }
+        </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="hotel-name">🍛 ${HOTEL_NAME}</div>
+                <div>${HOTEL_ADDRESS}</div>
+                <div>GSTIN: ${GSTIN}</div>
+                <div class="bill-title">TAX INVOICE / BILL</div>
+            </div>
+            <div class="info-row"><span><strong>Order ID:</strong> ${order.id}</span><span><strong>Date:</strong> ${order.date}</span></div>
+            <div class="info-row"><span><strong>Time:</strong> ${order.time}</span><span><strong>Order Type:</strong> ${typeMap[order.orderType] || order.orderType}</span></div>
+            <div class="info-row"><span><strong>Customer:</strong> ${order.customerName}</span><span><strong>Payment:</strong> ${order.payMethod || 'UPI'}</span></div>
+            <div class="info-row"><span><strong>UTR/Ref:</strong> ${order.utr || 'N/A'}</span><span><strong>Status:</strong> ${statusMap[order.status] || order.status}</span></div>
+            <table class="items-table">
+                <tr><th>Item</th><th>Qty</th><th class="text-right">Amount</th></tr>
+                ${order.items.map(l => `<tr><td>${l.name}</td><td>${l.qty}</td><td class="text-right">₹${l.total.toFixed(2)}</td></tr>`).join('')}
+            </table>
+            <div class="total-line"><span>Subtotal:</span><span>₹${order.total.toFixed(2)}</span></div>
+            <div class="total-line grand-total"><span>TOTAL:</span><span>₹${order.total.toFixed(2)}</span></div>
+            <div class="footer">
+                <div>✨ Thank you! Visit Again ✨</div>
+                <div>UPI: ${UPI_ID}</div>
+                <div class="security-stamp">🔒 This is a system generated bill | Valid for payment verification</div>
+            </div>
+        </body>
+        </html>`;
+    }
+    
     async function placeOrder() {
         const chk = document.getElementById('paymentConfirmCheckbox');
-        if (!chk.checked && selectedPaymentMethod !== 'cash') { showToast('⚠️ Please confirm payment', true); return; }
+        if (!chk.checked && selectedPaymentMethod !== 'cash') { showToast('⚠️ Please confirm payment before proceeding', true); return; }
         
         let total = 0, itemsList = [];
         for (const [id, qty] of Object.entries(cart)) {
@@ -442,7 +534,7 @@
             }
         }
         
-        const orderId = `ORD-${String(orderCounter++).padStart(3,'0')}`;
+        const orderId = `ORD-${Date.now()}-${Math.floor(Math.random()*1000)}`;
         const now = new Date();
         const order = {
             id: orderId, customerName: customerName, items: itemsList, total: total,
@@ -454,14 +546,30 @@
         
         try {
             await db.collection('orders').add(order);
-            orders.unshift(order);
-            localStorage.setItem('azhagu_orders', JSON.stringify(orders));
+            await loadOrdersFromFirebase();
+            currentBillOrder = order;
             cart = {}; renderMenu(); updateCartBar(); closePaymentModal();
-            showToast(`✅ Order ${orderId} placed! Status: Booked`);
-            document.getElementById('paymentConfirmCheckbox').checked = false;
-            document.getElementById('confirmPaymentBtn').disabled = true;
+            showToast(`✅ Order ${orderId} placed successfully!`);
+            showBill(order);
         } catch(e) { showToast('Order failed: ' + e.message, true); }
     }
+    
+    function showBill(order) {
+        const billHtml = generateBillHTML(order);
+        document.getElementById('billContent').innerHTML = billHtml + `<button class="print-btn" onclick="printBill()">🖨️ Print / Download Bill</button>`;
+        document.getElementById('billModal').style.display = 'flex';
+    }
+    
+    function printBill() {
+        const billHtml = generateBillHTML(currentBillOrder);
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(billHtml);
+        printWindow.document.close();
+        printWindow.print();
+        showToast('🖨️ Bill print window opened');
+    }
+    
+    function closeBillModal() { document.getElementById('billModal').style.display = 'none'; }
     
     function getStatusBadge(status) {
         const statusMap = {
@@ -470,7 +578,7 @@
             'ready': { class: 'status-ready', text: '✅ Ready' },
             'delivered': { class: 'status-delivered', text: '🚚 Delivered' }
         };
-        return statusMap[status] || { class: 'status-booked', text: status };
+        return statusMap[status] || { class: 'status-booked', text: '📖 Booked' };
     }
     
     function getOrderTypeText(type) {
@@ -484,7 +592,7 @@
         if (userOrders.length === 0) { container.innerHTML = '<div style="text-align:center; padding:50px;">No orders yet</div>'; return; }
         container.innerHTML = userOrders.map(order => {
             const status = getStatusBadge(order.status || 'booked');
-            return `<div class="history-item">
+            return `<div class="history-item" onclick="showBillFromHistory('${order.id}')">
                 <div class="history-header">
                     <span class="history-id">${order.id}</span>
                     <span class="history-date">${order.date} ${order.time}</span>
@@ -497,6 +605,34 @@
         }).join('');
     }
     
+    async function showBillFromHistory(orderId) {
+        const order = orders.find(o => o.id === orderId);
+        if (order) {
+            currentBillOrder = order;
+            showBill(order);
+        }
+    }
+    
+    async function trackOrder() {
+        const trackId = document.getElementById('trackOrderId').value.trim();
+        if (!trackId) { showToast('Please enter Order ID', true); return; }
+        const order = orders.find(o => o.id === trackId);
+        const resultDiv = document.getElementById('trackResult');
+        if (!order) { resultDiv.innerHTML = '<div style="background:#ffebee; padding:15px; border-radius:16px; text-align:center;">❌ Order not found. Please check your Order ID.</div>'; return; }
+        const status = getStatusBadge(order.status || 'booked');
+        resultDiv.innerHTML = `<div style="background:#e8f5e9; padding:15px; border-radius:16px;">
+            <div><strong>Order ID:</strong> ${order.id}</div>
+            <div><strong>Customer:</strong> ${order.customerName}</div>
+            <div><strong>Date:</strong> ${order.date} | ${order.time}</div>
+            <div><strong>Order Type:</strong> ${getOrderTypeText(order.orderType)}</div>
+            <div><strong>Status:</strong> <span class="status-badge ${status.class}">${status.text}</span></div>
+            <div><strong>Items:</strong> ${order.items.map(l => `${l.name}×${l.qty}`).join(', ')}</div>
+            <div><strong>Total:</strong> ₹${order.total}</div>
+            <div><strong>Payment:</strong> ${order.payMethod}</div>
+            <button class="track-btn" style="margin-top:15px;" onclick="showBillFromHistory('${order.id}')">📄 View Bill</button>
+        </div>`;
+    }
+    
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMenu(); });
     document.querySelectorAll('.fpill').forEach(p => {
         p.addEventListener('click', () => {
@@ -507,12 +643,13 @@
         });
     });
     document.querySelectorAll('.nt').forEach(tab => {
-        tab.addEventListener('click', () => {
+        tab.addEventListener('click', async () => {
             document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             tab.classList.add('active');
             document.getElementById(`view-${tab.dataset.view}`).classList.add('active');
             if (tab.dataset.view === 'orders') loadOrderHistory();
+            if (tab.dataset.view === 'track') document.getElementById('trackResult').innerHTML = '';
         });
     });
     
@@ -521,6 +658,10 @@
     
     loadMenuAndOffers();
     updateCartBar();
+    window.closeBillModal = closeBillModal;
+    window.printBill = printBill;
+    window.showBillFromHistory = showBillFromHistory;
+    window.trackOrder = trackOrder;
 </script>
 </body>
 </html>
