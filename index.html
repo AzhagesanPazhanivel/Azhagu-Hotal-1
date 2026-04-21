@@ -61,7 +61,6 @@
         .pbtn { background: var(--gold); color: var(--dark); border: none; border-radius: 40px; padding: 10px 24px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
         .pbtn:disabled { background: #9b7b5c; opacity: 0.5; cursor: not-allowed; }
         
-        /* Modal Styles */
         .modal-overlay {
             position: fixed; inset: 0; background: rgba(44,26,15,0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
@@ -106,7 +105,6 @@
         .btn-confirm:disabled { background: #ccc; cursor: not-allowed; }
         .btn-cancel { background: #ccc; color: #333; }
         
-        /* Order History Styles */
         .order-history-list { padding: 16px; }
         .history-item { background: white; border-radius: 20px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--border); transition: all 0.2s; cursor: pointer; }
         .history-header { display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 8px; }
@@ -274,16 +272,26 @@
     let selectedOrderType = 'dinein';
     let currentTotalAmount = 0;
     let currentBillOrder = null;
+    let unsubscribeOrders = null;
     
-    // Load orders from Firebase
-    async function loadOrdersFromFirebase() {
-        const snapshot = await db.collection('orders').orderBy('timestamp', 'desc').get();
-        orders = [];
-        snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-        localStorage.setItem('azhagu_orders', JSON.stringify(orders));
-        if (document.getElementById('view-orders').classList.contains('active')) {
-            loadOrderHistory();
-        }
+    // ========== REAL-TIME ORDER LISTENER ==========
+    function startListeningToOrders() {
+        if (unsubscribeOrders) unsubscribeOrders();
+        unsubscribeOrders = db.collection('orders')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot((snapshot) => {
+                orders = [];
+                snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+                localStorage.setItem('azhagu_orders', JSON.stringify(orders));
+                
+                // Update UI if on orders page
+                if (document.getElementById('view-orders').classList.contains('active')) {
+                    loadOrderHistory();
+                }
+                console.log("Orders updated in real-time:", orders.length);
+            }, (error) => {
+                console.error("Order listener error:", error);
+            });
     }
     
     function showToast(msg, isError = false) {
@@ -335,7 +343,6 @@
                 document.getElementById('offerBanner').innerHTML = `🎉 ${activeOffers.map(o => o.title || `${o.value}% OFF`).join(' | ')} 🎉`;
                 document.getElementById('offerBanner').style.display = 'block';
             }
-            await loadOrdersFromFirebase();
         } catch(e) { console.error(e); showToast('Loading menu...'); }
     }
     
@@ -546,10 +553,9 @@
         
         try {
             await db.collection('orders').add(order);
-            await loadOrdersFromFirebase();
+            showToast(`✅ Order ${orderId} placed successfully!`);
             currentBillOrder = order;
             cart = {}; renderMenu(); updateCartBar(); closePaymentModal();
-            showToast(`✅ Order ${orderId} placed successfully!`);
             showBill(order);
         } catch(e) { showToast('Order failed: ' + e.message, true); }
     }
@@ -658,6 +664,8 @@
     
     loadMenuAndOffers();
     updateCartBar();
+    startListeningToOrders();
+    
     window.closeBillModal = closeBillModal;
     window.printBill = printBill;
     window.showBillFromHistory = showBillFromHistory;
