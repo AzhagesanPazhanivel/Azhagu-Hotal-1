@@ -32,7 +32,6 @@
         .login-input:focus { outline: none; border-color: var(--primary); }
         .login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--deep)); color: white; border: none; border-radius: 60px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .error-msg { color: #e74c3c; font-size: 13px; margin-top: 12px; padding: 10px; background: #ffe; border-radius: 12px; }
-        .info-msg { background: #e3f2fd; color: #1565c0; font-size: 12px; margin-top: 15px; padding: 10px; border-radius: 12px; }
         
         .admin-content { display: none; }
         .admin-header {
@@ -109,10 +108,6 @@
         <div class="login-input-group"><label>🔒 Password</label><input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()"></div>
         <button class="login-btn" onclick="checkLogin()">Login →</button>
         <div id="loginError" class="error-msg"></div>
-        <div class="info-msg">
-            ⚠️ Make sure Email/Password sign-in is ENABLED in:<br>
-            Firebase Console → Authentication → Sign-in methods
-        </div>
     </div>
 </div>
 
@@ -145,7 +140,7 @@
     
     <div id="tab-menu" class="tab-pane">
         <button class="add-btn" onclick="openAddDishModal()">+ Add New Dish</button>
-        <table class="data-table"><thead><tr><th>Dish</th><th>Price</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead><tbody id="menuTableBody"></tbody></table>
+        <table class="data-table"><thead><tr><th>Dish</th><th>Price</th><th>Category</th><th>Status</th><th>Customer View</th><th>Actions</th></tr></thead><tbody id="menuTableBody"></tbody></table>
     </div>
     
     <div id="tab-offers" class="tab-pane">
@@ -227,15 +222,7 @@
             loadOffers();
             showToast(`✅ Welcome ${email}!`);
         } catch(error) {
-            let errorMsg = error.message;
-            if (error.code === 'auth/configuration-not-found') {
-                errorMsg = '❌ Authentication not enabled! Go to Firebase Console → Authentication → Sign-in methods → Enable Email/Password';
-            } else if (error.code === 'auth/user-not-found') {
-                errorMsg = '❌ User not found! Create user in Firebase Console → Authentication → Users → Add user';
-            } else if (error.code === 'auth/wrong-password') {
-                errorMsg = '❌ Wrong password! Please try again.';
-            }
-            document.getElementById('loginError').innerHTML = errorMsg;
+            document.getElementById('loginError').innerHTML = '❌ ' + error.message;
         }
     }
     
@@ -254,7 +241,6 @@
         }
     }
     
-    // Check if already logged in
     auth.onAuthStateChanged((user) => {
         if (user) {
             document.getElementById('loginModal').style.display = 'none';
@@ -283,15 +269,14 @@
         tbody.innerHTML = menuItems.map(item => `
             <tr>
                 <td>${item.emoji || '🍽️'} ${item.name}</td>
-                <td>₹${item.price}</td>
-                <td>${item.category === 'tiffin' ? 'Tiffin' : item.category === 'drinks' ? 'Drinks' : 'Rice'}</td>
+                <td>₹${item.price}</td> <td>${item.category === 'tiffin' ? 'Tiffin' : item.category === 'drinks' ? 'Drinks' : 'Rice'}</td>
                 <td><span class="status-badge ${item.available ? 'status-available' : 'status-unavailable'}">${item.available ? 'Available' : 'Unavailable'}</span></td>
+                <td><span class="status-badge ${item.approved ? 'status-approved' : 'status-unavailable'}">${item.approved ? '✅ Shows' : '❌ Hidden'}</span></td>
                 <td>
                     <button class="action-btn-sm btn-edit" onclick="editDish('${item.id}')">Edit</button>
                     <button class="action-btn-sm btn-toggle" onclick="toggleAvailability('${item.id}', ${!item.available})">${item.available ? 'Disable' : 'Enable'}</button>
                     <button class="action-btn-sm btn-delete" onclick="deleteDish('${item.id}')">Delete</button>
-                </td>
-            </tr>
+                 </tr>
         `).join('');
     }
     
@@ -310,14 +295,12 @@
         }
         tbody.innerHTML = offers.map(offer => `
             <tr>
-                <td>${offer.title || 'Offer'}</td>
-                <td>${offer.value}% OFF</td>
+                <td>${offer.title || 'Offer'} </td> <td>${offer.value}% OFF</td>
                 <td><span class="status-badge ${offer.active ? 'status-available' : 'status-unavailable'}">${offer.active ? 'Active' : 'Inactive'}</span></td>
                 <td>
                     <button class="action-btn-sm btn-toggle" onclick="toggleOffer('${offer.id}', ${!offer.active})">${offer.active ? 'Deactivate' : 'Activate'}</button>
                     <button class="action-btn-sm btn-delete" onclick="deleteOffer('${offer.id}')">Delete</button>
-                </td>
-            </tr>
+                 </tr>
         `).join('');
     }
     
@@ -402,20 +385,25 @@
             price: parseFloat(document.getElementById('dishPrice').value), 
             category: document.getElementById('dishCategory').value, 
             emoji: document.getElementById('dishEmoji').value, 
-            approved: true, 
-            available: true 
+            approved: true,   // ✅ IMPORTANT: Automatically approved
+            available: true   // ✅ IMPORTANT: Automatically available
         }; 
-        if (id) await db.collection('menu').doc(id).update(data); 
-        else await db.collection('menu').add(data); 
+        
+        if (id) {
+            await db.collection('menu').doc(id).update(data); 
+            showToast('Dish updated!');
+        } else { 
+            await db.collection('menu').add(data); 
+            showToast('New dish added! It will appear in customer menu immediately.');
+        }
         closeDishModal(); 
         loadMenu(); 
-        showToast('Dish saved!'); 
     }
     
     async function toggleAvailability(id, status) { 
         await db.collection('menu').doc(id).update({ available: status }); 
         loadMenu(); 
-        showToast(status ? 'Dish available' : 'Dish unavailable'); 
+        showToast(status ? 'Dish available to customers' : 'Dish hidden from customers'); 
     }
     
     async function deleteDish(id) { 
