@@ -539,7 +539,7 @@
         };
         
         try {
-            await db.collection('orders').add(order);
+            await db.collection('orders').doc(orderId).set(order);
             showToast(`✅ Order ${orderId} submitted! Waiting for payment verification.`);
             cart = {};
             renderMenu();
