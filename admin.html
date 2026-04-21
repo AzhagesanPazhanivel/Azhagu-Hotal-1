@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Azhagu Unavagam - Admin Control Panel</title>
+    <title>Azhagu Unavagam - Secure Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,6 +17,7 @@
             --border: #f0e2cf;
         }
         
+        /* Login Modal */
         .login-overlay {
             position: fixed; inset: 0; background: linear-gradient(135deg, rgba(44,26,15,0.98), rgba(44,26,15,0.95));
             z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);
@@ -61,7 +62,6 @@
         .data-table th { background: #faf6f0; font-weight: 600; }
         .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
         .status-approved { background: #e8f5e9; color: #2a7f49; }
-        .status-pending { background: #fff3e0; color: #f39c12; }
         .status-available { background: #e8f5e9; color: #2a7f49; }
         .status-unavailable { background: #ffebee; color: #c0392b; }
         
@@ -98,67 +98,31 @@
 </head>
 <body>
 
+<!-- LOGIN MODAL -->
 <div id="loginModal" class="login-overlay">
     <div class="login-card">
-        <h2>🔐 Admin Login</h2>
+        <h2>🔐 Secure Admin Login</h2>
         <div class="hotel-name">🍛 Azhagu Unavagam</div>
-        <div class="login-input-group"><label>👤 Username</label><input type="text" id="loginUsername" class="login-input" placeholder="Enter username"></div>
+        <div class="login-input-group"><label>📧 Email</label><input type="email" id="loginEmail" class="login-input" placeholder="admin@azhagu.com"></div>
         <div class="login-input-group"><label>🔒 Password</label><input type="password" id="loginPassword" class="login-input" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkLogin()"></div>
-        <button class="login-btn" onclick="checkLogin()">Login →</button>
+        <button class="login-btn" onclick="checkLogin()">Secure Login →</button>
         <div id="loginError" class="error-msg"></div>
-    </div>
-</div>
-
-<div id="changePwdModal" class="modal-overlay">
-    <div class="modal-card">
-        <h3>🔑 Change Password</h3>
-        <input type="text" id="currentUsername" placeholder="Current Username">
-        <input type="password" id="currentPassword" placeholder="Current Password">
-        <input type="password" id="newPassword" placeholder="New Password (min 4 characters)">
-        <input type="password" id="confirmPassword" placeholder="Confirm Password">
-        <button onclick="changePassword()">Update</button>
-        <button class="cancel-btn" onclick="closeChangePwdModal()">Cancel</button>
-    </div>
-</div>
-
-<div id="dishModal" class="modal-overlay">
-    <div class="modal-card">
-        <h3 id="dishModalTitle">Add New Dish</h3>
-        <input type="text" id="dishName" placeholder="Dish Name">
-        <input type="number" id="dishPrice" placeholder="Price (₹)">
-        <select id="dishCategory"><option value="tiffin">Tiffin</option><option value="drinks">Drinks</option><option value="rice">Rice</option></select>
-        <input type="text" id="dishEmoji" placeholder="Emoji (e.g., 🥞)">
-        <input type="hidden" id="dishId">
-        <button onclick="saveDish()">Save</button>
-        <button class="cancel-btn" onclick="closeDishModal()">Cancel</button>
-    </div>
-</div>
-
-<div id="offerModal" class="modal-overlay">
-    <div class="modal-card">
-        <h3>Add Offer</h3>
-        <input type="text" id="offerTitle" placeholder="Offer Title">
-        <input type="number" id="offerValue" placeholder="Discount %">
-        <select id="offerItem"><option value="all">All Items</option></select>
-        <button onclick="saveOffer()">Save</button>
-        <button class="cancel-btn" onclick="closeOfferModal()">Cancel</button>
     </div>
 </div>
 
 <div id="adminContent" class="admin-content">
     <div class="admin-header">
-        <div><h1>🍛 Azhagu <span>Admin</span></h1><p style="font-size:12px;">Complete Control Panel</p></div>
+        <div><h1>🍛 Azhagu <span>Admin</span></h1><p style="font-size:12px;">Secure Control Panel</p></div>
         <div class="header-right">
             <div class="datetime" id="datetimeDisplay"></div>
             <div class="live-badge"><div class="pulse-dot"></div><span>Live</span></div>
-            <button class="header-btn" onclick="openChangePwdModal()">🔐 Change Password</button>
             <button class="header-btn logout" onclick="logout()">🚪 Logout</button>
         </div>
     </div>
     
     <div class="admin-tabs">
         <button class="tab-btn active" data-tab="orders">📋 Orders</button>
-        <button class="tab-btn" data-tab="menu">🍽️ Menu Management</button>
+        <button class="tab-btn" data-tab="menu">🍽️ Menu</button>
         <button class="tab-btn" data-tab="offers">🏷️ Offers</button>
     </div>
     
@@ -188,17 +152,10 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 
 <script>
-    const ADMIN_CRED_KEY = 'azhagu_admin_credentials';
-    const DEFAULT_USERNAME = 'admin';
-    const DEFAULT_PASSWORD = 'admin123';
-    
-    if (!localStorage.getItem(ADMIN_CRED_KEY)) {
-        localStorage.setItem(ADMIN_CRED_KEY, JSON.stringify({ username: DEFAULT_USERNAME, password: DEFAULT_PASSWORD }));
-    }
-    
     let unsubscribeOrders = null;
     let menuItems = [];
     let offers = [];
@@ -218,21 +175,56 @@
     function updateDateTime() { document.getElementById('datetimeDisplay').innerHTML = new Date().toLocaleString('en-IN'); }
     setInterval(updateDateTime, 1000); updateDateTime();
     
-    async function initializeDefaultData() {
-        const menuSnapshot = await db.collection('menu').get();
-        if (menuSnapshot.empty) {
-            const defaultMenu = [
-                { name: 'Ghee Roast Dosa', price: 65, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                { name: 'Mini Idly', price: 30, category: 'tiffin', emoji: '🍚', approved: true, available: true },
-                { name: 'Masala Dosa', price: 70, category: 'tiffin', emoji: '🥞', approved: true, available: true },
-                { name: 'Filter Coffee', price: 22, category: 'drinks', emoji: '☕', approved: true, available: true },
-                { name: 'Badam Milk', price: 35, category: 'drinks', emoji: '🥛', approved: true, available: true }
-            ];
-            for (const item of defaultMenu) await db.collection('menu').add(item);
-            showToast('Default menu created!');
+    // ========== AUTHENTICATION ==========
+    async function checkLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            document.getElementById('loginError').innerHTML = '❌ Please enter email and password!';
+            return;
+        }
+        
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            startListeningOrders();
+            loadMenu();
+            loadOffers();
+            showToast(`✅ Welcome ${email}!`);
+        } catch(error) {
+            document.getElementById('loginError').innerHTML = '❌ ' + error.message;
         }
     }
     
+    async function logout() {
+        try {
+            await auth.signOut();
+            if (unsubscribeOrders) unsubscribeOrders();
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').innerHTML = '';
+            showToast('🔒 Logged out securely');
+        } catch(error) {
+            showToast('Error logging out', true);
+        }
+    }
+    
+    // Check if already logged in
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            startListeningOrders();
+            loadMenu();
+            loadOffers();
+        }
+    });
+    
+    // ========== LOAD MENU & OFFERS ==========
     async function loadMenu() {
         const snapshot = await db.collection('menu').get();
         menuItems = [];
@@ -250,11 +242,10 @@
                 <td>₹${item.price}</td>
                 <td>${item.category === 'tiffin' ? 'Tiffin' : item.category === 'drinks' ? 'Drinks' : 'Rice'}</td>
                 <td><span class="status-badge ${item.available ? 'status-available' : 'status-unavailable'}">${item.available ? 'Available' : 'Unavailable'}</span></td>
-                <td><span class="status-badge ${item.approved ? 'status-approved' : 'status-pending'}">${item.approved ? 'Approved' : 'Pending'}</span></td>
+                <td><span class="status-badge status-approved">Approved</span></td>
                 <td>
                     <button class="action-btn-sm btn-edit" onclick="editDish('${item.id}')">Edit</button>
                     <button class="action-btn-sm btn-toggle" onclick="toggleAvailability('${item.id}', ${!item.available})">${item.available ? 'Disable' : 'Enable'}</button>
-                    <button class="action-btn-sm btn-approve" onclick="toggleApproval('${item.id}', ${!item.approved})">${item.approved ? 'Unapprove' : 'Approve'}</button>
                     <button class="action-btn-sm btn-delete" onclick="deleteDish('${item.id}')">Delete</button>
                 </td>
             </tr>
@@ -289,6 +280,7 @@
         if (select) select.innerHTML = '<option value="all">All Items</option>' + menuItems.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
     }
     
+    // ========== ORDER MANAGEMENT ==========
     function startListeningOrders() {
         if (unsubscribeOrders) unsubscribeOrders();
         unsubscribeOrders = db.collection('orders').orderBy('timestamp', 'desc').onSnapshot((snapshot) => {
@@ -296,7 +288,7 @@
             snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
             renderOrders(orders);
             updateOrderStats(orders);
-            if (window.lastOrderCount && orders.length > window.lastOrderCount) { playSound(); showToast(`🔔 New order received!`); }
+            if (window.lastOrderCount && orders.length > window.lastOrderCount) { playSound(); showToast(`🔔 New order!`); }
             window.lastOrderCount = orders.length;
         });
     }
@@ -317,7 +309,11 @@
         `).join('');
     }
     
-    async function updateOrderStatus(orderId, newStatus) { await db.collection('orders').doc(orderId).update({ status: newStatus }); showToast(`Order ${newStatus === 'ready' ? 'Ready' : 'Completed'}`); if (newStatus === 'ready') playSound(); }
+    async function updateOrderStatus(orderId, newStatus) { 
+        await db.collection('orders').doc(orderId).update({ status: newStatus }); 
+        showToast(`Order ${newStatus === 'ready' ? 'Ready' : 'Completed'}`);
+        if (newStatus === 'ready') playSound();
+    }
     
     function updateOrderStats(orders) {
         document.getElementById('totalOrders').innerText = orders.length;
@@ -327,27 +323,110 @@
         document.getElementById('totalRevenue').innerHTML = '₹' + orders.filter(o => o.status === 'done').reduce((s, o) => s + (o.total || 0), 0).toFixed(2);
     }
     
-    function openAddDishModal() { document.getElementById('dishModalTitle').innerText = 'Add New Dish'; document.getElementById('dishId').value = ''; document.getElementById('dishName').value = ''; document.getElementById('dishPrice').value = ''; document.getElementById('dishCategory').value = 'tiffin'; document.getElementById('dishEmoji').value = '🍽️'; document.getElementById('dishModal').style.display = 'flex'; }
-    function editDish(id) { const item = menuItems.find(i => i.id === id); if(item){ document.getElementById('dishModalTitle').innerText = 'Edit Dish'; document.getElementById('dishId').value = id; document.getElementById('dishName').value = item.name; document.getElementById('dishPrice').value = item.price; document.getElementById('dishCategory').value = item.category; document.getElementById('dishEmoji').value = item.emoji || '🍽️'; document.getElementById('dishModal').style.display = 'flex'; } }
-    async function saveDish() { const id = document.getElementById('dishId').value; const data = { name: document.getElementById('dishName').value, price: parseFloat(document.getElementById('dishPrice').value), category: document.getElementById('dishCategory').value, emoji: document.getElementById('dishEmoji').value, approved: true, available: true }; if (id) await db.collection('menu').doc(id).update(data); else await db.collection('menu').add(data); closeDishModal(); loadMenu(); showToast('Dish saved!'); }
-    async function toggleAvailability(id, status) { await db.collection('menu').doc(id).update({ available: status }); loadMenu(); showToast(status ? 'Dish available' : 'Dish unavailable'); }
-    async function toggleApproval(id, status) { await db.collection('menu').doc(id).update({ approved: status }); loadMenu(); showToast(status ? 'Dish approved' : 'Dish unapproved'); }
-    async function deleteDish(id) { if(confirm('Delete this dish?')){ await db.collection('menu').doc(id).delete(); loadMenu(); showToast('Dish deleted'); } }
+    // ========== DISH MANAGEMENT ==========
+    function openAddDishModal() { 
+        document.getElementById('dishModalTitle').innerText = 'Add New Dish'; 
+        document.getElementById('dishId').value = ''; 
+        document.getElementById('dishName').value = ''; 
+        document.getElementById('dishPrice').value = ''; 
+        document.getElementById('dishCategory').value = 'tiffin'; 
+        document.getElementById('dishEmoji').value = '🍽️'; 
+        document.getElementById('dishModal').style.display = 'flex'; 
+    }
+    
+    function editDish(id) { 
+        const item = menuItems.find(i => i.id === id); 
+        if(item){ 
+            document.getElementById('dishModalTitle').innerText = 'Edit Dish'; 
+            document.getElementById('dishId').value = id; 
+            document.getElementById('dishName').value = item.name; 
+            document.getElementById('dishPrice').value = item.price; 
+            document.getElementById('dishCategory').value = item.category; 
+            document.getElementById('dishEmoji').value = item.emoji || '🍽️'; 
+            document.getElementById('dishModal').style.display = 'flex'; 
+        } 
+    }
+    
+    async function saveDish() { 
+        const id = document.getElementById('dishId').value; 
+        const data = { 
+            name: document.getElementById('dishName').value, 
+            price: parseFloat(document.getElementById('dishPrice').value), 
+            category: document.getElementById('dishCategory').value, 
+            emoji: document.getElementById('dishEmoji').value, 
+            approved: true, 
+            available: true 
+        }; 
+        if (id) await db.collection('menu').doc(id).update(data); 
+        else await db.collection('menu').add(data); 
+        closeDishModal(); 
+        loadMenu(); 
+        showToast('Dish saved!'); 
+    }
+    
+    async function toggleAvailability(id, status) { 
+        await db.collection('menu').doc(id).update({ available: status }); 
+        loadMenu(); 
+        showToast(status ? 'Dish available' : 'Dish unavailable'); 
+    }
+    
+    async function deleteDish(id) { 
+        if(confirm('Delete this dish?')){ 
+            await db.collection('menu').doc(id).delete(); 
+            loadMenu(); 
+            showToast('Dish deleted'); 
+        } 
+    }
+    
     function closeDishModal() { document.getElementById('dishModal').style.display = 'none'; }
     
-    function openAddOfferModal() { document.getElementById('offerTitle').value = ''; document.getElementById('offerValue').value = ''; updateOfferItems(); document.getElementById('offerModal').style.display = 'flex'; }
-    async function saveOffer() { const data = { title: document.getElementById('offerTitle').value || 'Special Offer', type: 'percentage', value: parseFloat(document.getElementById('offerValue').value), itemId: document.getElementById('offerItem').value, active: true }; await db.collection('offers').add(data); closeOfferModal(); loadOffers(); showToast('Offer added!'); }
-    async function toggleOffer(id, status) { await db.collection('offers').doc(id).update({ active: status }); loadOffers(); showToast(status ? 'Offer activated' : 'Offer deactivated'); }
-    async function deleteOffer(id) { if(confirm('Delete this offer?')){ await db.collection('offers').doc(id).delete(); loadOffers(); showToast('Offer deleted'); } }
+    // ========== OFFER MANAGEMENT ==========
+    function openAddOfferModal() { 
+        document.getElementById('offerTitle').value = ''; 
+        document.getElementById('offerValue').value = ''; 
+        updateOfferItems(); 
+        document.getElementById('offerModal').style.display = 'flex'; 
+    }
+    
+    async function saveOffer() { 
+        const data = { 
+            title: document.getElementById('offerTitle').value || 'Special Offer', 
+            type: 'percentage', 
+            value: parseFloat(document.getElementById('offerValue').value), 
+            itemId: document.getElementById('offerItem').value, 
+            active: true 
+        }; 
+        await db.collection('offers').add(data); 
+        closeOfferModal(); 
+        loadOffers(); 
+        showToast('Offer added!'); 
+    }
+    
+    async function toggleOffer(id, status) { 
+        await db.collection('offers').doc(id).update({ active: status }); 
+        loadOffers(); 
+        showToast(status ? 'Offer activated' : 'Offer deactivated'); 
+    }
+    
+    async function deleteOffer(id) { 
+        if(confirm('Delete this offer?')){ 
+            await db.collection('offers').doc(id).delete(); 
+            loadOffers(); 
+            showToast('Offer deleted'); 
+        } 
+    }
+    
     function closeOfferModal() { document.getElementById('offerModal').style.display = 'none'; }
     
-    function checkLogin() { const username = document.getElementById('loginUsername').value.trim(); const password = document.getElementById('loginPassword').value; const cred = JSON.parse(localStorage.getItem(ADMIN_CRED_KEY)); if(username === cred.username && password === cred.password){ document.getElementById('loginModal').style.display = 'none'; document.getElementById('adminContent').style.display = 'block'; initializeDefaultData(); startListeningOrders(); loadMenu(); loadOffers(); showToast(`Welcome ${username}!`); } else { document.getElementById('loginError').innerHTML = '❌ Invalid username or password!'; } }
-    function logout() { if(unsubscribeOrders) unsubscribeOrders(); document.getElementById('adminContent').style.display = 'none'; document.getElementById('loginModal').style.display = 'flex'; showToast('Logged out'); }
-    function openChangePwdModal() { document.getElementById('changePwdModal').style.display = 'flex'; }
-    function closeChangePwdModal() { document.getElementById('changePwdModal').style.display = 'none'; }
-    function changePassword() { const currUser = document.getElementById('currentUsername').value.trim(); const currPass = document.getElementById('currentPassword').value; const newPass = document.getElementById('newPassword').value; const confirmPass = document.getElementById('confirmPassword').value; const cred = JSON.parse(localStorage.getItem(ADMIN_CRED_KEY)); if(currUser !== cred.username || currPass !== cred.password){ showToast('Current credentials incorrect!', true); return; } if(newPass.length < 4){ showToast('Password must be at least 4 characters!', true); return; } if(newPass !== confirmPass){ showToast('Passwords do not match!', true); return; } cred.password = newPass; localStorage.setItem(ADMIN_CRED_KEY, JSON.stringify(cred)); closeChangePwdModal(); showToast('Password changed! Please login again.'); setTimeout(() => logout(), 1500); }
-    
-    document.querySelectorAll('.tab-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active')); btn.classList.add('active'); document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active'); }); });
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => { 
+        btn.addEventListener('click', () => { 
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active')); 
+            btn.classList.add('active'); 
+            document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active'); 
+        }); 
+    });
 </script>
 </body>
 </html>
