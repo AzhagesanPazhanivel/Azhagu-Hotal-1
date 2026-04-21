@@ -414,6 +414,18 @@
         document.getElementById('nameModal').classList.remove('open');
         showToast(`Welcome ${customerName}!`);
     }
+        function saveCustomerName() {
+        const name = document.getElementById('customerNameInput').value.trim();
+        if (!name) { showToast('Please enter name', true); return; }
+        customerName = name;
+        localStorage.setItem('customerName', customerName);
+        document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
+        document.getElementById('nameModal').classList.remove('open');
+        showToast(`Welcome ${customerName}!`);
+        
+        // Start listening to order status updates for this customer
+        listenToOrderStatus();
+    }
     
     function proceedToCheckout() {
         if (Object.keys(cart).length === 0) return;
@@ -662,7 +674,42 @@
             if (document.getElementById('view-orders').classList.contains('active')) loadOrderHistory();
         });
     }
+        // Real-time order status listener for customer
+    let unsubscribeOrderStatus = null;
     
+    function listenToOrderStatus() {
+        if (!customerName) return;
+        
+        if (unsubscribeOrderStatus) unsubscribeOrderStatus();
+        
+        unsubscribeOrderStatus = db.collection('orders')
+            .where('customerName', '==', customerName)
+            .onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === 'modified') {
+                        const updatedOrder = { id: change.doc.id, ...change.doc.data() };
+                        console.log("Order status updated:", updatedOrder);
+                        
+                        // Show notification when payment is verified
+                        if (updatedOrder.paymentStatus === 'VERIFIED') {
+                            showToast(`✅ Your order ${updatedOrder.id} payment has been verified! Order confirmed.`);
+                            // Optionally refresh order history
+                            if (document.getElementById('view-orders').classList.contains('active')) {
+                                loadOrderHistory();
+                            }
+                        }
+                        
+                        // Show notification when order status changes
+                        if (updatedOrder.status === 'ready') {
+                            showToast(`🎉 Your order ${updatedOrder.id} is ready for pickup!`);
+                        }
+                        if (updatedOrder.status === 'delivered') {
+                            showToast(`🚚 Your order ${updatedOrder.id} has been delivered. Thank you!`);
+                        }
+                    }
+                });
+            });
+    }
     document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderMenu(); });
     document.querySelectorAll('.fpill').forEach(p => {
         p.addEventListener('click', () => {
@@ -685,6 +732,14 @@
     
     if (customerName) document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
     else setTimeout(() => openNameModal(), 500);
+    
+    loadMenuAndOffers();
+    updateCartBar();
+    startListeningToOrders();
+    if (customerName) {
+        document.getElementById('welcomeNameBtn').innerHTML = `👤 ${customerName}`;
+        listenToOrderStatus();  // Add this line
+    } else setTimeout(() => openNameModal(), 500);
     
     loadMenuAndOffers();
     updateCartBar();
